@@ -29,7 +29,7 @@
 <br>
 🛠️ <i>الموضوع:</i> Building Local Tools with AI & Data Privacy
 <br>
-🔗 <i>المنصات:</i> <a href="#">LinkedIn</a>
+🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_aevaeraepaewaeyabraewaepaevaexabraeiaepaewaey-activity-7404240940619714562-03d5?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a>
 
 <br>
 <hr> <br>
@@ -40,7 +40,7 @@
 <br>
 🛠️ <i>الموضوع:</i> Vibe Coding & Requirement Engineering
 <br>
-🔗 <i>المنصات:</i> <a href="#">LinkedIn</a>
+🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_ai-softwareengineering-vibecoding-activity-7404882773146148864-Tg7k?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a>
 
 <br>
 <hr> <br>
@@ -51,7 +51,7 @@
 <br>
 🛠️ <i>الموضوع:</i> Idempotency & Handling Duplicate Requests
 <br>
-🔗 <i>المنصات:</i> <a href="#">LinkedIn</a> | <a href="#">قبيلة</a>
+🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_softwareengineering-idempotency-backend-activity-7405969834057846784-Cela?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="#">قبيلة</a>
 
 <br>
 <hr> <br>
@@ -62,7 +62,7 @@
 <br>
 🛠️ <i>الموضوع:</i> Dependency Injection & Circular Dependencies
 <br>
-🔗 <i>المنصات:</i> <a href="#">LinkedIn</a> | <a href="#">قبيلة</a>
+🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_nestjs-dependencyinjection-softwareengineering-activity-7406694666869407747-_aFn?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="#">قبيلة</a>
 
 <br>
 <hr> <br>
@@ -73,7 +73,7 @@
 <br>
 🛠️ <i>الموضوع:</i> Over-engineering & NestJS Mapped Types
 <br>
-🔗 <i>المنصات:</i> <a href="#">LinkedIn</a> | <a href="#">قبيلة</a>
+🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_softwareengineering-cleancode-nestjs-activity-7407419464347996160-xdxB?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="#">قبيلة</a>
 
 <br>
 <hr> <br>
@@ -84,7 +84,7 @@
 <br>
 🛠️ <i>الموضوع:</i> Connection Pooling & TCP Handshake
 <br>
-🔗 <i>المنصات:</i> <a href="#">LinkedIn</a> | <a href="#">قبيلة</a>
+🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_softwareengineering-backend-performance-activity-7408868933434257408-81Se?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="#">قبيلة</a>
 
 <br>
 <hr> <br>
@@ -95,6 +95,6 @@
 <br>
 🛠️ <i>الموضوع:</i> Facade Design Pattern & Abstraction
 <br>
-🔗 <i>المنصات:</i> <a href="#">LinkedIn</a> | <a href="#">قبيلة</a>
+🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_%D9%87%D9%88-%D8%A5%D8%AD%D9%86%D8%A7-%D9%84%D9%8A%D9%87-%D8%A8%D9%86%D8%BA%D9%84%D9%81-%D8%A7%D9%84%D9%83%D9%88%D8%AF-%D8%A7%D9%84%D8%B3%D9%87%D9%84-%D8%A8%D8%AA%D8%B9%D9%82%D9%8A%D8%AF-%D9%85%D8%A7%D9%84%D9%88%D8%B4-activity-7409956102563487744-Hv2A?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="#">قبيلة</a>
 
 </div>
