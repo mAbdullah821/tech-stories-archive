@@ -73,6 +73,8 @@
 🛠️ <i>الموضوع:</i> Connection Pooling & TCP Handshake
 <br>
 🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_softwareengineering-backend-performance-activity-7408868933434257408-81Se?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="https://qabilah.com/posts/كيف-حولت-عبء-السيرفر-إلى-كفاءة-باستخدام-connection-pool~RTrvxrDieJ8">قبيلة</a>
+<br>
+💡 <i>ملاحظة:</i> القصة على LinkedIn مقسمة (المنشور + أول تعليق). لقراءة متصلة وأفضل، ننصح برابط <a href="https://qabilah.com/posts/كيف-حولت-عبء-السيرفر-إلى-كفاءة-باستخدام-connection-pool~RTrvxrDieJ8">قبيلة</a>
 
 <br>
 <hr> <br>
