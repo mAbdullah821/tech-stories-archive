@@ -1,7 +1,7 @@
 <div dir="rtl">
 
 <div align="center">
-  <img src="Gemini_Generated_Image_9h6oak9h6oak9h6o_edit_451618978216365.png" alt="Cover Image" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+  <img src="Gemini_Generated_Image_3fa5kg3fa5kg3fa5.png" alt="Cover Image" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
 </div>
 
 # 📚 أرشيف "حكاوي واحد غاوي"
