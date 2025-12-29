@@ -84,4 +84,13 @@
 <br>
 🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_%D9%87%D9%88-%D8%A5%D8%AD%D9%86%D8%A7-%D9%84%D9%8A%D9%87-%D8%A8%D9%86%D8%BA%D9%84%D9%81-%D8%A7%D9%84%D9%83%D9%88%D8%AF-%D8%A7%D9%84%D8%B3%D9%87%D9%84-%D8%A8%D8%AA%D8%B9%D9%82%D9%8A%D8%AF-%D9%85%D8%A7%D9%84%D9%88%D8%B4-activity-7409956102563487744-Hv2A?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="https://qabilah.com/posts/تعل-م-لماذا-التعقيد-في-البرمجة-قد-يكون-الحل-الذكي~1-2TB61mJi8">قبيلة</a>
 
+<br>
+<hr> <br>
+
+📝 <b>كنت فاكر نفسي مهندس برمجيات.. واكتشفت إني شغال "ناسخ" أكواد! 🤡</b>
+<br>
+🛠️ <i>الموضوع:</i> NoSQL Relations & The DRY Principle
+<br>
+🔗 <i>المنصات:</i> <a href="#">LinkedIn</a> | <a href="#">قبيلة</a>
+
 </div>
