@@ -68,8 +68,712 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
       disabled
     />
-    <!-- Shared Styles -->
-    <link rel="stylesheet" href="shared-styles.css" />
+    <!-- 
+      ⚠️ SHARED STYLES - منسوخ من shared-styles.css
+      المرجع الرئيسي: shared-styles.css
+      عند التعديل: عدّل أولاً في shared-styles.css ثم انسخ المحتوى هنا
+    -->
+    <style>
+      /**
+       * Shared Styles for Blog System
+       * This file contains all shared CSS between viewer.html and writer.html
+       * to ensure consistent preview/display across both applications.
+       * 
+       * Version: 1.0
+       */
+
+      /* ============================================
+         ANIMATIONS
+         ============================================ */
+      .animate-fade-in {
+        animation: fadeIn 0.4s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Toast Notification Animation */
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -20px);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+      }
+
+      @keyframes slideOut {
+        from {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+        to {
+          opacity: 0;
+          transform: translate(-50%, -20px);
+        }
+      }
+
+      .toast-enter {
+        animation: slideIn 0.3s ease-out forwards;
+      }
+
+      .toast-exit {
+        animation: slideOut 0.3s ease-in forwards;
+      }
+
+      /* ============================================
+         PROSE RTL - Typography for Markdown Content
+         ============================================ */
+      .prose-rtl {
+        direction: rtl;
+        text-align: right;
+        line-height: 1.8;
+        color: #334155;
+      }
+
+      .dark .prose-rtl {
+        color: #cbd5e1;
+      }
+
+      /* Headers */
+      .prose-rtl h1,
+      .prose-rtl h2,
+      .prose-rtl h3 {
+        color: #0f172a;
+        font-weight: 800;
+        margin-top: 1.5em;
+        margin-bottom: 0.8em;
+      }
+
+      .dark .prose-rtl h1,
+      .dark .prose-rtl h2,
+      .dark .prose-rtl h3 {
+        color: #f8fafc;
+      }
+
+      .prose-rtl h1 {
+        font-size: 2.25em;
+      }
+
+      .prose-rtl h2 {
+        font-size: 1.5em;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 0.5em;
+      }
+
+      .dark .prose-rtl h2 {
+        border-color: #334155;
+      }
+
+      .prose-rtl h3 {
+        font-size: 1.25em;
+      }
+
+      /* Paragraphs */
+      .prose-rtl p {
+        margin-bottom: 1.2em;
+      }
+
+      /* Lists */
+      .prose-rtl ul {
+        list-style-type: disc;
+        padding-right: 1.5em;
+        margin-bottom: 1.2em;
+      }
+
+      .prose-rtl ol {
+        list-style-type: decimal;
+        padding-right: 1.5em;
+        margin-bottom: 1.2em;
+      }
+
+      /* Blockquotes */
+      .prose-rtl blockquote {
+        border-right: 4px solid #10b981;
+        padding-right: 1em;
+        background: #f1f5f9;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5em;
+        font-style: italic;
+      }
+
+      .dark .prose-rtl blockquote {
+        background: #1e293b;
+        border-color: #34d399;
+      }
+
+      /* Images */
+      .prose-rtl img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1.5rem auto;
+        display: block;
+        cursor: zoom-in;
+        transition: transform 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .prose-rtl img:hover {
+        transform: scale(1.01);
+      }
+
+      /* Images inside flex containers should not have auto margins */
+      .prose-rtl .flex img {
+        margin: 0;
+      }
+
+      /* ============================================
+         FLEX LAYOUT UTILITIES
+         ============================================ */
+      .prose-rtl .flex {
+        display: flex;
+      }
+
+      .prose-rtl .flex-wrap {
+        flex-wrap: wrap;
+      }
+
+      .prose-rtl .flex-row {
+        flex-direction: row;
+      }
+
+      .prose-rtl .flex-col {
+        flex-direction: column;
+      }
+
+      .prose-rtl .gap-2 {
+        gap: 0.5rem;
+      }
+
+      .prose-rtl .gap-3 {
+        gap: 0.75rem;
+      }
+
+      .prose-rtl .gap-4 {
+        gap: 1rem;
+      }
+
+      .prose-rtl .items-center {
+        align-items: center;
+      }
+
+      .prose-rtl .justify-center {
+        justify-content: center;
+      }
+
+      .prose-rtl .flex-shrink-0 {
+        flex-shrink: 0;
+      }
+
+      .prose-rtl .flex-shrink-0 img {
+        margin: 0;
+        max-width: 300px;
+        display: block;
+      }
+
+      .prose-rtl .mx-2 {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+      }
+
+      .prose-rtl .flex-row img {
+        max-width: 300px;
+        max-height: 400px;
+      }
+
+      .prose-rtl .flex-col img {
+        max-width: 100%;
+        max-height: 400px;
+      }
+
+      /* ============================================
+         GRID LAYOUT FOR IMAGES
+         ============================================ */
+      .prose-rtl .grid {
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .prose-rtl .grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+
+      .prose-rtl .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .prose-rtl .grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .prose-rtl .grid img {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* Smaller images for inline layout */
+      .prose-rtl .grid.grid-cols-3 img {
+        max-height: 120px !important;
+        min-height: 80px !important;
+      }
+
+      .prose-rtl .grid.grid-cols-2 img {
+        max-height: 120px !important;
+        min-height: 80px !important;
+      }
+
+      .prose-rtl .grid.grid-cols-1 img {
+        max-width: 100%;
+      }
+
+      /* Grid utilities */
+      .prose-rtl .grid .relative {
+        position: relative;
+        cursor: pointer;
+      }
+
+      .prose-rtl .grid .absolute {
+        position: absolute;
+      }
+
+      .prose-rtl .grid .inset-0 {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+
+      .prose-rtl .grid .bg-black\/60 {
+        background-color: rgba(0, 0, 0, 0.6);
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      .prose-rtl .grid .flex {
+        display: flex;
+      }
+
+      .prose-rtl .grid .items-center {
+        align-items: center;
+      }
+
+      .prose-rtl .grid .justify-center {
+        justify-content: center;
+      }
+
+      .prose-rtl .grid .text-white {
+        color: white;
+      }
+
+      .prose-rtl .grid .text-2xl {
+        font-size: 1.5rem;
+        line-height: 2rem;
+      }
+
+      .prose-rtl .grid .font-bold {
+        font-weight: 700;
+      }
+
+      .prose-rtl .grid .w-full {
+        width: 100%;
+      }
+
+      .prose-rtl .grid .h-full {
+        height: 100%;
+      }
+
+      .prose-rtl .grid .object-cover {
+        object-fit: cover;
+      }
+
+      .prose-rtl .grid .rounded-lg {
+        border-radius: 0.5rem;
+      }
+
+      .prose-rtl .grid .cursor-zoom-in {
+        cursor: zoom-in;
+      }
+
+      .prose-rtl .grid .border {
+        border-width: 1px;
+      }
+
+      .prose-rtl .grid .border-gray-200 {
+        border-color: rgb(229 231 235);
+      }
+
+      .dark .prose-rtl .grid .border-gray-700 {
+        border-color: rgb(55 65 81);
+      }
+
+      /* ============================================
+         CODE BLOCK STYLING
+         ============================================ */
+      .prose-rtl :not(pre) > code {
+        direction: ltr;
+        display: inline-block;
+        font-family: "Fira Code", monospace;
+        background: #e2e8f0;
+        color: #be185d;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-size: 0.85em;
+      }
+
+      .dark .prose-rtl :not(pre) > code {
+        background: #334155;
+        color: #f472b6;
+      }
+
+      .prose-rtl pre {
+        position: relative;
+        direction: ltr;
+        text-align: left;
+        background: #fafafa !important;
+        border: 1px solid #e5e7eb !important;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        overflow-x: auto;
+        margin-bottom: 1.5em;
+        font-family: "Fira Code", monospace;
+        font-size: 0.9em;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+          0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+
+      .dark .prose-rtl pre {
+        background: #282c34 !important;
+        border: 1px solid #3e4451 !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3),
+          0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      .prose-rtl pre:hover .copy-code-btn {
+        opacity: 1;
+      }
+
+      .prose-rtl pre code {
+        background: transparent !important;
+        color: inherit !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        display: inline;
+        font-size: 100% !important;
+      }
+
+      /* ============================================
+         LINK STYLING
+         ============================================ */
+      .prose-rtl a {
+        color: #10b981;
+        text-decoration: underline;
+        font-weight: 500;
+      }
+
+      .prose-rtl a.no-underline {
+        text-decoration: none !important;
+      }
+
+      .prose-rtl strong {
+        color: #0f172a;
+        font-weight: 700;
+      }
+
+      .dark .prose-rtl strong {
+        color: #f1f5f9;
+      }
+
+      /* ============================================
+         CUSTOM SCROLLBAR
+         ============================================ */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+
+      /* ============================================
+         THEMES - Tiny Stars in Colorful Space
+         Very gentle drift - like floating in space
+         Small stars with soft glow - peaceful & calming
+         ============================================ */
+
+      /* ---- Theme Base Setup ---- */
+      .theme-modern,
+      .theme-sepia,
+      .theme-ocean,
+      .theme-forest,
+      .theme-midnight {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .theme-modern::before,
+      .theme-sepia::before,
+      .theme-ocean::before,
+      .theme-forest::before,
+      .theme-midnight::before {
+        content: "";
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 300%;
+        height: 300%;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Ensure content appears above stars */
+      .theme-modern > *,
+      .theme-sepia > *,
+      .theme-ocean > *,
+      .theme-forest > *,
+      .theme-midnight > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ============================================
+         MODERN THEME - Emerald Stars
+         ============================================ */
+      .theme-modern::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.7) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(52, 211, 153, 0.5) 1px, transparent 1px);
+        background-size: 180px 180px, 260px 260px;
+        animation: stars-drift 500s linear infinite;
+      }
+
+      .dark .theme-modern::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(52, 211, 153, 0.85) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(74, 222, 128, 0.6) 1px, transparent 1px);
+        background-size: 200px 200px, 280px 280px;
+      }
+
+      /* ============================================
+         SEPIA THEME - Golden Stars
+         ============================================ */
+      .theme-sepia::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(180, 120, 60, 0.6) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(139, 90, 43, 0.4) 1px, transparent 1px);
+        background-size: 190px 190px, 270px 270px;
+        animation: stars-drift 550s linear infinite;
+      }
+
+      .dark .theme-sepia::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(251, 191, 36, 0.8) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(245, 158, 11, 0.55) 1px, transparent 1px);
+        background-size: 210px 210px, 290px 290px;
+      }
+
+      /* ============================================
+         OCEAN THEME - Cyan Stars Rising
+         ============================================ */
+      .theme-ocean::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(6, 182, 212, 0.65) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(34, 211, 238, 0.45) 1px, transparent 1px);
+        background-size: 170px 170px, 250px 250px;
+        animation: stars-rise 480s linear infinite;
+      }
+
+      .dark .theme-ocean::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(34, 211, 238, 0.85) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(103, 232, 249, 0.6) 1px, transparent 1px);
+        background-size: 190px 190px, 270px 270px;
+      }
+
+      /* ============================================
+         FOREST THEME - Green Stars
+         ============================================ */
+      .theme-forest::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(74, 222, 128, 0.7) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(52, 211, 153, 0.5) 1px, transparent 1px);
+        background-size: 200px 200px, 300px 300px;
+        animation: stars-drift 580s linear infinite;
+      }
+
+      .dark .theme-forest::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(74, 222, 128, 0.9) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle,
+            rgba(134, 239, 172, 0.65) 1px,
+            transparent 1px
+          );
+        background-size: 220px 220px, 320px 320px;
+      }
+
+      /* ============================================
+         MIDNIGHT THEME - White Stars in Purple Space
+         ============================================ */
+      .theme-midnight::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(139, 92, 246, 0.65) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(168, 85, 247, 0.45) 1px, transparent 1px);
+        background-size: 160px 160px, 240px 240px;
+        animation: stars-drift 450s linear infinite;
+      }
+
+      .dark .theme-midnight::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.9) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(196, 181, 253, 0.6) 1px, transparent 1px);
+        background-size: 180px 180px, 260px 260px;
+      }
+
+      /* ============================================
+         ANIMATIONS - Very Slow Drift
+         Like floating peacefully in space
+         ============================================ */
+
+      /* Diagonal drift - NW to SE (very slow) */
+      @keyframes stars-drift {
+        from {
+          transform: translate(0, 0);
+        }
+        to {
+          transform: translate(33.33%, 33.33%);
+        }
+      }
+
+      /* Rising drift - for ocean theme */
+      @keyframes stars-rise {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-33.33%);
+        }
+      }
+
+      /* ============================================
+         TOAST NOTIFICATION
+         ============================================ */
+      .toast-notification {
+        position: fixed;
+        top: 5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2),
+          0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        pointer-events: none;
+      }
+
+      .toast-notification.success {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+      }
+
+      .toast-notification.error {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+      }
+
+      .toast-notification.info {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+      }
+
+      /* ============================================
+         FULLSCREEN PREVIEW MODE
+         ============================================ */
+      .fullscreen-preview {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        overflow-y: auto;
+      }
+
+      .fullscreen-preview-close {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 110;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0.5rem;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .dark .fullscreen-preview-close {
+        background: rgba(30, 41, 59, 0.9);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .fullscreen-preview-close:hover {
+        transform: scale(1.1);
+      }
+    </style>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -577,10 +1281,27 @@
       function App() {
         const [posts, setPosts] = useState([]);
         const [activePost, setActivePost] = useState(null);
-        const [darkMode, setDarkMode] = useState(true);
-        const [currentTheme, setCurrentTheme] = useState("midnight");
+
+        // Load saved preferences from localStorage
+        const [darkMode, setDarkMode] = useState(() => {
+          const saved = localStorage.getItem("blog-darkMode");
+          return saved !== null ? saved === "true" : true;
+        });
+        const [currentTheme, setCurrentTheme] = useState(() => {
+          return localStorage.getItem("blog-theme") || "midnight";
+        });
+
         const [showThemeMenu, setShowThemeMenu] = useState(false);
         const [showDisplayMenu, setShowDisplayMenu] = useState(false);
+
+        // Save preferences to localStorage when they change
+        useEffect(() => {
+          localStorage.setItem("blog-darkMode", darkMode);
+        }, [darkMode]);
+
+        useEffect(() => {
+          localStorage.setItem("blog-theme", currentTheme);
+        }, [currentTheme]);
 
         // Image Zoom State
         const [zoomedImage, setZoomedImage] = useState(null);
@@ -632,14 +1353,7 @@
           }
         }, [darkMode]);
 
-        // Auto-change theme based on dark mode
-        useEffect(() => {
-          if (darkMode) {
-            setCurrentTheme("midnight");
-          } else {
-            setCurrentTheme("sepia");
-          }
-        }, [darkMode]);
+        // Theme is now saved in localStorage, no auto-change needed
 
         // Re-highlight code when dark mode changes
         useEffect(() => {
@@ -1737,9 +2451,5 @@
       const root = ReactDOM.createRoot(document.getElementById("root"));
       root.render(<App />);
     </script>
-    <!-- Styles are now loaded from shared-styles.css -->
-    <style>
-      /* Viewer-specific styles only */
-    </style>
   </body>
 </html>

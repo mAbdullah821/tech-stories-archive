@@ -437,395 +437,188 @@
 }
 
 /* ============================================
-   THEMES
+   THEMES - Tiny Stars in Colorful Space
+   Very gentle drift - like floating in space
+   Small stars with soft glow - peaceful & calming
    ============================================ */
 
-/* Modern Theme - Subtle floating particles */
-.theme-modern {
-  background-image: radial-gradient(
-      circle at 20% 50%,
-      rgba(16, 185, 129, 0.06) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(16, 185, 129, 0.06) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 30%,
-      rgba(16, 185, 129, 0.15) 1px,
-      transparent 1px
-    ),
-    radial-gradient(
-      circle at 60% 70%,
-      rgba(16, 185, 129, 0.12) 0.8px,
-      transparent 0.8px
-    );
-  background-size: 100% 100%, 100% 100%, 180px 180px, 220px 220px;
-  background-position: 0 0, 0 0, 0 0, 50px 80px;
-  animation: modern-float 90s ease-in-out infinite;
-}
-
-.dark .theme-modern {
-  background-image: radial-gradient(
-      circle at 20% 50%,
-      rgba(16, 185, 129, 0.08) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(16, 185, 129, 0.08) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 30%,
-      rgba(16, 185, 129, 0.25) 1.2px,
-      transparent 1.2px
-    ),
-    radial-gradient(
-      circle at 60% 70%,
-      rgba(16, 185, 129, 0.2) 1px,
-      transparent 1px
-    );
-  background-size: 100% 100%, 100% 100%, 180px 180px, 220px 220px;
-  background-position: 0 0, 0 0, 0 0, 50px 80px;
-  animation: modern-float 90s ease-in-out infinite;
-}
-
-@keyframes modern-float {
-  0%,
-  100% {
-    background-position: 0 0, 0 0, 0 0, 50px 80px;
-  }
-  50% {
-    background-position: 0 0, 0 0, 90px 90px, 140px 160px;
-  }
-}
-
-/* Sepia Theme - Paper texture with floating dust */
-.theme-sepia {
-  background-image: repeating-linear-gradient(
-      0deg,
-      rgba(139, 69, 19, 0.03) 0px,
-      transparent 1px,
-      transparent 2px,
-      rgba(139, 69, 19, 0.03) 3px
-    ),
-    radial-gradient(
-      circle at 25% 35%,
-      rgba(180, 120, 60, 0.08) 1px,
-      transparent 1px
-    ),
-    radial-gradient(
-      circle at 75% 65%,
-      rgba(180, 120, 60, 0.06) 0.8px,
-      transparent 0.8px
-    );
-  background-size: 100% 4px, 250px 250px, 300px 300px;
-  background-position: 0 0, 0 0, 100px 100px;
-  animation: sepia-dust 120s ease-in-out infinite;
-}
-
-.dark .theme-sepia {
-  background-image: repeating-linear-gradient(
-      0deg,
-      rgba(251, 191, 36, 0.05) 0px,
-      transparent 1px,
-      transparent 2px,
-      rgba(251, 191, 36, 0.05) 3px
-    ),
-    radial-gradient(
-      circle at 25% 35%,
-      rgba(251, 191, 36, 0.12) 1px,
-      transparent 1px
-    ),
-    radial-gradient(
-      circle at 75% 65%,
-      rgba(251, 191, 36, 0.1) 0.8px,
-      transparent 0.8px
-    );
-  background-size: 100% 4px, 250px 250px, 300px 300px;
-  background-position: 0 0, 0 0, 100px 100px;
-  animation: sepia-dust 120s ease-in-out infinite;
-}
-
-@keyframes sepia-dust {
-  0%,
-  100% {
-    background-position: 0 0, 0 0, 100px 100px;
-  }
-  50% {
-    background-position: 0 0, 125px 125px, 225px 225px;
-  }
-}
-
-/* Ocean Theme - Gentle waves and bubbles */
-.theme-ocean {
-  background-image: radial-gradient(
-      circle at 30% 20%,
-      rgba(6, 182, 212, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 70% 60%,
-      rgba(20, 184, 166, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 20% 70%,
-      rgba(6, 182, 212, 0.15) 1.5px,
-      transparent 1.5px
-    ),
-    radial-gradient(
-      circle at 80% 30%,
-      rgba(20, 184, 166, 0.12) 1px,
-      transparent 1px
-    ),
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(6, 182, 212, 0.08) 0.8px,
-      transparent 0.8px
-    );
-  background-size: 100% 100%, 100% 100%, 200px 200px, 280px 280px, 150px 150px;
-  background-position: 0 0, 0 0, 0 0, 50px 50px, 100px 30px;
-  animation: ocean-drift 100s ease-in-out infinite;
-}
-
-.dark .theme-ocean {
-  background-image: radial-gradient(
-      circle at 30% 20%,
-      rgba(6, 182, 212, 0.15) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 70% 60%,
-      rgba(20, 184, 166, 0.15) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 20% 70%,
-      rgba(6, 182, 212, 0.3) 1.5px,
-      transparent 1.5px
-    ),
-    radial-gradient(
-      circle at 80% 30%,
-      rgba(20, 184, 166, 0.25) 1px,
-      transparent 1px
-    ),
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(255, 255, 255, 0.15) 0.8px,
-      transparent 0.8px
-    );
-  background-size: 100% 100%, 100% 100%, 200px 200px, 280px 280px, 150px 150px;
-  background-position: 0 0, 0 0, 0 0, 50px 50px, 100px 30px;
-  animation: ocean-drift 100s ease-in-out infinite;
-}
-
-@keyframes ocean-drift {
-  0%,
-  100% {
-    background-position: 0 0, 0 0, 0 0, 50px 50px, 100px 30px;
-  }
-  33% {
-    background-position: 0 0, 0 0, 100px 50px, 150px 100px, 50px 80px;
-  }
-  66% {
-    background-position: 0 0, 0 0, 50px 100px, 100px 150px, 150px 60px;
-  }
-}
-
-/* Forest Theme - Floating leaves/fireflies */
-.theme-forest {
-  background-image: radial-gradient(
-      circle at 25% 25%,
-      rgba(16, 185, 129, 0.08) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 75% 75%,
-      rgba(5, 150, 105, 0.08) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 30% 60%,
-      rgba(16, 185, 129, 0.18) 1.2px,
-      transparent 1.2px
-    ),
-    radial-gradient(
-      circle at 70% 40%,
-      rgba(52, 211, 153, 0.15) 1px,
-      transparent 1px
-    ),
-    radial-gradient(
-      circle at 50% 80%,
-      rgba(5, 150, 105, 0.12) 0.8px,
-      transparent 0.8px
-    );
-  background-size: 100% 100%, 100% 100%, 220px 220px, 180px 180px, 260px 260px;
-  background-position: 0 0, 0 0, 0 0, 60px 40px, 30px 90px;
-  animation: forest-firefly 110s ease-in-out infinite;
-}
-
-.dark .theme-forest {
-  background-image: radial-gradient(
-      circle at 25% 25%,
-      rgba(16, 185, 129, 0.12) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 75% 75%,
-      rgba(5, 150, 105, 0.12) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 30% 60%,
-      rgba(52, 211, 153, 0.35) 1.5px,
-      transparent 1.5px
-    ),
-    radial-gradient(
-      circle at 70% 40%,
-      rgba(16, 185, 129, 0.3) 1.2px,
-      transparent 1.2px
-    ),
-    radial-gradient(
-      circle at 50% 80%,
-      rgba(74, 222, 128, 0.25) 1px,
-      transparent 1px
-    );
-  background-size: 100% 100%, 100% 100%, 220px 220px, 180px 180px, 260px 260px;
-  background-position: 0 0, 0 0, 0 0, 60px 40px, 30px 90px;
-  animation: forest-firefly 110s ease-in-out infinite;
-}
-
-@keyframes forest-firefly {
-  0%,
-  100% {
-    background-position: 0 0, 0 0, 0 0, 60px 40px, 30px 90px;
-  }
-  25% {
-    background-position: 0 0, 0 0, 55px 55px, 115px 95px, 85px 145px;
-  }
-  50% {
-    background-position: 0 0, 0 0, 110px 110px, 170px 150px, 140px 200px;
-  }
-  75% {
-    background-position: 0 0, 0 0, 55px 165px, 115px 205px, 85px 255px;
-  }
-}
-
-/* Midnight Theme - Enhanced stars and nebula with smooth drift */
+/* ---- Theme Base Setup ---- */
+.theme-modern,
+.theme-sepia,
+.theme-ocean,
+.theme-forest,
 .theme-midnight {
-  background-image: radial-gradient(
-      circle at 20% 30%,
-      rgba(99, 102, 241, 0.18) 0%,
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 80% 70%,
-      rgba(168, 85, 247, 0.18) 0%,
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(255, 255, 255, 0.9) 0.8px,
-      transparent 0.8px
-    ),
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(255, 255, 255, 0.7) 0.5px,
-      transparent 0.5px
-    ),
-    radial-gradient(
-      circle at 70% 80%,
-      rgba(255, 255, 255, 0.5) 0.6px,
-      transparent 0.6px
-    ),
-    radial-gradient(
-      circle at 15% 65%,
-      rgba(255, 255, 255, 0.4) 0.4px,
-      transparent 0.4px
-    ),
-    radial-gradient(
-      circle at 85% 35%,
-      rgba(255, 255, 255, 0.35) 0.35px,
-      transparent 0.35px
-    );
-  background-size: 100% 100%, 100% 100%, 180px 180px, 140px 140px, 200px 200px,
-    250px 250px, 160px 160px;
-  background-position: 0 0, 0 0, 0 0, 40px 80px, 120px 160px, 80px 200px,
-    160px 40px;
-  animation: starfield 70s linear infinite;
+  position: relative;
+  overflow: hidden;
 }
 
-.dark .theme-midnight {
+.theme-modern::before,
+.theme-sepia::before,
+.theme-ocean::before,
+.theme-forest::before,
+.theme-midnight::before {
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 300%;
+  height: 300%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure content appears above stars */
+.theme-modern > *,
+.theme-sepia > *,
+.theme-ocean > *,
+.theme-forest > *,
+.theme-midnight > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   MODERN THEME - Emerald Stars
+   ============================================ */
+.theme-modern::before {
   background-image: radial-gradient(
-      circle at 20% 30%,
-      rgba(99, 102, 241, 0.25) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 70%,
-      rgba(168, 85, 247, 0.25) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(255, 255, 255, 1) 1.2px,
-      transparent 1.2px
-    ),
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(255, 255, 255, 0.9) 0.8px,
-      transparent 0.8px
-    ),
-    radial-gradient(
-      circle at 70% 80%,
-      rgba(255, 255, 255, 0.7) 1px,
+      circle,
+      rgba(16, 185, 129, 0.7) 1px,
       transparent 1px
     ),
-    radial-gradient(
-      circle at 15% 65%,
-      rgba(255, 255, 255, 0.5) 0.6px,
-      transparent 0.6px
-    ),
-    radial-gradient(
-      circle at 85% 35%,
-      rgba(255, 255, 255, 0.45) 0.5px,
-      transparent 0.5px
-    ),
-    radial-gradient(
-      circle at 45% 90%,
-      rgba(255, 255, 255, 0.35) 0.4px,
-      transparent 0.4px
-    );
-  background-size: 100% 100%, 100% 100%, 250px 250px, 180px 180px, 300px 300px,
-    350px 350px, 220px 220px, 280px 280px;
-  background-position: 0 0, 0 0, 0 0, 80px 120px, 160px 240px, 120px 300px,
-    240px 60px, 40px 180px;
-  animation: starfield-dark 90s linear infinite;
+    radial-gradient(circle, rgba(52, 211, 153, 0.5) 1px, transparent 1px);
+  background-size: 180px 180px, 260px 260px;
+  animation: stars-drift 500s linear infinite;
 }
 
-@keyframes starfield {
-  0% {
-    background-position: 0 0, 0 0, 0 0, 40px 80px, 120px 160px, 80px 200px,
-      160px 40px;
+.dark .theme-modern::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(52, 211, 153, 0.85) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(74, 222, 128, 0.6) 1px, transparent 1px);
+  background-size: 200px 200px, 280px 280px;
+}
+
+/* ============================================
+   SEPIA THEME - Golden Stars
+   ============================================ */
+.theme-sepia::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(180, 120, 60, 0.6) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(139, 90, 43, 0.4) 1px, transparent 1px);
+  background-size: 190px 190px, 270px 270px;
+  animation: stars-drift 550s linear infinite;
+}
+
+.dark .theme-sepia::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(251, 191, 36, 0.8) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(245, 158, 11, 0.55) 1px, transparent 1px);
+  background-size: 210px 210px, 290px 290px;
+}
+
+/* ============================================
+   OCEAN THEME - Cyan Stars Rising
+   ============================================ */
+.theme-ocean::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(6, 182, 212, 0.65) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(34, 211, 238, 0.45) 1px, transparent 1px);
+  background-size: 170px 170px, 250px 250px;
+  animation: stars-rise 480s linear infinite;
+}
+
+.dark .theme-ocean::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(34, 211, 238, 0.85) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(103, 232, 249, 0.6) 1px, transparent 1px);
+  background-size: 190px 190px, 270px 270px;
+}
+
+/* ============================================
+   FOREST THEME - Green Stars
+   ============================================ */
+.theme-forest::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(74, 222, 128, 0.7) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(52, 211, 153, 0.5) 1px, transparent 1px);
+  background-size: 200px 200px, 300px 300px;
+  animation: stars-drift 580s linear infinite;
+}
+
+.dark .theme-forest::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(74, 222, 128, 0.9) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(134, 239, 172, 0.65) 1px, transparent 1px);
+  background-size: 220px 220px, 320px 320px;
+}
+
+/* ============================================
+   MIDNIGHT THEME - White Stars in Purple Space
+   ============================================ */
+.theme-midnight::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(139, 92, 246, 0.65) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(168, 85, 247, 0.45) 1px, transparent 1px);
+  background-size: 160px 160px, 240px 240px;
+  animation: stars-drift 450s linear infinite;
+}
+
+.dark .theme-midnight::before {
+  background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.9) 1px,
+      transparent 1px
+    ),
+    radial-gradient(circle, rgba(196, 181, 253, 0.6) 1px, transparent 1px);
+  background-size: 180px 180px, 260px 260px;
+}
+
+/* ============================================
+   ANIMATIONS - Very Slow Drift
+   Like floating peacefully in space
+   ============================================ */
+
+/* Diagonal drift - NW to SE (very slow) */
+@keyframes stars-drift {
+  from {
+    transform: translate(0, 0);
   }
-  100% {
-    background-position: 0 0, 0 0, 180px 180px, 220px 260px, 300px 340px,
-      260px 380px, 340px 220px;
+  to {
+    transform: translate(33.33%, 33.33%);
   }
 }
 
-@keyframes starfield-dark {
-  0% {
-    background-position: 0 0, 0 0, 0 0, 80px 120px, 160px 240px, 120px 300px,
-      240px 60px, 40px 180px;
+/* Rising drift - for ocean theme */
+@keyframes stars-rise {
+  from {
+    transform: translateY(0);
   }
-  100% {
-    background-position: 0 0, 0 0, 250px 250px, 330px 370px, 410px 490px,
-      370px 550px, 490px 310px, 290px 430px;
+  to {
+    transform: translateY(-33.33%);
   }
 }
 
