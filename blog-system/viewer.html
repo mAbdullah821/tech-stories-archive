@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary Meta Tags -->
-    <title>Tech Stories Archive</title>
+    <title>حكاوي واحد غاوي</title>
     <meta
       name="description"
       content="ارشيف حكاوي واحد غاوي - رحلة في كواليس البرمجه وتجارب الBackend"
@@ -18,7 +18,7 @@
       property="og:url"
       content="https://mabdullah821.github.io/tech-stories-archive/viewer.html"
     />
-    <meta property="og:title" content="Tech Stories Archive" />
+    <meta property="og:title" content="حكاوي واحد غاوي" />
     <meta
       property="og:description"
       content="ارشيف حكاوي واحد غاوي - رحلة في كواليس البرمجه وتجارب الBackend"
@@ -36,13 +36,13 @@
     <meta property="og:image:type" content="image/jpeg" />
     <meta
       property="og:image:alt"
-      content="Tech Stories Archive - ارشيف حكاوي واحد غاوي"
+      content="حكاوي واحد غاوي - ارشيف حكاوي واحد غاوي"
     />
     <meta property="og:locale" content="ar_EG" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Tech Stories Archive" />
+    <meta name="twitter:title" content="حكاوي واحد غاوي" />
     <meta
       name="twitter:description"
       content="ارشيف حكاوي واحد غاوي - رحلة في كواليس البرمجه وتجارب الBackend"
@@ -185,6 +185,16 @@
           <path d="m18 15-6-6-6 6" />
         </IconBase>
       );
+      const ChevronLeft = (props) => (
+        <IconBase {...props}>
+          <path d="m15 18-6-6 6-6" />
+        </IconBase>
+      );
+      const ChevronRight = (props) => (
+        <IconBase {...props}>
+          <path d="m9 18 6-6-6-6" />
+        </IconBase>
+      );
       const PlusCircle = (props) => (
         <IconBase {...props}>
           <circle cx="12" cy="12" r="10" />
@@ -297,21 +307,141 @@
       };
 
       // --- Image Lightbox Component ---
-      const ImageModal = ({ src, onClose }) => {
-        if (!src) return null;
+      const ImageModal = ({
+        images,
+        currentIndex,
+        onClose,
+        onNext,
+        onPrev,
+      }) => {
+        // Ensure images is an array
+        const imagesArray = Array.isArray(images)
+          ? images
+          : images
+          ? [images]
+          : [];
+        if (!imagesArray || imagesArray.length === 0) return null;
+
+        // Ensure currentIndex is valid
+        const validIndex = Math.max(
+          0,
+          Math.min(currentIndex || 0, imagesArray.length - 1)
+        );
+        const currentImage = imagesArray[validIndex];
+
+        useEffect(() => {
+          if (!imagesArray || imagesArray.length === 0) return;
+
+          const handleKeyDown = (e) => {
+            // Only handle if modal is open and not typing in input
+            if (
+              e.target.tagName === "INPUT" ||
+              e.target.tagName === "TEXTAREA" ||
+              e.target.isContentEditable
+            ) {
+              return;
+            }
+
+            if (e.key === "Escape") {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+            } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              onNext();
+            } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              onPrev();
+            }
+          };
+
+          // Add event listener with capture phase for better priority
+          window.addEventListener("keydown", handleKeyDown, true);
+
+          return () => {
+            window.removeEventListener("keydown", handleKeyDown, true);
+          };
+        }, [onClose, onNext, onPrev, validIndex, imagesArray]);
+
         return (
           <div
             className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-fade-in backdrop-blur-sm cursor-zoom-out"
             onClick={onClose}
           >
-            <img
-              src={src}
-              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl scale-100 transition-transform duration-300"
-              onClick={(e) => e.stopPropagation()}
-            />
+            {/* Previous Button - Always show if more than 1 image */}
+            {imagesArray.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPrev();
+                }}
+                className={`absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors z-[110] ${
+                  validIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                title="الصورة السابقة (←)"
+                disabled={validIndex === 0}
+                style={{ zIndex: 110 }}
+              >
+                <ChevronRight size={32} />
+              </button>
+            )}
+
+            {/* Image Container - Maintain aspect ratio with smaller size */}
+            <div className="flex items-center justify-center w-full h-full p-8 relative z-[105]">
+              <img
+                src={currentImage}
+                className="max-w-[90%] max-h-[90%] w-auto h-auto object-contain rounded-lg shadow-2xl transition-transform duration-300"
+                onClick={(e) => e.stopPropagation()}
+                alt={`صورة ${validIndex + 1} من ${imagesArray.length}`}
+                style={{
+                  maxWidth: "90%",
+                  maxHeight: "90%",
+                  width: "auto",
+                  height: "auto",
+                  objectFit: "contain",
+                }}
+              />
+            </div>
+
+            {/* Next Button - Always show if more than 1 image */}
+            {imagesArray.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onNext();
+                }}
+                className={`absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors z-[110] ${
+                  validIndex === imagesArray.length - 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+                title="الصورة التالية (→)"
+                disabled={validIndex === imagesArray.length - 1}
+                style={{ zIndex: 110 }}
+              >
+                <ChevronLeft size={32} />
+              </button>
+            )}
+
+            {/* Image Counter */}
+            {imagesArray.length > 1 && (
+              <div
+                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm z-[110]"
+                style={{ zIndex: 110 }}
+              >
+                {validIndex + 1} / {imagesArray.length}
+              </div>
+            )}
+
+            {/* Close Button */}
             <button
               onClick={onClose}
               className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+              title="إغلاق (ESC)"
             >
               <X size={24} />
             </button>
@@ -452,6 +582,21 @@
 
         // Image Zoom State
         const [zoomedImage, setZoomedImage] = useState(null);
+        const [imageGallery, setImageGallery] = useState(null);
+        const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+        // Refs to keep latest state for handlers
+        const imageGalleryRef = useRef(null);
+        const currentImageIndexRef = useRef(0);
+
+        // Update refs when state changes
+        useEffect(() => {
+          imageGalleryRef.current = imageGallery;
+        }, [imageGallery]);
+
+        useEffect(() => {
+          currentImageIndexRef.current = currentImageIndex;
+        }, [currentImageIndex]);
 
         // Pagination & Filter State
         const [lastDoc, setLastDoc] = useState(null);
@@ -762,8 +907,356 @@
         }, [lastDoc, loading, hasMore, activePost]);
 
         const renderMarkdown = (content) => {
-          return { __html: marked.parse(content || "") };
+          if (!content) return { __html: "" };
+          // If content already contains HTML tags, use it directly
+          // Otherwise parse as markdown
+          if (
+            content.includes("<div") ||
+            content.includes("<img") ||
+            content.includes("<a")
+          ) {
+            // Content already has HTML, process it to add click handlers for images
+            let processedContent = content;
+
+            // Process image groups with data-all-images attribute
+            // Use simpler approach: just add data-image-group to divs that have data-all-images
+            // The regex matches opening div tag with data-all-images attribute (using single quotes)
+            let groupIndex = 0;
+
+            // Match div opening tags with data-all-images='...' (single quotes contain JSON with double quotes)
+            processedContent = processedContent.replace(
+              /<div([^>]*)\s+data-all-images='([^']*)'([^>]*)>/g,
+              (match, beforeAttr, allImagesJson, afterAttr) => {
+                const groupId = `image-group-${groupIndex++}`;
+
+                // Keep the original data-all-images and add data-image-group
+                return `<div${beforeAttr} data-all-images='${allImagesJson}' data-image-group="${groupId}"${afterAttr}>`;
+              }
+            );
+
+            // Also handle double quotes version (less common)
+            processedContent = processedContent.replace(
+              /<div([^>]*)\s+data-all-images="([^"]*)"([^>]*)>/g,
+              (match, beforeAttr, allImagesJson, afterAttr) => {
+                // Check if this div already has data-image-group (from previous replace)
+                if (match.includes("data-image-group")) {
+                  return match;
+                }
+                const groupId = `image-group-${groupIndex++}`;
+                return `<div${beforeAttr} data-all-images="${allImagesJson}" data-image-group="${groupId}"${afterAttr}>`;
+              }
+            );
+
+            // Also handle standalone images
+            processedContent = processedContent.replace(
+              /<img([^>]+)src="([^"]+)"([^>]*)>/g,
+              (match, before, src, after) => {
+                return `<img${before}src="${src}"${after} data-image-src="${src}" class="cursor-pointer">`;
+              }
+            );
+
+            return { __html: processedContent };
+          }
+          return { __html: marked.parse(content) };
         };
+
+        // Handlers for image gallery
+        const handleImageClick = (images, index) => {
+          // Ensure images is an array
+          const imagesArray = Array.isArray(images)
+            ? images
+            : [images].filter(Boolean);
+          if (imagesArray.length > 0) {
+            setImageGallery(imagesArray);
+            const validIndex = Math.max(
+              0,
+              Math.min(index, imagesArray.length - 1)
+            );
+            setCurrentImageIndex(validIndex);
+          }
+        };
+
+        const handleNextImage = () => {
+          const currentGallery = imageGalleryRef.current;
+          const currentIndex = currentImageIndexRef.current;
+          if (
+            currentGallery &&
+            Array.isArray(currentGallery) &&
+            currentIndex < currentGallery.length - 1
+          ) {
+            setCurrentImageIndex(currentIndex + 1);
+          }
+        };
+
+        const handlePrevImage = () => {
+          const currentIndex = currentImageIndexRef.current;
+          if (currentIndex > 0) {
+            setCurrentImageIndex(currentIndex - 1);
+          }
+        };
+
+        const handleCloseGallery = () => {
+          setImageGallery(null);
+          setCurrentImageIndex(0);
+        };
+
+        // Add click handlers to images after render
+        useEffect(() => {
+          if (!activePost) return;
+
+          // Helper function to normalize URLs for comparison
+          const normalizeUrl = (url) => {
+            if (!url) return "";
+            // Remove query parameters and fragments for comparison
+            try {
+              const urlObj = new URL(url, window.location.href);
+              return urlObj.origin + urlObj.pathname;
+            } catch {
+              // If URL parsing fails, try to clean it manually
+              return url.split("?")[0].split("#")[0];
+            }
+          };
+
+          // Helper function to find image index in array - more flexible matching
+          const findImageIndex = (imgSrc, imagesArray) => {
+            if (!imgSrc || !imagesArray || imagesArray.length === 0) return -1;
+
+            // Clean the source URL
+            const cleanSrc = imgSrc.trim();
+
+            // First try exact match (case-insensitive)
+            for (let i = 0; i < imagesArray.length; i++) {
+              const img = imagesArray[i];
+              if (!img) continue;
+              if (cleanSrc === img || cleanSrc === img.trim()) {
+                return i;
+              }
+            }
+
+            // Then try normalized comparison (without query params)
+            const normalizedSrc = normalizeUrl(cleanSrc);
+            for (let i = 0; i < imagesArray.length; i++) {
+              const img = imagesArray[i];
+              if (!img) continue;
+              const normalizedImg = normalizeUrl(img);
+              if (normalizedSrc === normalizedImg) {
+                return i;
+              }
+            }
+
+            // Try filename match (last part of URL)
+            const srcFilename = cleanSrc
+              .split("/")
+              .pop()
+              .split("?")[0]
+              .split("#")[0];
+            for (let i = 0; i < imagesArray.length; i++) {
+              const img = imagesArray[i];
+              if (!img) continue;
+              const imgFilename = img
+                .split("/")
+                .pop()
+                .split("?")[0]
+                .split("#")[0];
+              if (srcFilename && imgFilename && srcFilename === imgFilename) {
+                return i;
+              }
+            }
+
+            // Try if one URL contains the other (for relative vs absolute)
+            for (let i = 0; i < imagesArray.length; i++) {
+              const img = imagesArray[i];
+              if (!img) continue;
+              if (cleanSrc.includes(img) || img.includes(cleanSrc)) {
+                return i;
+              }
+              const normalizedImg = normalizeUrl(img);
+              if (
+                normalizedSrc.includes(normalizedImg) ||
+                normalizedImg.includes(normalizedSrc)
+              ) {
+                return i;
+              }
+            }
+
+            return -1;
+          };
+
+          const handleClick = (e) => {
+            // Find the clicked image (could be e.target itself or a parent)
+            let clickedImg = null;
+            if (e.target.tagName === "IMG") {
+              clickedImg = e.target;
+            } else {
+              // Check if clicked on something inside an image (like overlay)
+              clickedImg = e.target.closest("img");
+            }
+
+            // If we found an image, handle it
+            if (clickedImg) {
+              // Search for image group - try both data-image-group and data-all-images
+              const imageGroup =
+                clickedImg.closest("[data-image-group]") ||
+                clickedImg.closest("[data-all-images]");
+
+              if (imageGroup) {
+                // Image is part of a group
+                try {
+                  // Try data-all-images first (original from writer), then data-images
+                  let imagesJson =
+                    imageGroup.getAttribute("data-all-images") ||
+                    imageGroup.getAttribute("data-images");
+
+                  if (imagesJson) {
+                    // Handle HTML entities and quotes
+                    const cleanedJson = imagesJson
+                      .replace(/&#39;/g, "'")
+                      .replace(/&quot;/g, '"')
+                      .replace(/&amp;/g, "&");
+
+                    let images;
+                    try {
+                      images = JSON.parse(cleanedJson);
+                    } catch (parseErr) {
+                      console.error("JSON parse error:", parseErr, cleanedJson);
+                      return;
+                    }
+
+                    // Ensure images is an array
+                    if (!Array.isArray(images) || images.length === 0) {
+                      console.error("Invalid images array:", images);
+                      return;
+                    }
+
+                    // Try multiple ways to get the image source
+                    const imgSrc =
+                      clickedImg.getAttribute("src") ||
+                      clickedImg.getAttribute("data-image-src") ||
+                      clickedImg.getAttribute("data-src") ||
+                      clickedImg.currentSrc ||
+                      clickedImg.src;
+
+                    if (!imgSrc) {
+                      console.error("Could not find image source");
+                      return;
+                    }
+
+                    const index = findImageIndex(imgSrc, images);
+
+                    if (index !== -1) {
+                      // Found the image index - open gallery at that index
+                      const imagesArray = Array.isArray(images)
+                        ? images
+                        : [images].filter(Boolean);
+                      if (imagesArray.length > 0) {
+                        setImageGallery(imagesArray);
+                        const validIndex = Math.max(
+                          0,
+                          Math.min(index, imagesArray.length - 1)
+                        );
+                        setCurrentImageIndex(validIndex);
+                      }
+                      e.preventDefault();
+                      e.stopPropagation();
+                      return;
+                    } else {
+                      // If index not found, still open gallery with first image
+                      // This can happen if URLs don't match exactly
+                      const imagesArray = Array.isArray(images)
+                        ? images
+                        : [images].filter(Boolean);
+                      if (imagesArray.length > 0) {
+                        setImageGallery(imagesArray);
+                        setCurrentImageIndex(0);
+                      }
+                      e.preventDefault();
+                      e.stopPropagation();
+                      return;
+                    }
+                  } else {
+                    console.warn(
+                      "No data-images or data-all-images attribute found"
+                    );
+                  }
+                } catch (err) {
+                  console.error("Error parsing image group:", err);
+                }
+              } else {
+                // Standalone image
+                const src =
+                  clickedImg.getAttribute("data-image-src") ||
+                  clickedImg.getAttribute("src") ||
+                  clickedImg.getAttribute("data-src") ||
+                  clickedImg.currentSrc ||
+                  clickedImg.src;
+                if (src) {
+                  // Use the component-level handleImageClick
+                  setImageGallery([src]);
+                  setCurrentImageIndex(0);
+                  e.preventDefault();
+                  e.stopPropagation();
+                  return;
+                }
+              }
+            }
+
+            // If no image was clicked, check if clicked on image group container
+            const imageGroupContainer =
+              e.target.closest("[data-image-group]") ||
+              e.target.closest("[data-all-images]");
+            if (imageGroupContainer && !clickedImg) {
+              try {
+                // Try data-all-images first (original from writer), then data-images
+                let imagesJson =
+                  imageGroupContainer.getAttribute("data-all-images") ||
+                  imageGroupContainer.getAttribute("data-images");
+
+                if (imagesJson) {
+                  // Handle HTML entities and quotes
+                  const cleanedJson = imagesJson
+                    .replace(/&#39;/g, "'")
+                    .replace(/&quot;/g, '"')
+                    .replace(/&amp;/g, "&");
+
+                  let images;
+                  try {
+                    images = JSON.parse(cleanedJson);
+                  } catch (parseErr) {
+                    console.error("JSON parse error:", parseErr, cleanedJson);
+                    return;
+                  }
+
+                  // Ensure images is an array
+                  if (Array.isArray(images) && images.length > 0) {
+                    // Use the component-level handleImageClick
+                    setImageGallery(images);
+                    setCurrentImageIndex(0);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                  } else {
+                    console.error("Invalid images array:", images);
+                  }
+                } else {
+                  console.warn(
+                    "No data-images or data-all-images attribute found on container"
+                  );
+                }
+              } catch (err) {
+                console.error("Error parsing image group:", err);
+              }
+            }
+          };
+
+          const contentContainer = document.querySelector(".prose-rtl");
+          if (contentContainer) {
+            contentContainer.addEventListener("click", handleClick, true); // Use capture phase
+
+            return () => {
+              contentContainer.removeEventListener("click", handleClick, true);
+            };
+          }
+        }, [activePost]);
 
         const handleEditPost = (post, e) => {
           e.stopPropagation();
@@ -786,10 +1279,27 @@
             <div
               className={`min-h-screen pb-20 ${getThemeClass()} transition-colors duration-500`}
             >
-              <ImageModal
-                src={zoomedImage}
-                onClose={() => setZoomedImage(null)}
-              />
+              {/* Legacy single image modal */}
+              {zoomedImage && (
+                <ImageModal
+                  images={[zoomedImage]}
+                  currentIndex={0}
+                  onClose={() => setZoomedImage(null)}
+                  onNext={() => {}}
+                  onPrev={() => {}}
+                />
+              )}
+
+              {/* New image gallery modal */}
+              {imageGallery && (
+                <ImageModal
+                  images={imageGallery}
+                  currentIndex={currentImageIndex}
+                  onClose={handleCloseGallery}
+                  onNext={handleNextImage}
+                  onPrev={handlePrevImage}
+                />
+              )}
 
               {/* Header Overlay for Single Post */}
               <header className="fixed top-0 z-50 w-full p-4 pointer-events-none">
@@ -1000,7 +1510,7 @@
                     window.scrollTo(0, 0);
                   }}
                 >
-                  TechArchive
+                  حكاوي واحد غاوي
                 </h1>
                 <div className="flex gap-2 items-center">
                   <button
@@ -1293,8 +1803,165 @@
         cursor: zoom-in;
         transition: transform 0.2s;
       }
+      /* Images inside flex containers should not have auto margins */
+      .prose-rtl .flex img {
+        margin: 0;
+      }
       .prose-rtl img:hover {
         transform: scale(1.01);
+      }
+      /* Inline images and buttons container */
+      .prose-rtl .flex {
+        display: flex;
+      }
+      .prose-rtl .flex-wrap {
+        flex-wrap: wrap;
+      }
+      .prose-rtl .gap-4 {
+        gap: 1rem;
+      }
+      .prose-rtl .justify-center {
+        justify-content: center;
+      }
+      .prose-rtl .flex-shrink-0 {
+        flex-shrink: 0;
+      }
+      .prose-rtl .flex-shrink-0 img {
+        margin: 0;
+        max-width: 300px;
+        display: block;
+      }
+      .prose-rtl .mx-2 {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+      }
+      /* Images inside flex containers */
+      .prose-rtl .flex img {
+        margin: 0;
+        display: block;
+      }
+      .prose-rtl .flex-row {
+        flex-direction: row;
+      }
+      .prose-rtl .flex-col {
+        flex-direction: column;
+      }
+      .prose-rtl .flex-row img {
+        max-width: 300px;
+        max-height: 400px;
+      }
+      .prose-rtl .flex-col img {
+        max-width: 100%;
+        max-height: 400px;
+      }
+      .prose-rtl .gap-2 {
+        gap: 0.5rem;
+      }
+      .prose-rtl .gap-3 {
+        gap: 0.75rem;
+      }
+      .prose-rtl .gap-4 {
+        gap: 1rem;
+      }
+      .prose-rtl .items-center {
+        align-items: center;
+      }
+      /* Grid layout for images */
+      .prose-rtl .grid {
+        display: grid;
+      }
+      .prose-rtl .grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+      .prose-rtl .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .prose-rtl .grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .prose-rtl .gap-2 {
+        gap: 0.5rem;
+      }
+      .prose-rtl .grid img {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      /* Smaller images for inline layout */
+      .prose-rtl .grid.grid-cols-3 img {
+        max-height: 120px !important;
+        min-height: 80px !important;
+      }
+      .prose-rtl .grid.grid-cols-2 img {
+        max-height: 120px !important;
+        min-height: 80px !important;
+      }
+      .prose-rtl .grid.grid-cols-1 img {
+        max-width: 100%;
+      }
+      .prose-rtl .grid .relative {
+        position: relative;
+      }
+      .prose-rtl .grid .absolute {
+        position: absolute;
+      }
+      .prose-rtl .grid .inset-0 {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+      .prose-rtl .grid .bg-black\/60 {
+        background-color: rgba(0, 0, 0, 0.6);
+        pointer-events: auto;
+        cursor: pointer;
+      }
+      .prose-rtl .grid .relative {
+        cursor: pointer;
+      }
+      .prose-rtl .grid .flex {
+        display: flex;
+      }
+      .prose-rtl .grid .items-center {
+        align-items: center;
+      }
+      .prose-rtl .grid .justify-center {
+        justify-content: center;
+      }
+      .prose-rtl .grid .text-white {
+        color: white;
+      }
+      .prose-rtl .grid .text-2xl {
+        font-size: 1.5rem;
+        line-height: 2rem;
+      }
+      .prose-rtl .grid .font-bold {
+        font-weight: 700;
+      }
+      .prose-rtl .grid .w-full {
+        width: 100%;
+      }
+      .prose-rtl .grid .h-full {
+        height: 100%;
+      }
+      .prose-rtl .grid .object-cover {
+        object-fit: cover;
+      }
+      .prose-rtl .grid .rounded-lg {
+        border-radius: 0.5rem;
+      }
+      .prose-rtl .grid .cursor-zoom-in {
+        cursor: zoom-in;
+      }
+      .prose-rtl .grid .border {
+        border-width: 1px;
+      }
+      .prose-rtl .grid .border-gray-200 {
+        border-color: rgb(229 231 235);
+      }
+      .dark .prose-rtl .grid .border-gray-700 {
+        border-color: rgb(55 65 81);
       }
 
       /* Code Block Styling - Ensure relative pos for button */

@@ -463,6 +463,11 @@
       }) => {
         const fileInputRef = useRef(null);
         const [uploading, setUploading] = useState(false);
+
+        // Handle both string (old format) and object (new format)
+        const imageData =
+          typeof image === "string" ? { url: image } : { ...image };
+
         const handleFileChange = async (e) => {
           const file = e.target.files[0];
           if (!file) return;
@@ -482,8 +487,9 @@
               { method: "POST", body: formData }
             );
             const result = await response.json();
-            if (result.success) onChange(result.data.url);
-            else throw new Error(result.error?.message);
+            if (result.success) {
+              onChange(result.data.url);
+            } else throw new Error(result.error?.message);
           } catch (error) {
             alert("فشل الرفع: " + error.message);
           } finally {
@@ -499,11 +505,11 @@
               <p className="text-sm text-gray-500">جاري الرفع...</p>
             </div>
           );
-        if (image)
+        if (imageData.url)
           return (
             <div className="relative group rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black/20 w-full">
               <img
-                src={image}
+                src={imageData.url}
                 className={`${heightClass} w-full object-cover`}
               />
               <button
@@ -532,11 +538,324 @@
         );
       };
 
+      const ButtonGroupBlock = ({ content, onChange }) => {
+        const data = content || { buttons: [], layout: "block" };
+        const addButton = () => {
+          onChange({
+            ...data,
+            buttons: [
+              ...(data.buttons || []),
+              { text: "", url: "", color: "#10b981", textColorMode: "auto" },
+            ],
+          });
+        };
+        const updateButton = (index, updates) => {
+          const newButtons = [...(data.buttons || [])];
+          newButtons[index] = { ...newButtons[index], ...updates };
+          onChange({ ...data, buttons: newButtons });
+        };
+        const removeButton = (index) => {
+          const newButtons = [...(data.buttons || [])];
+          newButtons.splice(index, 1);
+          onChange({ ...data, buttons: newButtons });
+        };
+        return (
+          <div className="flex flex-col gap-3 p-4 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                مجموعة أزرار
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onChange({ ...data, layout: "block" })}
+                  className={`px-3 py-1 rounded text-xs ${
+                    data.layout === "block"
+                      ? "bg-primary text-white"
+                      : "bg-gray-200 text-gray-600 dark:bg-slate-700 dark:text-gray-300"
+                  }`}
+                >
+                  عمودي
+                </button>
+                <button
+                  onClick={() => onChange({ ...data, layout: "inline" })}
+                  className={`px-3 py-1 rounded text-xs ${
+                    data.layout === "inline"
+                      ? "bg-primary text-white"
+                      : "bg-gray-200 text-gray-600 dark:bg-slate-700 dark:text-gray-300"
+                  }`}
+                >
+                  أفقي
+                </button>
+              </div>
+            </div>
+            {(data.buttons || []).map((btn, index) => {
+              const textColor =
+                btn.textColorMode === "white"
+                  ? "#ffffff"
+                  : btn.textColorMode === "black"
+                  ? "#000000"
+                  : getContrastColor(btn.color || "#10b981");
+              return (
+                <div
+                  key={index}
+                  className="flex flex-col gap-2 p-3 bg-white dark:bg-slate-900 rounded border border-gray-200 dark:border-gray-600"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={btn.text || ""}
+                      onChange={(e) =>
+                        updateButton(index, { text: e.target.value })
+                      }
+                      placeholder="نص الزر"
+                      className="w-full p-2 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900 focus:border-primary outline-none"
+                    />
+                    <input
+                      type="text"
+                      value={btn.url || ""}
+                      onChange={(e) =>
+                        updateButton(index, { url: e.target.value })
+                      }
+                      placeholder="الرابط"
+                      className="w-full p-2 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900 focus:border-primary outline-none ltr text-left"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 justify-between">
+                    <div className="flex items-center gap-2">
+                      <Palette size={14} className="text-gray-400" />
+                      <input
+                        type="color"
+                        value={btn.color || "#10b981"}
+                        onChange={(e) =>
+                          updateButton(index, { color: e.target.value })
+                        }
+                        className="w-6 h-6 rounded cursor-pointer border-0 p-0"
+                      />
+                    </div>
+                    <div className="flex gap-1 text-xs">
+                      <button
+                        onClick={() =>
+                          updateButton(index, { textColorMode: "auto" })
+                        }
+                        className={`px-2 py-1 rounded ${
+                          btn.textColorMode === "auto"
+                            ? "bg-primary text-white"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        تلقائي
+                      </button>
+                      <button
+                        onClick={() =>
+                          updateButton(index, { textColorMode: "white" })
+                        }
+                        className={`px-2 py-1 rounded ${
+                          btn.textColorMode === "white"
+                            ? "bg-primary text-white"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        أبيض
+                      </button>
+                      <button
+                        onClick={() =>
+                          updateButton(index, { textColorMode: "black" })
+                        }
+                        className={`px-2 py-1 rounded ${
+                          btn.textColorMode === "black"
+                            ? "bg-primary text-white"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        أسود
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => removeButton(index)}
+                      className="px-2 py-1 bg-red-500 text-white rounded text-xs"
+                    >
+                      حذف
+                    </button>
+                  </div>
+                  <span
+                    className="px-4 py-2 rounded-full text-xs font-bold shadow-sm w-fit"
+                    style={{
+                      backgroundColor: btn.color || "#10b981",
+                      color: textColor,
+                    }}
+                  >
+                    {btn.text || "معاينة"}
+                  </span>
+                </div>
+              );
+            })}
+            <button
+              onClick={addButton}
+              className="mt-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors"
+            >
+              + إضافة زر
+            </button>
+          </div>
+        );
+      };
+
+      const ImageGroupBlock = ({ content, onChange, imgbbApiKey }) => {
+        const data = content || { images: [], layout: "block" };
+        const fileInputRefs = useRef({});
+        const [uploading, setUploading] = useState({});
+
+        const handleFileChange = async (index, e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          if (!imgbbApiKey) {
+            alert(
+              "مفتاح ImgBB API غير موجود. يرجى إضافته من الإعدادات (⚙️) في شريط الأدوات."
+            );
+            return;
+          }
+          if (file.size > 5 * 1024 * 1024) return alert("الصورة كبيرة جداً.");
+          setUploading({ ...uploading, [index]: true });
+          try {
+            const formData = new FormData();
+            formData.append("image", file);
+            const response = await fetch(
+              `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`,
+              { method: "POST", body: formData }
+            );
+            const result = await response.json();
+            if (result.success) {
+              const newImages = [...(data.images || [])];
+              newImages[index] = result.data.url;
+              onChange({ ...data, images: newImages });
+            } else throw new Error(result.error?.message);
+          } catch (error) {
+            alert("فشل الرفع: " + error.message);
+          } finally {
+            setUploading({ ...uploading, [index]: false });
+          }
+        };
+
+        const addImage = () => {
+          onChange({
+            ...data,
+            images: [...(data.images || []), ""],
+          });
+        };
+
+        const removeImage = (index) => {
+          const newImages = [...(data.images || [])];
+          newImages.splice(index, 1);
+          onChange({ ...data, images: newImages });
+        };
+
+        return (
+          <div className="flex flex-col gap-3 p-4 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                مجموعة صور
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onChange({ ...data, layout: "block" })}
+                  className={`px-3 py-1 rounded text-xs ${
+                    data.layout === "block"
+                      ? "bg-primary text-white"
+                      : "bg-gray-200 text-gray-600 dark:bg-slate-700 dark:text-gray-300"
+                  }`}
+                >
+                  عمودي
+                </button>
+                <button
+                  onClick={() => onChange({ ...data, layout: "inline" })}
+                  className={`px-3 py-1 rounded text-xs ${
+                    data.layout === "inline"
+                      ? "bg-primary text-white"
+                      : "bg-gray-200 text-gray-600 dark:bg-slate-700 dark:text-gray-300"
+                  }`}
+                >
+                  أفقي
+                </button>
+              </div>
+            </div>
+            <div
+              className={`gap-3 ${
+                data.layout === "inline" ? "grid grid-cols-3" : "flex flex-col"
+              }`}
+            >
+              {(data.images || []).map((imgUrl, index) => (
+                <div
+                  key={index}
+                  className={`relative border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden bg-gray-50 dark:bg-slate-900 ${
+                    data.layout === "inline" ? "" : "w-full"
+                  }`}
+                >
+                  {uploading[index] ? (
+                    <div className="flex flex-col items-center justify-center p-6">
+                      <Loader className="text-primary w-6 h-6 mb-2" />
+                      <p className="text-xs text-gray-500">جاري الرفع...</p>
+                    </div>
+                  ) : imgUrl ? (
+                    <>
+                      <img
+                        src={imgUrl}
+                        className={`w-full object-contain rounded-lg ${
+                          data.layout === "inline" ? "max-h-32" : "max-h-48"
+                        }`}
+                      />
+                      <button
+                        onClick={() => {
+                          const newImages = [...(data.images || [])];
+                          newImages[index] = "";
+                          onChange({ ...data, images: newImages });
+                        }}
+                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full"
+                      >
+                        <X size={14} />
+                      </button>
+                    </>
+                  ) : (
+                    <div
+                      className="flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                      onClick={() => fileInputRefs.current[index]?.click()}
+                    >
+                      <CloudUpload className="text-gray-400 mb-2" size={24} />
+                      <p className="text-xs text-gray-500">اختر صورة</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        ref={(el) => (fileInputRefs.current[index] = el)}
+                        onChange={(e) => handleFileChange(index, e)}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={addImage}
+              className="mt-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors"
+            >
+              + إضافة صورة
+            </button>
+          </div>
+        );
+      };
+
       const ButtonBlock = ({ content, onChange }) => {
         const data =
           typeof content === "string"
-            ? { text: "", url: "", color: "#10b981", textColorMode: "auto" }
-            : { color: "#10b981", textColorMode: "auto", ...content };
+            ? {
+                text: "",
+                url: "",
+                color: "#10b981",
+                textColorMode: "auto",
+              }
+            : {
+                color: "#10b981",
+                textColorMode: "auto",
+                ...content,
+              };
         const textColor =
           data.textColorMode === "white"
             ? "#ffffff"
@@ -888,6 +1207,7 @@
         const [showLoadModal, setShowLoadModal] = useState(false);
         const [showSettings, setShowSettings] = useState(false);
         const [showMobileMenu, setShowMobileMenu] = useState(false);
+        const [notification, setNotification] = useState(null);
         const [darkMode, setDarkMode] = useState(true);
         const [currentTheme, setCurrentTheme] = useState("midnight");
         const [showThemeMenu, setShowThemeMenu] = useState(false);
@@ -1084,9 +1404,42 @@
                   },
                 ]
               : [])
-          ).map((b) =>
-            b.type === "text" && !b.dir ? { ...b, dir: "rtl" } : b
-          );
+          )
+            .map((b) => {
+              // Convert old format to new format for compatibility
+              if (b.type === "text" && !b.dir) {
+                return { ...b, dir: "rtl" };
+              }
+              // Convert old image to image-group
+              if (b.type === "image") {
+                const imageUrl =
+                  typeof b.content === "string"
+                    ? b.content
+                    : b.content?.url || "";
+                if (imageUrl) {
+                  return {
+                    ...b,
+                    type: "image-group",
+                    content: { images: [imageUrl], layout: "block" },
+                  };
+                }
+                return null; // Skip empty images
+              }
+              // Convert old button to button-group
+              if (b.type === "button" && b.content) {
+                const { layout, ...buttonContent } = b.content;
+                if (buttonContent.text) {
+                  return {
+                    ...b,
+                    type: "button-group",
+                    content: { buttons: [buttonContent], layout: "block" },
+                  };
+                }
+                return null; // Skip empty buttons
+              }
+              return b;
+            })
+            .filter(Boolean); // Remove null entries
           setBlocks(loadedBlocks);
           setShowLoadModal(false);
         };
@@ -1101,24 +1454,29 @@
         };
         const removeTag = (t) => setTopics(topics.filter((tag) => tag !== t));
 
-        const addBlock = (type) =>
+        const addBlock = (type) => {
+          let content = "";
+          if (type === "button-group") {
+            content = {
+              buttons: [],
+              layout: "block",
+            };
+          } else if (type === "image-group") {
+            content = {
+              images: [],
+              layout: "block",
+            };
+          }
           setBlocks([
             ...blocks,
             {
               id: crypto.randomUUID(),
               type,
-              content:
-                type === "button"
-                  ? {
-                      text: "",
-                      url: "",
-                      color: "#10b981",
-                      textColorMode: "auto",
-                    }
-                  : "",
+              content,
               dir: "rtl",
             },
           ]);
+        };
         const updateBlock = (id, val) =>
           setBlocks(
             blocks.map((b) => (b.id === id ? { ...b, content: val } : b))
@@ -1302,32 +1660,17 @@
         };
 
         const handleSave = async () => {
-          if (!title) return alert("اكتب العنوان!");
+          if (!title) {
+            setNotification({ type: "error", message: "اكتب العنوان!" });
+            setTimeout(() => setNotification(null), 3000);
+            return;
+          }
           setIsSaving(true);
-          const fullContent = blocks
-            .map((b) => {
-              if (b.type === "text") {
-                if (b.dir === "ltr") {
-                  return `\n<div dir="ltr" style="text-align: left;">\n\n${b.content}\n\n</div>\n`;
-                }
-                return `\n${b.content}\n`;
-              }
-              if (b.type === "image")
-                return b.content ? `\n![Image](${b.content})\n` : "";
-              if (b.type === "button") {
-                const { text, url, color, textColorMode } = b.content;
-                if (!text) return "";
-                const textColor =
-                  textColorMode === "white"
-                    ? "#ffffff"
-                    : textColorMode === "black"
-                    ? "#000000"
-                    : getContrastColor(color);
-                return `\n<div class="my-6 text-center"><a href="${url}" target="_blank" style="background-color: ${color}; border: 2px solid ${color}; color: ${textColor} !important; text-decoration: none !important; padding:12px 24px;border-radius:9999px;font-weight:bold;display:inline-block;transition:0.2s;" class="no-underline shadow-lg hover:opacity-90">${text}</a></div>\n`;
-              }
-              return `\n${b.content}\n`;
-            })
-            .join("\n");
+          const fullContent = renderPreview();
+          // Extract text from HTML for excerpt
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = fullContent;
+          const textContent = tempDiv.textContent || tempDiv.innerText || "";
           const postData = {
             title,
             coverImage,
@@ -1336,10 +1679,8 @@
             content: fullContent,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             excerpt:
-              fullContent
-                .replace(/!\[.*?\]\(.*?\)/g, "")
-                .replace(/<[^>]*>?/gm, "")
-                .substring(0, 150) + "...",
+              textContent.substring(0, 150) +
+              (textContent.length > 150 ? "..." : ""),
           };
           try {
             const idToUse = postId || crypto.randomUUID();
@@ -1350,9 +1691,11 @@
             await docRef.set(postData, { merge: true });
             setPostId(idToUse);
             window.history.pushState({ id: idToUse }, "", `?id=${idToUse}`);
-            alert("تم الحفظ!");
+            setNotification({ type: "success", message: "تم الحفظ!" });
+            setTimeout(() => setNotification(null), 3000);
           } catch (e) {
-            alert("خطأ: " + e.message);
+            setNotification({ type: "error", message: "خطأ: " + e.message });
+            setTimeout(() => setNotification(null), 3000);
           } finally {
             setIsSaving(false);
           }
@@ -1402,32 +1745,176 @@
         };
 
         const renderPreview = () => {
-          const body = blocks
-            .map((b) => {
+          const parts = blocks
+            .map((b, idx) => {
               if (b.type === "text") {
+                // Text blocks - use markdown with placeholder
                 if (b.dir === "ltr") {
-                  return `\n<div dir="ltr" style="text-align: left;">\n\n${b.content}\n\n</div>\n`;
+                  return {
+                    type: "markdown",
+                    content: `\n<div dir="ltr" style="text-align: left;">\n\n${b.content}\n\n</div>\n`,
+                    index: idx,
+                  };
                 }
-                return `\n${b.content}\n`;
-              }
-              if (b.type === "image")
-                return b.content ? `\n![Image](${b.content})\n` : "";
-              if (b.type === "button") {
-                const { text, url, color, textColorMode } = b.content;
+                return {
+                  type: "markdown",
+                  content: `\n${b.content}\n`,
+                  index: idx,
+                };
+              } else if (b.type === "image") {
+                // Old format - convert to markdown
+                const imageUrl =
+                  typeof b.content === "string"
+                    ? b.content
+                    : b.content?.url || "";
+                return imageUrl
+                  ? {
+                      type: "markdown",
+                      content: `\n![Image](${imageUrl})\n`,
+                      index: idx,
+                    }
+                  : null;
+              } else if (b.type === "button") {
+                // Old format - convert to HTML
+                const buttonData = b.content || {};
+                const { text, url, color, textColorMode } = buttonData;
+                if (!text) return null;
                 const textColor =
                   textColorMode === "white"
                     ? "#ffffff"
                     : textColorMode === "black"
                     ? "#000000"
                     : getContrastColor(color);
-                return text
-                  ? `\n<div class="my-6 text-center"><a href="${url}" style="background-color: ${color}; color: ${textColor} !important; text-decoration: none !important;" class="inline-block font-bold py-3 px-8 rounded-full shadow-lg no-underline">${text}</a></div>\n`
-                  : "";
+                return {
+                  type: "html",
+                  content: `<div class="my-6 text-center"><a href="${url}" style="background-color: ${color}; color: ${textColor} !important; text-decoration: none !important;" class="inline-block font-bold py-3 px-8 rounded-full shadow-lg no-underline">${text}</a></div>`,
+                  index: idx,
+                };
+              } else if (b.type === "button-group") {
+                // Button groups - HTML directly
+                const groupData = b.content || {};
+                const { buttons = [], layout = "block" } = groupData;
+                if (buttons.length === 0) return null;
+                const buttonsHtml = buttons
+                  .map((btn) => {
+                    if (!btn.text) return "";
+                    const textColor =
+                      btn.textColorMode === "white"
+                        ? "#ffffff"
+                        : btn.textColorMode === "black"
+                        ? "#000000"
+                        : getContrastColor(btn.color || "#10b981");
+                    return `<a href="${
+                      btn.url || "#"
+                    }" style="background-color: ${
+                      btn.color || "#10b981"
+                    }; color: ${textColor} !important; text-decoration: none !important;" class="inline-block font-bold py-3 px-8 rounded-full shadow-lg no-underline mx-2 mb-2">${
+                      btn.text
+                    }</a>`;
+                  })
+                  .filter(Boolean)
+                  .join("");
+                const containerClass =
+                  layout === "inline"
+                    ? "my-6 text-center flex flex-wrap gap-2 justify-center"
+                    : "my-6 text-center flex flex-col gap-2 items-center";
+                return {
+                  type: "html",
+                  content: `<div class="${containerClass}">${buttonsHtml}</div>`,
+                  index: idx,
+                };
+              } else if (b.type === "image-group") {
+                // Image groups - HTML directly
+                const groupData = b.content || {};
+                const { images = [], layout = "block" } = groupData;
+                const validImages = images.filter((img) => img && img.trim());
+                if (validImages.length === 0) return null;
+
+                // Grid layout based on number of images (like LinkedIn)
+                let gridClass = "";
+                let showMore = false;
+                let displayImages = validImages;
+                let remainingCount = 0;
+
+                if (layout === "inline") {
+                  if (validImages.length === 1) {
+                    gridClass = "grid grid-cols-1";
+                  } else if (validImages.length === 2) {
+                    gridClass = "grid grid-cols-2";
+                  } else if (validImages.length === 3) {
+                    gridClass = "grid grid-cols-3";
+                  } else {
+                    // 4 or more: show first 3 + overlay with count starting from +1
+                    displayImages = validImages.slice(0, 3);
+                    remainingCount = validImages.length - 3;
+                    showMore = remainingCount > 0;
+                    gridClass = "grid grid-cols-3";
+                  }
+                } else {
+                  // Block layout: vertical stack
+                  gridClass = "grid grid-cols-1";
+                }
+
+                const imagesHtml = displayImages
+                  .map((imgUrl, imgIdx) => {
+                    if (!imgUrl) return "";
+                    const isLastInGrid =
+                      imgIdx === displayImages.length - 1 && showMore;
+                    return `<div class="relative">
+                    <img src="${imgUrl}" alt="Image" class="w-full h-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 cursor-zoom-in" style="max-height: ${
+                      layout === "inline" ? "120px" : "400px"
+                    }; min-height: ${
+                      layout === "inline" ? "80px" : "300px"
+                    }; max-width: ${layout === "inline" ? "100%" : "100%"};" />
+                    ${
+                      isLastInGrid
+                        ? `<div class="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center">
+                      <span class="text-white text-2xl font-bold">+${remainingCount}</span>
+                    </div>`
+                        : ""
+                    }
+                  </div>`;
+                  })
+                  .filter(Boolean)
+                  .join("");
+
+                const containerClass = `my-6 ${gridClass} gap-2`;
+                return {
+                  type: "html",
+                  content: `<div class="${containerClass}" data-all-images='${JSON.stringify(
+                    validImages
+                  ).replace(/'/g, "&#39;")}'>${imagesHtml}</div>`,
+                  index: idx,
+                };
               }
-              return `\n${b.content}\n`;
+              return null;
             })
-            .join("\n");
-          return marked.parse(body);
+            .filter(Boolean);
+
+          // Build final HTML by processing markdown and inserting HTML
+          let result = "";
+          let markdownBuffer = "";
+
+          parts.forEach((part) => {
+            if (part.type === "markdown") {
+              markdownBuffer += part.content;
+            } else {
+              // Flush markdown buffer
+              if (markdownBuffer) {
+                result += marked.parse(markdownBuffer);
+                markdownBuffer = "";
+              }
+              // Add HTML directly
+              result += part.content;
+            }
+          });
+
+          // Flush remaining markdown
+          if (markdownBuffer) {
+            result += marked.parse(markdownBuffer);
+          }
+
+          return result;
         };
 
         if (authChecking)
@@ -1539,14 +2026,14 @@
                     </button>
                   </div>
 
-                  {/* View Mode Toggle - يظهر على جميع الشاشات */}
+                  {/* View Mode Toggle - يظهر فقط على الشاشات الصغيرة */}
                   <button
                     onClick={() =>
                       setViewMode((prev) =>
                         prev === "edit" ? "preview" : "edit"
                       )
                     }
-                    className={`px-3 py-2 rounded-lg font-bold flex items-center gap-1 text-sm transition-colors ${
+                    className={`lg:hidden px-3 py-2 rounded-lg font-bold flex items-center gap-1 text-sm transition-colors ${
                       viewMode === "preview"
                         ? "bg-indigo-500 text-white"
                         : "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
@@ -1633,6 +2120,27 @@
                 </div>
               </div>
             </header>
+
+            {/* Notification */}
+            {notification && (
+              <div
+                className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-[100] px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 ${
+                  notification.type === "success"
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
+                }`}
+                style={{
+                  animation: "fadeIn 0.3s ease-in",
+                }}
+              >
+                {notification.type === "success" ? (
+                  <CheckCircle size={20} />
+                ) : (
+                  <AlertCircle size={20} />
+                )}
+                <span className="font-bold">{notification.message}</span>
+              </div>
+            )}
 
             {/* Mobile Menu - قائمة منسدلة عمودية للشاشات الصغيرة */}
             {showMobileMenu && (
@@ -1915,13 +2423,19 @@
                         >
                           <span className="text-xs font-bold text-gray-400 flex items-center gap-2">
                             {block.type === "text" && <Type size={14} />}
-                            {block.type === "image" && <ImageIcon size={14} />}
-                            {block.type === "button" && <LinkIcon size={14} />}
+                            {block.type === "button-group" && (
+                              <LinkIcon size={14} />
+                            )}
+                            {block.type === "image-group" && (
+                              <ImageIcon size={14} />
+                            )}
                             {block.type === "text"
                               ? "نص"
-                              : block.type === "image"
-                              ? "صورة"
-                              : "زر"}
+                              : block.type === "button-group"
+                              ? "أزرار"
+                              : block.type === "image-group"
+                              ? "صور"
+                              : "غير معروف"}
                           </span>
                           {/* Alignment Button for Text Blocks Moved Here */}
                           {block.type === "text" && (
@@ -1973,17 +2487,17 @@
                               onChange={(val) => updateBlock(block.id, val)}
                             />
                           )}
-                          {block.type === "image" && (
-                            <ImageUploader
-                              image={block.content}
-                              onChange={(val) => updateBlock(block.id, val)}
-                              imgbbApiKey={imgbbApiKey}
-                            />
-                          )}
-                          {block.type === "button" && (
-                            <ButtonBlock
+                          {block.type === "button-group" && (
+                            <ButtonGroupBlock
                               content={block.content}
                               onChange={(val) => updateBlock(block.id, val)}
+                            />
+                          )}
+                          {block.type === "image-group" && (
+                            <ImageGroupBlock
+                              content={block.content}
+                              onChange={(val) => updateBlock(block.id, val)}
+                              imgbbApiKey={imgbbApiKey}
                             />
                           )}
                         </div>
@@ -2003,21 +2517,21 @@
                 <div className="grid grid-cols-3 gap-3 p-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl">
                   <button
                     onClick={() => addBlock("text")}
-                    className="flex flex-col items-center p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded"
+                    className="p-3 hover:bg-gray-100 dark:hover:bg-slate-800 rounded text-sm font-bold"
                   >
-                    <Type /> نص
+                    نص
                   </button>
                   <button
-                    onClick={() => addBlock("image")}
-                    className="flex flex-col items-center p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded"
+                    onClick={() => addBlock("button-group")}
+                    className="p-3 hover:bg-gray-100 dark:hover:bg-slate-800 rounded text-sm font-bold"
                   >
-                    <ImageIcon /> صورة
+                    أزرار
                   </button>
                   <button
-                    onClick={() => addBlock("button")}
-                    className="flex flex-col items-center p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded"
+                    onClick={() => addBlock("image-group")}
+                    className="p-3 hover:bg-gray-100 dark:hover:bg-slate-800 rounded text-sm font-bold"
                   >
-                    <LinkIcon /> زر
+                    صور
                   </button>
                 </div>
               </div>
@@ -2139,6 +2653,94 @@
         margin: 1.5rem auto;
         display: block;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Grid layout for images */
+      .prose-rtl .grid {
+        display: grid;
+        gap: 0.5rem;
+      }
+      .prose-rtl .grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+      .prose-rtl .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .prose-rtl .grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .prose-rtl .grid img {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      /* Smaller images for inline layout */
+      .prose-rtl .grid.grid-cols-3 img {
+        max-height: 120px !important;
+        min-height: 80px !important;
+      }
+      .prose-rtl .grid.grid-cols-2 img {
+        max-height: 120px !important;
+        min-height: 80px !important;
+      }
+      .prose-rtl .grid .relative {
+        position: relative;
+      }
+      .prose-rtl .grid .absolute {
+        position: absolute;
+      }
+      .prose-rtl .grid .inset-0 {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+      .prose-rtl .grid .bg-black\/60 {
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+      .prose-rtl .grid .flex {
+        display: flex;
+      }
+      .prose-rtl .grid .items-center {
+        align-items: center;
+      }
+      .prose-rtl .grid .justify-center {
+        justify-content: center;
+      }
+      .prose-rtl .grid .text-white {
+        color: white;
+      }
+      .prose-rtl .grid .text-2xl {
+        font-size: 1.5rem;
+        line-height: 2rem;
+      }
+      .prose-rtl .grid .font-bold {
+        font-weight: 700;
+      }
+      .prose-rtl .grid .w-full {
+        width: 100%;
+      }
+      .prose-rtl .grid .h-full {
+        height: 100%;
+      }
+      .prose-rtl .grid .object-cover {
+        object-fit: cover;
+      }
+      .prose-rtl .grid .rounded-lg {
+        border-radius: 0.5rem;
+      }
+      .prose-rtl .grid .cursor-zoom-in {
+        cursor: zoom-in;
+      }
+      .prose-rtl .grid .border {
+        border-width: 1px;
+      }
+      .prose-rtl .grid .border-gray-200 {
+        border-color: rgb(229 231 235);
+      }
+      .dark .prose-rtl .grid .border-gray-700 {
+        border-color: rgb(55 65 81);
       }
 
       /* Code Block Styling - Ensure relative pos for button */
