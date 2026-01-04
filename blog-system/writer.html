@@ -559,6 +559,15 @@
           newButtons.splice(index, 1);
           onChange({ ...data, buttons: newButtons });
         };
+
+        const moveButton = (fromIndex, toIndex) => {
+          if (fromIndex === toIndex) return;
+          const newButtons = [...(data.buttons || [])];
+          const [movedItem] = newButtons.splice(fromIndex, 1);
+          newButtons.splice(toIndex, 0, movedItem);
+          onChange({ ...data, buttons: newButtons });
+        };
+
         return (
           <div className="flex flex-col gap-3 p-4 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-2">
@@ -595,97 +604,125 @@
                   : btn.textColorMode === "black"
                   ? "#000000"
                   : getContrastColor(btn.color || "#10b981");
+              const buttonsCount = (data.buttons || []).length;
               return (
-                <div
-                  key={index}
-                  className="flex flex-col gap-2 p-3 bg-white dark:bg-slate-900 rounded border border-gray-200 dark:border-gray-600"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      value={btn.text || ""}
-                      onChange={(e) =>
-                        updateButton(index, { text: e.target.value })
-                      }
-                      placeholder="نص الزر"
-                      className="w-full p-2 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900 focus:border-primary outline-none"
-                    />
-                    <input
-                      type="text"
-                      value={btn.url || ""}
-                      onChange={(e) =>
-                        updateButton(index, { url: e.target.value })
-                      }
-                      placeholder="الرابط"
-                      className="w-full p-2 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900 focus:border-primary outline-none ltr text-left"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2 justify-between">
-                    <div className="flex items-center gap-2">
-                      <Palette size={14} className="text-gray-400" />
+                <div key={index} className="relative">
+                  <div className="flex flex-col gap-2 p-3 bg-white dark:bg-slate-900 rounded border border-gray-200 dark:border-gray-600">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <input
-                        type="color"
-                        value={btn.color || "#10b981"}
+                        type="text"
+                        value={btn.text || ""}
                         onChange={(e) =>
-                          updateButton(index, { color: e.target.value })
+                          updateButton(index, { text: e.target.value })
                         }
-                        className="w-6 h-6 rounded cursor-pointer border-0 p-0"
+                        placeholder="نص الزر"
+                        className="w-full p-2 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900 focus:border-primary outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={btn.url || ""}
+                        onChange={(e) =>
+                          updateButton(index, { url: e.target.value })
+                        }
+                        placeholder="الرابط"
+                        className="w-full p-2 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900 focus:border-primary outline-none ltr text-left"
                       />
                     </div>
-                    <div className="flex gap-1 text-xs">
-                      <button
-                        onClick={() =>
-                          updateButton(index, { textColorMode: "auto" })
-                        }
-                        className={`px-2 py-1 rounded ${
-                          btn.textColorMode === "auto"
-                            ? "bg-primary text-white"
-                            : "bg-gray-200 text-gray-600"
-                        }`}
-                      >
-                        تلقائي
-                      </button>
-                      <button
-                        onClick={() =>
-                          updateButton(index, { textColorMode: "white" })
-                        }
-                        className={`px-2 py-1 rounded ${
-                          btn.textColorMode === "white"
-                            ? "bg-primary text-white"
-                            : "bg-gray-200 text-gray-600"
-                        }`}
-                      >
-                        أبيض
-                      </button>
-                      <button
-                        onClick={() =>
-                          updateButton(index, { textColorMode: "black" })
-                        }
-                        className={`px-2 py-1 rounded ${
-                          btn.textColorMode === "black"
-                            ? "bg-primary text-white"
-                            : "bg-gray-200 text-gray-600"
-                        }`}
-                      >
-                        أسود
-                      </button>
+                    <div className="flex items-center gap-2 justify-between">
+                      <div className="flex items-center gap-2">
+                        <Palette size={14} className="text-gray-400" />
+                        <input
+                          type="color"
+                          value={btn.color || "#10b981"}
+                          onChange={(e) =>
+                            updateButton(index, { color: e.target.value })
+                          }
+                          className="w-6 h-6 rounded cursor-pointer border-0 p-0"
+                        />
+                      </div>
+                      <div className="flex gap-1 text-xs">
+                        <button
+                          onClick={() =>
+                            updateButton(index, { textColorMode: "auto" })
+                          }
+                          className={`px-2 py-1 rounded ${
+                            btn.textColorMode === "auto"
+                              ? "bg-primary text-white"
+                              : "bg-gray-200 text-gray-600"
+                          }`}
+                        >
+                          تلقائي
+                        </button>
+                        <button
+                          onClick={() =>
+                            updateButton(index, { textColorMode: "white" })
+                          }
+                          className={`px-2 py-1 rounded ${
+                            btn.textColorMode === "white"
+                              ? "bg-primary text-white"
+                              : "bg-gray-200 text-gray-600"
+                          }`}
+                        >
+                          أبيض
+                        </button>
+                        <button
+                          onClick={() =>
+                            updateButton(index, { textColorMode: "black" })
+                          }
+                          className={`px-2 py-1 rounded ${
+                            btn.textColorMode === "black"
+                              ? "bg-primary text-white"
+                              : "bg-gray-200 text-gray-600"
+                          }`}
+                        >
+                          أسود
+                        </button>
+                      </div>
+                      <div className="flex gap-1 items-center">
+                        <div className="flex flex-col gap-0.5">
+                          <button
+                            onClick={() => moveButton(index, index - 1)}
+                            disabled={index === 0}
+                            className={`p-0.5 rounded transition-colors ${
+                              index === 0
+                                ? "text-gray-300 cursor-not-allowed"
+                                : "text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-slate-700"
+                            }`}
+                            title="تحريك لأعلى"
+                          >
+                            <ArrowUp size={14} />
+                          </button>
+                          <button
+                            onClick={() => moveButton(index, index + 1)}
+                            disabled={index === buttonsCount - 1}
+                            className={`p-0.5 rounded transition-colors ${
+                              index === buttonsCount - 1
+                                ? "text-gray-300 cursor-not-allowed"
+                                : "text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-slate-700"
+                            }`}
+                            title="تحريك لأسفل"
+                          >
+                            <ArrowDown size={14} />
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => removeButton(index)}
+                          className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
+                        >
+                          حذف
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => removeButton(index)}
-                      className="px-2 py-1 bg-red-500 text-white rounded text-xs"
+                    <span
+                      className="px-4 py-2 rounded-full text-xs font-bold shadow-sm w-fit"
+                      style={{
+                        backgroundColor: btn.color || "#10b981",
+                        color: textColor,
+                      }}
                     >
-                      حذف
-                    </button>
+                      {btn.text || "معاينة"}
+                    </span>
                   </div>
-                  <span
-                    className="px-4 py-2 rounded-full text-xs font-bold shadow-sm w-fit"
-                    style={{
-                      backgroundColor: btn.color || "#10b981",
-                      color: textColor,
-                    }}
-                  >
-                    {btn.text || "معاينة"}
-                  </span>
                 </div>
               );
             })}
@@ -748,6 +785,19 @@
           onChange({ ...data, images: newImages });
         };
 
+        const moveImage = (fromIndex, toIndex) => {
+          if (
+            fromIndex === toIndex ||
+            toIndex < 0 ||
+            toIndex >= (data.images || []).length
+          )
+            return;
+          const newImages = [...(data.images || [])];
+          const [movedItem] = newImages.splice(fromIndex, 1);
+          newImages.splice(toIndex, 0, movedItem);
+          onChange({ ...data, images: newImages });
+        };
+
         return (
           <div className="flex flex-col gap-3 p-4 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-2">
@@ -782,55 +832,85 @@
                 data.layout === "inline" ? "grid grid-cols-3" : "flex flex-col"
               }`}
             >
-              {(data.images || []).map((imgUrl, index) => (
-                <div
-                  key={index}
-                  className={`relative border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden bg-gray-50 dark:bg-slate-900 ${
-                    data.layout === "inline" ? "" : "w-full"
-                  }`}
-                >
-                  {uploading[index] ? (
-                    <div className="flex flex-col items-center justify-center p-6">
-                      <Loader className="text-primary w-6 h-6 mb-2" />
-                      <p className="text-xs text-gray-500">جاري الرفع...</p>
-                    </div>
-                  ) : imgUrl ? (
-                    <>
-                      <img
-                        src={imgUrl}
-                        className={`w-full object-contain rounded-lg ${
-                          data.layout === "inline" ? "max-h-32" : "max-h-48"
-                        }`}
-                      />
-                      <button
-                        onClick={() => {
-                          const newImages = [...(data.images || [])];
-                          newImages[index] = "";
-                          onChange({ ...data, images: newImages });
-                        }}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full"
-                      >
-                        <X size={14} />
-                      </button>
-                    </>
-                  ) : (
+              {(data.images || []).map((imgUrl, index) => {
+                const imagesCount = (data.images || []).length;
+                return (
+                  <div key={index} className="relative">
                     <div
-                      className="flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
-                      onClick={() => fileInputRefs.current[index]?.click()}
+                      className={`relative border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden bg-gray-50 dark:bg-slate-900 ${
+                        data.layout === "inline" ? "" : "w-full"
+                      }`}
                     >
-                      <CloudUpload className="text-gray-400 mb-2" size={24} />
-                      <p className="text-xs text-gray-500">اختر صورة</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        ref={(el) => (fileInputRefs.current[index] = el)}
-                        onChange={(e) => handleFileChange(index, e)}
-                      />
+                      {uploading[index] ? (
+                        <div className="flex flex-col items-center justify-center p-6">
+                          <Loader className="text-primary w-6 h-6 mb-2" />
+                          <p className="text-xs text-gray-500">جاري الرفع...</p>
+                        </div>
+                      ) : imgUrl ? (
+                        <>
+                          <img
+                            src={imgUrl}
+                            className={`w-full object-contain rounded-lg ${
+                              data.layout === "inline" ? "max-h-32" : "max-h-48"
+                            }`}
+                          />
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            <button
+                              onClick={() => moveImage(index, index - 1)}
+                              disabled={index === 0}
+                              className={`p-1 rounded-full transition-colors ${
+                                index === 0
+                                  ? "bg-gray-400/50 text-gray-300 cursor-not-allowed"
+                                  : "bg-gray-800/70 text-white hover:bg-blue-500"
+                              }`}
+                              title="تحريك لليسار/لأعلى"
+                            >
+                              <ArrowUp size={14} />
+                            </button>
+                            <button
+                              onClick={() => moveImage(index, index + 1)}
+                              disabled={index === imagesCount - 1}
+                              className={`p-1 rounded-full transition-colors ${
+                                index === imagesCount - 1
+                                  ? "bg-gray-400/50 text-gray-300 cursor-not-allowed"
+                                  : "bg-gray-800/70 text-white hover:bg-blue-500"
+                              }`}
+                              title="تحريك لليمين/لأسفل"
+                            >
+                              <ArrowDown size={14} />
+                            </button>
+                            <button
+                              onClick={() => removeImage(index)}
+                              className="bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                              title="حذف الصورة"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <div
+                          className="flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                          onClick={() => fileInputRefs.current[index]?.click()}
+                        >
+                          <CloudUpload
+                            className="text-gray-400 mb-2"
+                            size={24}
+                          />
+                          <p className="text-xs text-gray-500">اختر صورة</p>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            ref={(el) => (fileInputRefs.current[index] = el)}
+                            onChange={(e) => handleFileChange(index, e)}
+                          />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </div>
             <button
               onClick={addImage}
