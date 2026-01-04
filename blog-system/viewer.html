@@ -9,7 +9,7 @@
       href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <!-- Highlight.js CSS for Code Coloring -->
+    <!-- Highlight.js CSS for Code Coloring (Atom One Dark) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
@@ -159,6 +159,17 @@
         <IconBase {...props}>
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+        </IconBase>
+      );
+      const Copy = (props) => (
+        <IconBase {...props}>
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+        </IconBase>
+      );
+      const Check = (props) => (
+        <IconBase {...props}>
+          <path d="M20 6 9 17l-5-5" />
         </IconBase>
       );
 
@@ -333,7 +344,7 @@
         // Tag Cloud State
         const [allTags, setAllTags] = useState({});
 
-        // Ref for content container to handle image clicks
+        // Ref for content container to handle image clicks and code highlighting
         const contentRef = useRef(null);
 
         useEffect(() => {
@@ -349,16 +360,46 @@
             }
           };
 
-          // Attach event listener to document or specific container
+          // Attach event listener to document
           document.addEventListener("click", handleClick);
           return () => document.removeEventListener("click", handleClick);
         }, []);
 
-        // --- Apply syntax highlighting ---
+        // --- Syntax Highlighting & Copy Button Injection ---
         useEffect(() => {
           if (activePost && contentRef.current) {
+            // 1. Highlight Code
             contentRef.current.querySelectorAll("pre code").forEach((block) => {
               hljs.highlightElement(block);
+            });
+
+            // 2. Inject Copy Buttons
+            contentRef.current.querySelectorAll("pre").forEach((preBlock) => {
+              if (preBlock.querySelector(".copy-code-btn")) return;
+
+              const button = document.createElement("button");
+              button.className =
+                "copy-code-btn absolute top-2 right-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 p-1.5 rounded-md text-xs transition-all opacity-0 group-hover:opacity-100 z-10 flex items-center justify-center backdrop-blur-sm border border-white/10";
+              button.innerHTML =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+              button.title = "نسخ الكود";
+
+              button.addEventListener("click", () => {
+                const code = preBlock.querySelector("code").innerText;
+                navigator.clipboard.writeText(code).then(() => {
+                  button.innerHTML =
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+                  button.classList.add("text-green-500");
+                  setTimeout(() => {
+                    button.innerHTML =
+                      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+                    button.classList.remove("text-green-500");
+                  }, 2000);
+                });
+              });
+
+              preBlock.classList.add("group");
+              preBlock.appendChild(button);
             });
           }
         }, [activePost]);
@@ -441,7 +482,6 @@
         // --- COPY LINK FUNCTION ---
         const handleCopyLink = (id, e) => {
           if (e) e.stopPropagation();
-          // Base URL fixed for Github Pages deployment
           const baseUrl =
             "https://mabdullah821.github.io/tech-stories-archive/viewer.html";
           const url = `${baseUrl}?id=${id}`;
@@ -945,33 +985,53 @@
       .prose-rtl img:hover {
         transform: scale(1.01);
       }
-      .prose-rtl pre {
-        direction: ltr;
-        text-align: left;
-        background: #1e293b;
-        color: #e2e8f0;
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        overflow-x: auto;
-        margin-bottom: 1.5em;
-        font-family: "Fira Code", monospace;
-      }
-      .prose-rtl code {
+
+      /* Code Block Styling - Ensure relative pos for button */
+      /* Updated CSS Selectors for Code */
+      .prose-rtl :not(pre) > code {
         direction: ltr;
         display: inline-block;
         font-family: "Fira Code", monospace;
         background: #e2e8f0;
         color: #be185d;
-        padding: 0.1rem 0.4rem;
+        padding: 0.2rem 0.4rem;
         border-radius: 0.25rem;
-        font-size: 0.875em;
+        font-size: 0.85em;
       }
-      .dark .prose-rtl code {
+      .dark .prose-rtl :not(pre) > code {
         background: #334155;
         color: #f472b6;
       }
 
-      /* Fix Link Style */
+      .prose-rtl pre {
+        position: relative;
+        direction: ltr;
+        text-align: left;
+        background: #282c34 !important; /* Force dark background */
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        overflow-x: auto;
+        margin-bottom: 1.5em;
+        font-family: "Fira Code", monospace;
+        font-size: 0.9em;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+      }
+
+      .prose-rtl pre:hover .copy-code-btn {
+        opacity: 1;
+      }
+
+      .prose-rtl pre code {
+        background: transparent !important;
+        color: inherit !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        display: inline; /* Or block depending on highlight.js preference */
+        font-size: 100% !important;
+      }
+
+      /* Link Styling */
       .prose-rtl a {
         color: #10b981;
         text-decoration: underline;
@@ -980,15 +1040,22 @@
       .prose-rtl a.no-underline {
         text-decoration: none !important;
       }
+      .prose-rtl strong {
+        color: #0f172a;
+        font-weight: 700;
+      }
+      .dark .prose-rtl strong {
+        color: #f1f5f9;
+      }
 
-      ::-webkit-scrollbar {
+      .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
       }
-      ::-webkit-scrollbar-thumb {
+      .custom-scrollbar::-webkit-scrollbar-thumb {
         background: #cbd5e1;
         border-radius: 4px;
       }
-      .dark ::-webkit-scrollbar-thumb {
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
         background: #475569;
       }
 

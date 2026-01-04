@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>المحرر المطور - Writer Pro v24 (Copy Code)</title>
+    <title>المحرر المطور - Writer Pro v25 (Fixed Code Preview)</title>
 
     <!-- Fonts & Tailwind -->
     <link
@@ -305,17 +305,6 @@
           <line x1="21" x2="3" y1="18" y2="18" />
         </IconBase>
       );
-      const Copy = (props) => (
-        <IconBase {...props}>
-          <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-        </IconBase>
-      );
-      const Check = (props) => (
-        <IconBase {...props}>
-          <path d="M20 6 9 17l-5-5" />
-        </IconBase>
-      );
 
       // --- Utils ---
       const getContrastColor = (hexcolor) => {
@@ -343,6 +332,7 @@
           localStorage.setItem("imgbb_key", localImgbbKey);
           if (localEmail) localStorage.setItem("saved_email", localEmail);
           if (localPass) localStorage.setItem("saved_pass", localPass);
+
           alert("تم حفظ الإعدادات وبيانات الدخول.");
           window.location.reload();
         };
@@ -358,7 +348,9 @@
                   <X size={24} />
                 </button>
               </div>
+
               <div className="space-y-6">
+                {/* ImgBB Section */}
                 <div>
                   <label className="block text-sm font-bold text-gray-500 mb-2 flex items-center gap-2">
                     <ImageIcon size={16} /> مفتاح ImgBB API
@@ -371,7 +363,10 @@
                     placeholder="API Key"
                   />
                 </div>
+
                 <div className="h-px bg-gray-200 dark:bg-gray-700 my-4"></div>
+
+                {/* Saved Credentials Section */}
                 <div>
                   <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
                     <Key size={18} /> بيانات الدخول المحفوظة
@@ -379,13 +374,14 @@
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1">
-                        البريد الإلكتروني
+                        البريد الإلكتروني (Firebase Auth)
                       </label>
                       <input
                         type="email"
                         value={localEmail}
                         onChange={(e) => setLocalEmail(e.target.value)}
                         className="w-full p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none ltr"
+                        placeholder="admin@example.com"
                       />
                     </div>
                     <div>
@@ -397,10 +393,12 @@
                         value={localPass}
                         onChange={(e) => setLocalPass(e.target.value)}
                         className="w-full p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none ltr"
+                        placeholder="********"
                       />
                     </div>
                   </div>
                 </div>
+
                 <button
                   onClick={handleSave}
                   className="w-full bg-primary hover:bg-emerald-600 text-white py-3 rounded-xl font-bold transition-all shadow-lg"
@@ -586,6 +584,7 @@
         );
       };
 
+      // --- Post List Modal ---
       const PostListModal = ({ isOpen, onClose, onSelect }) => {
         const [postsList, setPostsList] = useState([]);
         const [loading, setLoading] = useState(false);
@@ -835,7 +834,7 @@
           else document.documentElement.classList.remove("dark");
         }, [darkMode]);
 
-        // Syntax Highlight Effect for Preview & Copy Button
+        // Syntax Highlight Effect for Preview
         useEffect(() => {
           if (previewRef.current) {
             previewRef.current.querySelectorAll("pre code").forEach((block) => {
@@ -1502,6 +1501,7 @@
       root.render(<App />);
     </script>
     <style>
+      /* Enhanced Typography for Accurate Preview */
       .prose-rtl {
         direction: rtl;
         text-align: right;
@@ -1571,23 +1571,7 @@
       }
 
       /* Code Block Styling - Ensure relative pos for button */
-      .prose-rtl pre {
-        position: relative;
-        direction: ltr;
-        text-align: left;
-        background: #282c34;
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        overflow-x: auto;
-        margin-bottom: 1.5em;
-        font-family: "Fira Code", monospace;
-        font-size: 0.9em;
-        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-      }
-      .prose-rtl pre:hover .copy-code-btn {
-        opacity: 1;
-      }
-      .prose-rtl code {
+      .prose-rtl :not(pre) > code {
         direction: ltr;
         display: inline-block;
         font-family: "Fira Code", monospace;
@@ -1597,15 +1581,37 @@
         border-radius: 0.25rem;
         font-size: 0.85em;
       }
-      .dark .prose-rtl code {
+      .dark .prose-rtl :not(pre) > code {
         background: #334155;
         color: #f472b6;
       }
+
+      .prose-rtl pre {
+        position: relative;
+        direction: ltr;
+        text-align: left;
+        background: #282c34 !important; /* Force dark background */
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        overflow-x: auto;
+        margin-bottom: 1.5em;
+        font-family: "Fira Code", monospace;
+        font-size: 0.9em;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+      }
+
+      .prose-rtl pre:hover .copy-code-btn {
+        opacity: 1;
+      }
+
       .prose-rtl pre code {
-        background: transparent;
-        color: inherit;
-        padding: 0;
-        display: inline;
+        background: transparent !important;
+        color: inherit !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        display: inline; /* Or block depending on highlight.js preference */
+        font-size: 100% !important;
       }
 
       /* Link Styling */
@@ -1624,6 +1630,7 @@
       .dark .prose-rtl strong {
         color: #f1f5f9;
       }
+
       .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
       }
