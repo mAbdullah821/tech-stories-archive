@@ -666,42 +666,52 @@
 
               {/* Header Overlay for Single Post */}
               <header className="fixed top-0 z-50 w-full p-4 pointer-events-none">
-                <div className="max-w-4xl mx-auto flex justify-end gap-2 pointer-events-auto">
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowThemeMenu(!showThemeMenu)}
-                      className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
-                      title="تغيير المظهر"
-                    >
-                      <Palette size={20} />
-                    </button>
-                    {showThemeMenu && (
-                      <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
-                        {Object.entries(themes).map(([key, t]) => (
-                          <button
-                            key={key}
-                            onClick={() => {
-                              setCurrentTheme(key);
-                              setShowThemeMenu(false);
-                            }}
-                            className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
-                              currentTheme === key
-                                ? "text-primary font-bold"
-                                : ""
-                            }`}
-                          >
-                            {t.name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                <div className="max-w-4xl mx-auto flex justify-between items-center pointer-events-auto">
                   <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
+                    onClick={handleBackToList}
+                    className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-white hover:bg-white dark:hover:bg-black/70"
+                    title="العودة للقائمة"
                   >
-                    {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                    <ArrowRight size={18} />{" "}
+                    <span className="hidden sm:inline">عودة</span>
                   </button>
+                  <div className="flex gap-2 items-center">
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowThemeMenu(!showThemeMenu)}
+                        className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
+                        title="تغيير المظهر"
+                      >
+                        <Palette size={20} />
+                      </button>
+                      {showThemeMenu && (
+                        <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
+                          {Object.entries(themes).map(([key, t]) => (
+                            <button
+                              key={key}
+                              onClick={() => {
+                                setCurrentTheme(key);
+                                setShowThemeMenu(false);
+                              }}
+                              className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
+                                currentTheme === key
+                                  ? "text-primary font-bold"
+                                  : ""
+                              }`}
+                            >
+                              {t.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setDarkMode(!darkMode)}
+                      className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
+                    >
+                      {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                    </button>
+                  </div>
                 </div>
               </header>
 
@@ -713,14 +723,6 @@
                     onClick={() => setZoomedImage(activePost.coverImage)}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-50/100 dark:from-dark to-transparent pointer-events-none"></div>
-                  <div className="absolute top-4 right-4 z-20">
-                    <button
-                      onClick={handleBackToList}
-                      className="bg-white/90 dark:bg-black/50 text-gray-700 dark:text-white px-4 py-2 rounded-full backdrop-blur-sm text-sm font-bold shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
-                    >
-                      <ArrowRight size={16} /> عودة
-                    </button>
-                  </div>
                 </div>
               )}
 
@@ -729,15 +731,6 @@
                   activePost.coverImage ? "-mt-20 relative z-10" : "pt-24"
                 }`}
               >
-                {!activePost.coverImage && (
-                  <button
-                    onClick={handleBackToList}
-                    className="mb-8 flex items-center text-gray-500 hover:text-primary gap-2"
-                  >
-                    <ArrowRight size={16} /> عودة للقائمة
-                  </button>
-                )}
-
                 <article className="animate-fade-in bg-white/90 dark:bg-slate-800/90 p-6 md:p-8 rounded-2xl shadow-sm backdrop-blur-md relative group border border-gray-100 dark:border-gray-700">
                   {/* Action Buttons */}
                   <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
