@@ -93,4 +93,13 @@
 <br>
 🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_aevaeraepaewaeyabraewaepaevaexabraeiaepaewaey-activity-7411364431885926400-ZK8q?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="https://qabilah.com/posts/من-مهندس-برمجيات-إلى-ناسخ-أكواد-رحلة-التحول-للأفضل~Cp-rQR5cook">قبيلة</a>
 
+<br>
+<hr> <br>
+
+📝 <b>ليه سموه (Soft-ware) طالما هو (Hard) أوي كده في التغيير؟ 🤔.. رحلة البحث عن الهندسة المفقودة</b>
+<br>
+🛠️ <i>الموضوع:</i> Domain-Driven Design & Clean Architecture
+<br>
+🔗 <i>المنصات:</i> <i>قريباً.. الحكاية جاية! 🚀✨</i>
+
 </div>
