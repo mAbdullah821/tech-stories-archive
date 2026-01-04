@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tech Stories Archive - Viewer v22</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@300;400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Tajawal", "sans-serif"],
+              mono: ["Fira Code", "monospace"],
+            },
+            colors: { primary: "#10b981", dark: "#0f172a" },
+          },
+        },
+      };
+    </script>
+
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  </head>
+  <body
+    class="bg-gray-50 dark:bg-dark text-slate-800 dark:text-slate-100 transition-colors duration-300"
+  >
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef } = React;
+
+      // --- Icons Definitions (SVG Components) ---
+      const IconBase = ({ children, size = 24, className = "" }) => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+        >
+          {children}
+        </svg>
+      );
+
+      const Sun = (props) => (
+        <IconBase {...props}>
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="m4.93 4.93 1.41 1.41" />
+          <path d="m17.66 17.66 1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="m6.34 17.66-1.41-1.41" />
+          <path d="m19.07 4.93-1.41 1.41" />
+        </IconBase>
+      );
+      const Moon = (props) => (
+        <IconBase {...props}>
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+        </IconBase>
+      );
+      const ArrowRight = (props) => (
+        <IconBase {...props}>
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </IconBase>
+      );
+      const LoaderIcon = (props) => (
+        <IconBase {...props}>
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </IconBase>
+      );
+      const X = (props) => (
+        <IconBase {...props}>
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </IconBase>
+      );
+      const Edit = (props) => (
+        <IconBase {...props}>
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </IconBase>
+      );
+      const TagIcon = (props) => (
+        <IconBase {...props}>
+          <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
+          <path d="M7 7h.01" />
+        </IconBase>
+      );
+      const ChevronDown = (props) => (
+        <IconBase {...props}>
+          <path d="m6 9 6 6 6-6" />
+        </IconBase>
+      );
+      const ChevronUp = (props) => (
+        <IconBase {...props}>
+          <path d="m18 15-6-6-6 6" />
+        </IconBase>
+      );
+      const PlusCircle = (props) => (
+        <IconBase {...props}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M8 12h8" />
+          <path d="M12 8v8" />
+        </IconBase>
+      );
+      const Palette = (props) => (
+        <IconBase {...props}>
+          <circle cx="13.5" cy="6.5" r=".5" />
+          <circle cx="17.5" cy="10.5" r=".5" />
+          <circle cx="8.5" cy="7.5" r=".5" />
+          <circle cx="6.5" cy="12.5" r=".5" />
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+        </IconBase>
+      );
+
+      // --- Firebase Config ---
+      const firebaseConfig = {
+        apiKey: "AIzaSyAquezWzOJ5w5CZPuQFC01RxdGM2i9oYss",
+        authDomain: "tech-stories-archive.firebaseapp.com",
+        projectId: "tech-stories-archive",
+        storageBucket: "tech-stories-archive.firebasestorage.app",
+        messagingSenderId: "345367195836",
+        appId: "1:345367195836:web:14719979eaad7bb43220b9",
+      };
+
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      const db = firebase.firestore();
+
+      // --- Themes Configuration ---
+      const themes = {
+        plain: { name: "عادي", bgLight: "bg-gray-50", bgDark: "dark:bg-dark" },
+        stars: {
+          name: "فضاء",
+          bgLight: "bg-slate-100",
+          bgDark: "dark:bg-[#0B0D17]",
+          className: "theme-stars",
+        },
+        garden: {
+          name: "حديقة",
+          bgLight: "bg-[#F0FDF4]",
+          bgDark: "dark:bg-[#022C22]",
+          className: "theme-garden",
+        },
+      };
+
+      // --- Tag Cloud Component ---
+      const TagCloud = ({ tags, selectedTags, onSelectTag }) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+        const sortedTags = Object.entries(tags).sort((a, b) => b[1] - a[1]);
+
+        if (sortedTags.length === 0) return null;
+
+        return (
+          <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-gray-200 dark:border-gray-700 mb-6 transition-all duration-300">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-sm font-bold text-gray-500 flex items-center gap-2">
+                <TagIcon size={16} /> استكشف المواضيع (اختر حتى 5)
+              </h3>
+              {selectedTags.length > 0 && (
+                <button
+                  onClick={() => onSelectTag(null, true)}
+                  className="text-xs text-red-500 hover:underline"
+                >
+                  مسح الكل
+                </button>
+              )}
+            </div>
+
+            <div
+              className={`flex flex-wrap gap-2 transition-all duration-500 ease-in-out ${
+                isExpanded ? "max-h-[1000px]" : "max-h-[88px] overflow-hidden"
+              }`}
+            >
+              {sortedTags.map(([tag, count]) => {
+                const isSelected = selectedTags.includes(tag);
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => onSelectTag(tag)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all ${
+                      isSelected
+                        ? "bg-primary text-white shadow-lg scale-105"
+                        : "bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
+                    }`}
+                  >
+                    <span>#{tag}</span>
+                    <span
+                      className={`px-1.5 py-0.5 rounded-md text-[10px] ${
+                        isSelected
+                          ? "bg-white/20"
+                          : "bg-gray-200 dark:bg-slate-800"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {sortedTags.length > 10 && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="w-full mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 text-xs font-bold text-primary flex items-center justify-center gap-1 hover:bg-gray-50 dark:hover:bg-slate-700/30 rounded-b-lg transition-colors"
+              >
+                {isExpanded ? (
+                  <>
+                    <span>عرض أقل</span> <ChevronUp size={14} />
+                  </>
+                ) : (
+                  <>
+                    <span>عرض المزيد ({sortedTags.length - 10}+)</span>{" "}
+                    <ChevronDown size={14} />
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        );
+      };
+
+      function App() {
+        const [posts, setPosts] = useState([]);
+        const [activePost, setActivePost] = useState(null);
+        const [darkMode, setDarkMode] = useState(true);
+        const [currentTheme, setCurrentTheme] = useState("plain");
+        const [showThemeMenu, setShowThemeMenu] = useState(false);
+
+        // Pagination & Filter State
+        const [lastDoc, setLastDoc] = useState(null);
+        const [loading, setLoading] = useState(false);
+        const [hasMore, setHasMore] = useState(true);
+        const [selectedTags, setSelectedTags] = useState([]);
+
+        // Tag Cloud State
+        const [allTags, setAllTags] = useState({});
+
+        useEffect(() => {
+          if (darkMode) document.documentElement.classList.add("dark");
+          else document.documentElement.classList.remove("dark");
+        }, [darkMode]);
+
+        // --- URL Routing Logic ---
+        useEffect(() => {
+          const params = new URLSearchParams(window.location.search);
+          const idFromUrl = params.get("id");
+
+          if (idFromUrl) {
+            loadSinglePost(idFromUrl);
+          }
+
+          const handlePopState = () => {
+            const newParams = new URLSearchParams(window.location.search);
+            const newId = newParams.get("id");
+            if (newId) loadSinglePost(newId);
+            else setActivePost(null);
+          };
+
+          window.addEventListener("popstate", handlePopState);
+          return () => window.removeEventListener("popstate", handlePopState);
+        }, []);
+
+        // --- Fetch Tags Stats ---
+        useEffect(() => {
+          db.collection("posts")
+            .orderBy("createdAt", "desc")
+            .limit(100)
+            .get()
+            .then((snapshot) => {
+              const tagsMap = {};
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.topics && Array.isArray(data.topics)) {
+                  data.topics.forEach((tag) => {
+                    tagsMap[tag] = (tagsMap[tag] || 0) + 1;
+                  });
+                }
+              });
+              setAllTags(tagsMap);
+            });
+        }, []);
+
+        // --- Helpers ---
+        const updateUrl = (id) => {
+          if (id) {
+            window.history.pushState({ id }, "", `?id=${id}`);
+          } else {
+            window.history.pushState({}, "", window.location.pathname);
+          }
+        };
+
+        const loadSinglePost = async (id) => {
+          setLoading(true);
+          try {
+            const doc = await db.collection("posts").doc(id).get();
+            if (doc.exists) {
+              setActivePost({ id: doc.id, ...doc.data() });
+            } else {
+              updateUrl(null);
+            }
+          } catch (err) {
+            console.error("Error loading post:", err);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        const handlePostClick = (post) => {
+          setActivePost(post);
+          updateUrl(post.id);
+        };
+
+        const handleBackToList = () => {
+          setActivePost(null);
+          updateUrl(null);
+        };
+
+        const handleTagSelection = (tag, reset = false) => {
+          if (reset) {
+            setSelectedTags([]);
+            return;
+          }
+
+          if (selectedTags.includes(tag)) {
+            setSelectedTags(selectedTags.filter((t) => t !== tag));
+          } else {
+            if (selectedTags.length < 5) {
+              setSelectedTags([...selectedTags, tag]);
+            } else {
+              alert("يمكنك اختيار 5 مواضيع كحد أقصى.");
+            }
+          }
+        };
+
+        // --- Fetch List Posts Logic ---
+        const fetchPosts = async (isNewFilter = false) => {
+          if (loading || (!hasMore && !isNewFilter)) return;
+          setLoading(true);
+
+          try {
+            let query = db.collection("posts");
+
+            // Filter logic for multiple tags (OR logic client-side approximation or array-contains-any)
+            if (selectedTags.length > 0) {
+              // Use array-contains-any to match ANY of the selected tags
+              query = query.where("topics", "array-contains-any", selectedTags);
+            }
+
+            query = query.orderBy("createdAt", "desc");
+
+            if (!isNewFilter && lastDoc) {
+              query = query.startAfter(lastDoc);
+            }
+
+            query = query.limit(5);
+
+            const snapshot = await query.get();
+
+            if (snapshot.empty) {
+              setHasMore(false);
+              if (isNewFilter) setPosts([]);
+            } else {
+              const newPosts = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+              setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+
+              if (isNewFilter) {
+                setPosts(newPosts);
+              } else {
+                setPosts((prev) => {
+                  const existingIds = new Set(prev.map((p) => p.id));
+                  const uniqueNewPosts = newPosts.filter(
+                    (p) => !existingIds.has(p.id)
+                  );
+                  return [...prev, ...uniqueNewPosts];
+                });
+              }
+
+              if (snapshot.docs.length < 5) setHasMore(false);
+            }
+          } catch (err) {
+            console.error("Error fetching posts:", err);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        useEffect(() => {
+          if (!activePost) {
+            setLastDoc(null);
+            setHasMore(true);
+            fetchPosts(true);
+          }
+        }, [selectedTags, activePost]);
+
+        // Scroll Handler
+        useEffect(() => {
+          const handleScroll = () => {
+            if (activePost) return;
+            if (
+              window.innerHeight + document.documentElement.scrollTop >=
+              document.documentElement.offsetHeight - 100
+            ) {
+              fetchPosts(false);
+            }
+          };
+          window.addEventListener("scroll", handleScroll);
+          return () => window.removeEventListener("scroll", handleScroll);
+        }, [lastDoc, loading, hasMore, activePost]);
+
+        const renderMarkdown = (content) => {
+          return { __html: marked.parse(content || "") };
+        };
+
+        const handleEditPost = (post, e) => {
+          e.stopPropagation();
+          window.location.href = `writer.html?id=${post.id}`;
+        };
+
+        const handleCreateNew = () => {
+          window.location.href = `writer.html`;
+        };
+
+        // --- Theme Classes ---
+        const getThemeClass = () => {
+          const theme = themes[currentTheme];
+          return `${theme.bgLight} ${theme.bgDark} ${theme.className || ""}`;
+        };
+
+        // --- Single Post View ---
+        if (activePost) {
+          return (
+            <div
+              className={`min-h-screen pb-20 ${getThemeClass()} transition-colors duration-500`}
+            >
+              {/* Header Overlay for Single Post */}
+              <header className="fixed top-0 z-50 w-full p-4 pointer-events-none">
+                <div className="max-w-4xl mx-auto flex justify-between pointer-events-auto">
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
+                  >
+                    {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowThemeMenu(!showThemeMenu)}
+                      className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
+                    >
+                      <Palette size={20} />
+                    </button>
+                    {showThemeMenu && (
+                      <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
+                        {Object.entries(themes).map(([key, t]) => (
+                          <button
+                            key={key}
+                            onClick={() => {
+                              setCurrentTheme(key);
+                              setShowThemeMenu(false);
+                            }}
+                            className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
+                              currentTheme === key
+                                ? "text-primary font-bold"
+                                : ""
+                            }`}
+                          >
+                            {t.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </header>
+
+              {activePost.coverImage && (
+                <div className="w-full h-64 md:h-96 relative">
+                  <img
+                    src={activePost.coverImage}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-50/100 dark:from-dark to-transparent"></div>
+                  <div className="absolute top-4 right-4 z-20">
+                    <button
+                      onClick={handleBackToList}
+                      className="bg-white/90 dark:bg-black/50 text-gray-700 dark:text-white px-4 py-2 rounded-full backdrop-blur-sm text-sm font-bold shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+                    >
+                      <ArrowRight size={16} /> عودة
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div
+                className={`max-w-3xl mx-auto px-4 ${
+                  activePost.coverImage ? "-mt-20 relative z-10" : "pt-24"
+                }`}
+              >
+                {!activePost.coverImage && (
+                  <button
+                    onClick={handleBackToList}
+                    className="mb-8 flex items-center text-gray-500 hover:text-primary gap-2"
+                  >
+                    <ArrowRight size={16} /> عودة للقائمة
+                  </button>
+                )}
+
+                <article className="animate-fade-in bg-white/90 dark:bg-slate-800/90 p-6 md:p-8 rounded-2xl shadow-sm backdrop-blur-md relative group border border-gray-100 dark:border-gray-700">
+                  <button
+                    onClick={(e) => handleEditPost(activePost, e)}
+                    className="absolute top-4 left-4 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-emerald-600 transition-transform hover:scale-110 z-50 opacity-0 group-hover:opacity-100"
+                    title="تعديل هذا المقال"
+                  >
+                    <Edit size={18} />
+                  </button>
+
+                  <div className="mb-8 border-b border-gray-100 dark:border-gray-700 pb-6">
+                    {activePost.topics && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {activePost.topics.map((tag, i) => (
+                          <span
+                            key={i}
+                            onClick={() => {
+                              setActivePost(null);
+                              handleTagSelection(tag, true);
+                              handleTagSelection(tag);
+                            }}
+                            className="cursor-pointer px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full hover:bg-primary hover:text-white transition-colors"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
+                      {activePost.title}
+                    </h1>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <span>
+                        {activePost.createdAt
+                          ? new Date(
+                              activePost.createdAt.toDate()
+                            ).toLocaleDateString("ar-EG")
+                          : "غير معروف"}
+                      </span>
+                      <span>•</span>
+                      <span>قراءة ممتعة ☕</span>
+                    </div>
+                  </div>
+                  <div
+                    className="prose-rtl"
+                    dangerouslySetInnerHTML={renderMarkdown(activePost.content)}
+                  />
+                </article>
+              </div>
+            </div>
+          );
+        }
+
+        // --- List View ---
+        return (
+          <div
+            className={`min-h-screen ${getThemeClass()} transition-colors duration-500`}
+          >
+            <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 transition-colors">
+              <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+                <h1
+                  className="text-xl font-bold text-primary cursor-pointer"
+                  onClick={() => {
+                    setSelectedTags([]);
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  TechArchive
+                </h1>
+                <div className="flex gap-2 items-center">
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowThemeMenu(!showThemeMenu)}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                      title="السمات"
+                    >
+                      <Palette size={20} />
+                    </button>
+                    {showThemeMenu && (
+                      <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
+                        {Object.entries(themes).map(([key, t]) => (
+                          <button
+                            key={key}
+                            onClick={() => {
+                              setCurrentTheme(key);
+                              setShowThemeMenu(false);
+                            }}
+                            className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
+                              currentTheme === key
+                                ? "text-primary font-bold"
+                                : ""
+                            }`}
+                          >
+                            {t.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={handleCreateNew}
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-primary"
+                    title="إنشاء مقال جديد"
+                  >
+                    <PlusCircle size={20} />
+                  </button>
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            <main className="max-w-4xl mx-auto px-4 py-8">
+              {/* Tag Cloud Section */}
+              {!activePost && (
+                <TagCloud
+                  tags={allTags}
+                  selectedTags={selectedTags}
+                  onSelectTag={handleTagSelection}
+                />
+              )}
+
+              <div className="grid gap-6">
+                {posts.map((post) => (
+                  <div
+                    key={post.id}
+                    onClick={() => handlePostClick(post)}
+                    className="group bg-white/90 dark:bg-slate-800/90 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col md:flex-row h-auto md:h-52 relative backdrop-blur-sm"
+                  >
+                    <button
+                      onClick={(e) => handleEditPost(post, e)}
+                      className="absolute top-3 left-3 bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-all opacity-0 group-hover:opacity-100 z-10"
+                      title="تعديل سريع"
+                    >
+                      <Edit size={16} />
+                    </button>
+
+                    {post.coverImage && (
+                      <div className="md:w-1/3 h-48 md:h-full overflow-hidden shrink-0">
+                        <img
+                          src={post.coverImage}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+                    <div className="p-6 flex-1 flex flex-col justify-center">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {post.topics?.slice(0, 3).map((t, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold"
+                          >
+                            #{t}
+                          </span>
+                        ))}
+                      </div>
+                      <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title}
+                      </h2>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
+                        {post.excerpt}
+                      </p>
+                      <div className="mt-auto text-xs text-gray-400 font-medium">
+                        {post.createdAt
+                          ? new Date(
+                              post.createdAt.toDate()
+                            ).toLocaleDateString("ar-EG")
+                          : "الآن"}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {loading && (
+                <div className="col-span-full flex justify-center py-8">
+                  <LoaderIcon className="animate-spin text-primary" size={32} />
+                </div>
+              )}
+              {!hasMore && posts.length > 0 && (
+                <div className="col-span-full text-center text-gray-500 py-8 text-sm opacity-50">
+                  -- تم عرض جميع المقالات --
+                </div>
+              )}
+              {!loading && posts.length === 0 && (
+                <div className="col-span-full text-center py-20 text-gray-500 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 backdrop-blur-sm">
+                  لا توجد مقالات لعرضها حالياً.
+                </div>
+              )}
+            </main>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+    <style>
+      .animate-fade-in {
+        animation: fadeIn 0.4s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Typography CSS Match */
+      .prose-rtl {
+        direction: rtl;
+        text-align: right;
+        line-height: 1.8;
+        color: #334155;
+      }
+      .dark .prose-rtl {
+        color: #cbd5e1;
+      }
+      .prose-rtl h1 {
+        color: #0f172a;
+        font-weight: 800;
+        margin-top: 1.5em;
+        margin-bottom: 0.8em;
+      }
+      .dark .prose-rtl h1 {
+        color: #f8fafc;
+      }
+      .prose-rtl p {
+        margin-bottom: 1.2em;
+      }
+      .prose-rtl ul {
+        list-style-type: disc;
+        padding-right: 1.5em;
+        margin-bottom: 1.2em;
+      }
+      .prose-rtl blockquote {
+        border-right: 4px solid #10b981;
+        padding-right: 1em;
+        background: #f1f5f9;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5em;
+        font-style: italic;
+      }
+      .dark .prose-rtl blockquote {
+        background: #1e293b;
+        border-color: #34d399;
+      }
+      .prose-rtl img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1.5rem auto;
+        display: block;
+      }
+      .prose-rtl pre {
+        direction: ltr;
+        text-align: left;
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        overflow-x: auto;
+        margin-bottom: 1.5em;
+        font-family: "Fira Code", monospace;
+      }
+      .prose-rtl code {
+        direction: ltr;
+        display: inline-block;
+        font-family: "Fira Code", monospace;
+        background: #e2e8f0;
+        color: #be185d;
+        padding: 0.1rem 0.4rem;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+      }
+      .dark .prose-rtl code {
+        background: #334155;
+        color: #f472b6;
+      }
+
+      /* Fix Link Style */
+      .prose-rtl a {
+        color: #10b981;
+        text-decoration: underline;
+        font-weight: 500;
+      }
+      .prose-rtl a.no-underline {
+        text-decoration: none !important;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+
+      /* Themes */
+      .theme-stars {
+        background-color: #0b0d17;
+        background-image: radial-gradient(
+            white,
+            rgba(255, 255, 255, 0.2) 2px,
+            transparent 3px
+          ),
+          radial-gradient(white, rgba(255, 255, 255, 0.15) 1px, transparent 2px),
+          radial-gradient(white, rgba(255, 255, 255, 0.1) 2px, transparent 3px);
+        background-size: 550px 550px, 350px 350px, 250px 250px;
+        background-position: 0 0, 40px 60px, 130px 270px;
+      }
+      .theme-garden {
+        background-color: #f0fdf4;
+        background-image: radial-gradient(#86efac 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+      .dark .theme-garden {
+        background-color: #022c22;
+        background-image: radial-gradient(#064e3b 1px, transparent 1px);
+      }
+    </style>
+  </body>
+</html>
