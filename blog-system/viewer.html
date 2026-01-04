@@ -331,8 +331,7 @@
 
         if (!topics || topics.length === 0) return null;
 
-        // Limit to 3 lines (approx 15 tags if avg width allows, but here we do simple slicing for demo logic,
-        // a true line clamp needs CSS or measurement. Let's assume 10-12 tags fit in 3 lines comfortably on mobile)
+        // Limit to 3 lines
         const VISIBLE_COUNT = 15;
         const showExpandButton = topics.length > VISIBLE_COUNT;
         const displayedTags = isExpanded
@@ -392,7 +391,7 @@
         // Tag Cloud State
         const [allTags, setAllTags] = useState({});
 
-        // Ref for content container to handle image clicks and code highlighting
+        // Ref for content container
         const contentRef = useRef(null);
 
         useEffect(() => {
@@ -408,7 +407,6 @@
             }
           };
 
-          // Attach event listener to document
           document.addEventListener("click", handleClick);
           return () => document.removeEventListener("click", handleClick);
         }, []);
@@ -668,13 +666,7 @@
 
               {/* Header Overlay for Single Post */}
               <header className="fixed top-0 z-50 w-full p-4 pointer-events-none">
-                <div className="max-w-4xl mx-auto flex justify-between pointer-events-auto">
-                  <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
-                  >
-                    {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                  </button>
+                <div className="max-w-4xl mx-auto flex justify-end gap-2 pointer-events-auto">
                   <div className="relative">
                     <button
                       onClick={() => setShowThemeMenu(!showThemeMenu)}
@@ -704,6 +696,12 @@
                       </div>
                     )}
                   </div>
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
+                  >
+                    {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                  </button>
                 </div>
               </header>
 
@@ -813,6 +811,13 @@
                 <div className="flex gap-2 items-center">
                   <div className="relative">
                     <button
+                      onClick={handleCreateNew}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-primary"
+                      title="إنشاء مقال جديد"
+                    >
+                      <PlusCircle size={20} />
+                    </button>
+                    <button
                       onClick={() => setShowThemeMenu(!showThemeMenu)}
                       className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
                       title="السمات"
@@ -840,13 +845,6 @@
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={handleCreateNew}
-                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-primary"
-                    title="إنشاء مقال جديد"
-                  >
-                    <PlusCircle size={20} />
-                  </button>
                   <button
                     onClick={() => setDarkMode(!darkMode)}
                     className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
