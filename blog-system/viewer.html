@@ -3,12 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tech Stories Archive - Viewer v22</title>
+    <title>Tech Stories Archive</title>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
+    <!-- Highlight.js CSS for Code Coloring -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+    />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -35,6 +41,8 @@
     ></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -139,6 +147,20 @@
           <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
         </IconBase>
       );
+      const ZoomIn = (props) => (
+        <IconBase {...props}>
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" x2="16.65" y1="21" y2="16.65" />
+          <line x1="11" x2="11" y1="8" y2="14" />
+          <line x1="8" x2="14" y1="11" y2="11" />
+        </IconBase>
+      );
+      const LinkIcon = (props) => (
+        <IconBase {...props}>
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+        </IconBase>
+      );
 
       // --- Firebase Config ---
       const firebaseConfig = {
@@ -157,19 +179,63 @@
 
       // --- Themes Configuration ---
       const themes = {
-        plain: { name: "عادي", bgLight: "bg-gray-50", bgDark: "dark:bg-dark" },
-        stars: {
-          name: "فضاء",
-          bgLight: "bg-slate-100",
-          bgDark: "dark:bg-[#0B0D17]",
+        plain: {
+          name: "عادي",
+          bgLight: "bg-gray-50",
+          bgDark: "dark:bg-dark",
+          accent: "text-primary",
+        },
+        sepia: {
+          name: "ورقي (Sepia)",
+          bgLight: "bg-[#f4ecd8] text-slate-800",
+          bgDark: "dark:bg-[#463a2a] dark:text-[#f4ecd8]",
+          accent: "text-amber-600",
+          className: "theme-sepia",
+        },
+        ocean: {
+          name: "محيط (Ocean)",
+          bgLight: "bg-blue-50 text-slate-800",
+          bgDark: "dark:bg-[#0f172a] dark:text-blue-100",
+          accent: "text-blue-500",
+          className: "theme-ocean",
+        },
+        forest: {
+          name: "غابة (Forest)",
+          bgLight: "bg-[#f0fdf4] text-slate-800",
+          bgDark: "dark:bg-[#052e16] dark:text-green-100",
+          accent: "text-emerald-500",
+          className: "theme-forest",
+        },
+        midnight: {
+          name: "فضاء (Midnight)",
+          bgLight: "bg-indigo-50 text-slate-800",
+          bgDark: "dark:bg-[#0B0D17] dark:text-indigo-100",
+          accent: "text-indigo-500",
           className: "theme-stars",
         },
-        garden: {
-          name: "حديقة",
-          bgLight: "bg-[#F0FDF4]",
-          bgDark: "dark:bg-[#022C22]",
-          className: "theme-garden",
-        },
+      };
+
+      // --- Image Lightbox Component ---
+      const ImageModal = ({ src, onClose }) => {
+        if (!src) return null;
+        return (
+          <div
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-fade-in backdrop-blur-sm cursor-zoom-out"
+            onClick={onClose}
+          >
+            <img
+              src={src}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl scale-100 transition-transform duration-300"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+            >
+              <X size={24} />
+            </button>
+          </div>
+        );
       };
 
       // --- Tag Cloud Component ---
@@ -255,6 +321,9 @@
         const [currentTheme, setCurrentTheme] = useState("plain");
         const [showThemeMenu, setShowThemeMenu] = useState(false);
 
+        // Image Zoom State
+        const [zoomedImage, setZoomedImage] = useState(null);
+
         // Pagination & Filter State
         const [lastDoc, setLastDoc] = useState(null);
         const [loading, setLoading] = useState(false);
@@ -264,10 +333,35 @@
         // Tag Cloud State
         const [allTags, setAllTags] = useState({});
 
+        // Ref for content container to handle image clicks
+        const contentRef = useRef(null);
+
         useEffect(() => {
           if (darkMode) document.documentElement.classList.add("dark");
           else document.documentElement.classList.remove("dark");
         }, [darkMode]);
+
+        // --- Click Handler for Images in Markdown ---
+        useEffect(() => {
+          const handleClick = (e) => {
+            if (e.target.tagName === "IMG" && e.target.closest(".prose-rtl")) {
+              setZoomedImage(e.target.src);
+            }
+          };
+
+          // Attach event listener to document or specific container
+          document.addEventListener("click", handleClick);
+          return () => document.removeEventListener("click", handleClick);
+        }, []);
+
+        // --- Apply syntax highlighting ---
+        useEffect(() => {
+          if (activePost && contentRef.current) {
+            contentRef.current.querySelectorAll("pre code").forEach((block) => {
+              hljs.highlightElement(block);
+            });
+          }
+        }, [activePost]);
 
         // --- URL Routing Logic ---
         useEffect(() => {
@@ -344,6 +438,23 @@
           updateUrl(null);
         };
 
+        // --- COPY LINK FUNCTION ---
+        const handleCopyLink = (id, e) => {
+          if (e) e.stopPropagation();
+          // Base URL fixed for Github Pages deployment
+          const baseUrl =
+            "https://mabdullah821.github.io/tech-stories-archive/viewer.html";
+          const url = `${baseUrl}?id=${id}`;
+          navigator.clipboard
+            .writeText(url)
+            .then(() => {
+              alert("تم نسخ رابط المنشور بنجاح! 📋");
+            })
+            .catch((err) => {
+              console.error("Failed to copy: ", err);
+            });
+        };
+
         const handleTagSelection = (tag, reset = false) => {
           if (reset) {
             setSelectedTags([]);
@@ -369,9 +480,7 @@
           try {
             let query = db.collection("posts");
 
-            // Filter logic for multiple tags (OR logic client-side approximation or array-contains-any)
             if (selectedTags.length > 0) {
-              // Use array-contains-any to match ANY of the selected tags
               query = query.where("topics", "array-contains-any", selectedTags);
             }
 
@@ -464,6 +573,11 @@
             <div
               className={`min-h-screen pb-20 ${getThemeClass()} transition-colors duration-500`}
             >
+              <ImageModal
+                src={zoomedImage}
+                onClose={() => setZoomedImage(null)}
+              />
+
               {/* Header Overlay for Single Post */}
               <header className="fixed top-0 z-50 w-full p-4 pointer-events-none">
                 <div className="max-w-4xl mx-auto flex justify-between pointer-events-auto">
@@ -477,6 +591,7 @@
                     <button
                       onClick={() => setShowThemeMenu(!showThemeMenu)}
                       className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
+                      title="تغيير المظهر"
                     >
                       <Palette size={20} />
                     </button>
@@ -509,8 +624,9 @@
                   <img
                     src={activePost.coverImage}
                     className="w-full h-full object-cover"
+                    onClick={() => setZoomedImage(activePost.coverImage)}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-50/100 dark:from-dark to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-50/100 dark:from-dark to-transparent pointer-events-none"></div>
                   <div className="absolute top-4 right-4 z-20">
                     <button
                       onClick={handleBackToList}
@@ -537,13 +653,23 @@
                 )}
 
                 <article className="animate-fade-in bg-white/90 dark:bg-slate-800/90 p-6 md:p-8 rounded-2xl shadow-sm backdrop-blur-md relative group border border-gray-100 dark:border-gray-700">
-                  <button
-                    onClick={(e) => handleEditPost(activePost, e)}
-                    className="absolute top-4 left-4 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-emerald-600 transition-transform hover:scale-110 z-50 opacity-0 group-hover:opacity-100"
-                    title="تعديل هذا المقال"
-                  >
-                    <Edit size={18} />
-                  </button>
+                  {/* Action Buttons */}
+                  <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                    <button
+                      onClick={(e) => handleCopyLink(activePost.id, e)}
+                      className="bg-white text-gray-700 p-2 rounded-full shadow-lg hover:bg-gray-100 transition-transform hover:scale-110"
+                      title="نسخ رابط المقال"
+                    >
+                      <LinkIcon size={18} />
+                    </button>
+                    <button
+                      onClick={(e) => handleEditPost(activePost, e)}
+                      className="bg-primary text-white p-2 rounded-full shadow-lg hover:bg-emerald-600 transition-transform hover:scale-110"
+                      title="تعديل هذا المقال"
+                    >
+                      <Edit size={18} />
+                    </button>
+                  </div>
 
                   <div className="mb-8 border-b border-gray-100 dark:border-gray-700 pb-6">
                     {activePost.topics && (
@@ -579,6 +705,7 @@
                     </div>
                   </div>
                   <div
+                    ref={contentRef}
                     className="prose-rtl"
                     dangerouslySetInnerHTML={renderMarkdown(activePost.content)}
                   />
@@ -668,13 +795,23 @@
                     onClick={() => handlePostClick(post)}
                     className="group bg-white/90 dark:bg-slate-800/90 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col md:flex-row h-auto md:h-52 relative backdrop-blur-sm"
                   >
-                    <button
-                      onClick={(e) => handleEditPost(post, e)}
-                      className="absolute top-3 left-3 bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-all opacity-0 group-hover:opacity-100 z-10"
-                      title="تعديل سريع"
-                    >
-                      <Edit size={16} />
-                    </button>
+                    {/* Action Buttons in List View */}
+                    <div className="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <button
+                        onClick={(e) => handleCopyLink(post.id, e)}
+                        className="bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                        title="نسخ الرابط"
+                      >
+                        <LinkIcon size={16} />
+                      </button>
+                      <button
+                        onClick={(e) => handleEditPost(post, e)}
+                        className="bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                        title="تعديل سريع"
+                      >
+                        <Edit size={16} />
+                      </button>
+                    </div>
 
                     {post.coverImage && (
                       <div className="md:w-1/3 h-48 md:h-full overflow-hidden shrink-0">
@@ -778,6 +915,11 @@
         padding-right: 1.5em;
         margin-bottom: 1.2em;
       }
+      .prose-rtl ol {
+        list-style-type: decimal;
+        padding-right: 1.5em;
+        margin-bottom: 1.2em;
+      }
       .prose-rtl blockquote {
         border-right: 4px solid #10b981;
         padding-right: 1em;
@@ -797,6 +939,11 @@
         border-radius: 0.5rem;
         margin: 1.5rem auto;
         display: block;
+        cursor: zoom-in;
+        transition: transform 0.2s;
+      }
+      .prose-rtl img:hover {
+        transform: scale(1.01);
       }
       .prose-rtl pre {
         direction: ltr;

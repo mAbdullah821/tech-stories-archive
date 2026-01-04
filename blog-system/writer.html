@@ -3,13 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>المحرر المطور - Writer Pro v22 (Auto-Auth)</title>
+    <title>المحرر المطور - Writer Pro v24 (Copy Code)</title>
 
     <!-- Fonts & Tailwind -->
     <link
       href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+    />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -26,7 +31,6 @@
       };
     </script>
 
-    <!-- React & Babel -->
     <script
       crossorigin
       src="https://unpkg.com/react@18/umd/react.development.js"
@@ -37,6 +41,7 @@
     ></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -252,8 +257,8 @@
       );
       const Settings = (props) => (
         <IconBase {...props}>
-          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
           <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </IconBase>
       );
       const CheckCircle = (props) => (
@@ -286,6 +291,31 @@
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </IconBase>
       );
+      const AlignLeft = (props) => (
+        <IconBase {...props}>
+          <line x1="17" x2="3" y1="12" y2="12" />
+          <line x1="21" x2="3" y1="6" y2="6" />
+          <line x1="21" x2="3" y1="18" y2="18" />
+        </IconBase>
+      );
+      const AlignRight = (props) => (
+        <IconBase {...props}>
+          <line x1="21" x2="7" y1="12" y2="12" />
+          <line x1="21" x2="3" y1="6" y2="6" />
+          <line x1="21" x2="3" y1="18" y2="18" />
+        </IconBase>
+      );
+      const Copy = (props) => (
+        <IconBase {...props}>
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+        </IconBase>
+      );
+      const Check = (props) => (
+        <IconBase {...props}>
+          <path d="M20 6 9 17l-5-5" />
+        </IconBase>
+      );
 
       // --- Utils ---
       const getContrastColor = (hexcolor) => {
@@ -297,7 +327,7 @@
         return yiq >= 128 ? "#000000" : "#ffffff";
       };
 
-      // --- Settings Modal (Expanded) ---
+      // --- Settings Modal ---
       const SettingsModal = ({ isOpen, onClose, currentImgbbKey }) => {
         const [localImgbbKey, setLocalImgbbKey] = useState(currentImgbbKey);
         const [localEmail, setLocalEmail] = useState(
@@ -313,7 +343,6 @@
           localStorage.setItem("imgbb_key", localImgbbKey);
           if (localEmail) localStorage.setItem("saved_email", localEmail);
           if (localPass) localStorage.setItem("saved_pass", localPass);
-
           alert("تم حفظ الإعدادات وبيانات الدخول.");
           window.location.reload();
         };
@@ -329,9 +358,7 @@
                   <X size={24} />
                 </button>
               </div>
-
               <div className="space-y-6">
-                {/* ImgBB Section */}
                 <div>
                   <label className="block text-sm font-bold text-gray-500 mb-2 flex items-center gap-2">
                     <ImageIcon size={16} /> مفتاح ImgBB API
@@ -344,10 +371,7 @@
                     placeholder="API Key"
                   />
                 </div>
-
                 <div className="h-px bg-gray-200 dark:bg-gray-700 my-4"></div>
-
-                {/* Saved Credentials Section */}
                 <div>
                   <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
                     <Key size={18} /> بيانات الدخول المحفوظة
@@ -355,14 +379,13 @@
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1">
-                        البريد الإلكتروني (Firebase Auth)
+                        البريد الإلكتروني
                       </label>
                       <input
                         type="email"
                         value={localEmail}
                         onChange={(e) => setLocalEmail(e.target.value)}
                         className="w-full p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none ltr"
-                        placeholder="admin@example.com"
                       />
                     </div>
                     <div>
@@ -374,16 +397,10 @@
                         value={localPass}
                         onChange={(e) => setLocalPass(e.target.value)}
                         className="w-full p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none ltr"
-                        placeholder="********"
                       />
                     </div>
-                    <p className="text-[10px] text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded">
-                      تنبيه: يتم حفظ كلمة المرور في المتصفح (LocalStorage)
-                      لتسهيل الدخول. تأكد من أنك تستخدم جهازاً آمناً.
-                    </p>
                   </div>
                 </div>
-
                 <button
                   onClick={handleSave}
                   className="w-full bg-primary hover:bg-emerald-600 text-white py-3 rounded-xl font-bold transition-all shadow-lg"
@@ -552,17 +569,23 @@
         );
       };
 
-      const TextBlock = ({ content, onChange }) => (
-        <textarea
-          value={content}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="اكتب هنا... (Markdown)"
-          className="w-full min-h-[120px] p-3 bg-transparent outline-none resize-y font-mono text-sm leading-relaxed"
-          style={{ direction: "rtl" }}
-        />
-      );
+      const TextBlock = ({ content, dir, onChange, onDirChange }) => {
+        return (
+          <div className="relative group">
+            <textarea
+              value={content}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder="اكتب هنا... (Markdown)"
+              className="w-full min-h-[120px] p-3 pt-8 bg-transparent outline-none resize-y font-mono text-sm leading-relaxed focus:bg-gray-50/50 dark:focus:bg-slate-800/50 rounded-lg transition-colors"
+              style={{
+                direction: dir || "rtl",
+                textAlign: dir === "ltr" ? "left" : "right",
+              }}
+            />
+          </div>
+        );
+      };
 
-      // --- Post List Modal ---
       const PostListModal = ({ isOpen, onClose, onSelect }) => {
         const [postsList, setPostsList] = useState([]);
         const [loading, setLoading] = useState(false);
@@ -641,7 +664,7 @@
                           <div className="flex gap-1 mt-1 text-[10px]">
                             {post.topics?.slice(0, 3).map((t, i) => (
                               <span
-                                key={i}
+                                key={t}
                                 className="bg-primary/10 text-primary px-1.5 py-0.5 rounded"
                               >
                                 #{t}
@@ -674,10 +697,23 @@
       const AuthScreen = ({ onLogin, onOpenSettings }) => {
         const [email, setEmail] = useState("");
         const [password, setPassword] = useState("");
+        const [apiKey, setApiKey] = useState("");
         const [error, setError] = useState("");
         const [loading, setLoading] = useState(false);
+        const handleLogin = async (e) => {
+          e.preventDefault();
+          if (!apiKey.trim()) return setError("مفتاح ImgBB مطلوب");
+          setLoading(true);
+          setError("");
+          try {
+            await auth.signInWithEmailAndPassword(email, password);
+            onLogin(apiKey);
+          } catch (err) {
+            setError("فشل تسجيل الدخول.");
+            setLoading(false);
+          }
+        };
 
-        // Auto-fill logic
         useEffect(() => {
           const savedEmail = localStorage.getItem("saved_email");
           const savedPass = localStorage.getItem("saved_pass");
@@ -685,23 +721,8 @@
           if (savedPass) setPassword(savedPass);
         }, []);
 
-        const handleLogin = async (e) => {
-          e.preventDefault();
-          setLoading(true);
-          setError("");
-          try {
-            await auth.signInWithEmailAndPassword(email, password);
-            const apiKey = localStorage.getItem("imgbb_key");
-            onLogin(apiKey || "");
-          } catch (err) {
-            setError("فشل تسجيل الدخول. تأكد من البيانات.");
-            setLoading(false);
-          }
-        };
-
         return (
           <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-dark p-4 relative">
-            {/* Settings Trigger for First Run */}
             <button
               onClick={onOpenSettings}
               className="absolute top-6 left-6 p-2 bg-white dark:bg-surface rounded-full shadow text-gray-500 hover:text-primary transition-colors"
@@ -709,7 +730,6 @@
             >
               <Settings size={24} />
             </button>
-
             <div className="bg-white dark:bg-surface p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-700">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-primary mb-2">
@@ -740,7 +760,6 @@
                     required
                   />
                 </div>
-
                 {error && (
                   <p className="text-red-500 text-sm bg-red-50 p-2 rounded border border-red-100">
                     {error}
@@ -770,7 +789,7 @@
         const [topics, setTopics] = useState([]);
         const [tagInput, setTagInput] = useState("");
         const [blocks, setBlocks] = useState([
-          { id: "1", type: "text", content: "" },
+          { id: "1", type: "text", content: "", dir: "rtl" },
         ]);
 
         const [isSaving, setIsSaving] = useState(false);
@@ -782,6 +801,9 @@
         const [imgbbApiKey, setImgbbApiKey] = useState(
           () => localStorage.getItem("imgbb_key") || ""
         );
+
+        // Ref for code highlighting
+        const previewRef = useRef(null);
 
         useEffect(() => {
           const unsubscribe = auth.onAuthStateChanged((u) => {
@@ -813,6 +835,40 @@
           else document.documentElement.classList.remove("dark");
         }, [darkMode]);
 
+        // Syntax Highlight Effect for Preview & Copy Button
+        useEffect(() => {
+          if (previewRef.current) {
+            previewRef.current.querySelectorAll("pre code").forEach((block) => {
+              hljs.highlightElement(block);
+            });
+
+            // Inject Copy Buttons
+            previewRef.current.querySelectorAll("pre").forEach((preBlock) => {
+              if (preBlock.querySelector(".copy-code-btn")) return;
+
+              const button = document.createElement("button");
+              button.className =
+                "copy-code-btn absolute top-2 right-2 bg-gray-700/50 hover:bg-gray-700 text-gray-300 p-1 rounded text-xs transition-all opacity-0 group-hover:opacity-100 z-10";
+              button.innerHTML =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+              button.title = "نسخ الكود";
+
+              button.addEventListener("click", () => {
+                const code = preBlock.querySelector("code").innerText;
+                navigator.clipboard.writeText(code).then(() => {
+                  button.innerHTML =
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+                  setTimeout(() => {
+                    button.innerHTML =
+                      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+                  }, 2000);
+                });
+              });
+              preBlock.appendChild(button);
+            });
+          }
+        }, [viewMode, blocks, title, coverImage]);
+
         const handleAuthSuccess = (key) => {
           setImgbbApiKey(key);
           sessionStorage.setItem("imgbb_key", key);
@@ -831,18 +887,21 @@
           setTitle(post.title || "");
           setCoverImage(post.coverImage || "");
           setTopics(post.topics || []);
-          setBlocks(
+          const loadedBlocks = (
             post.blocks ||
-              (post.content
-                ? [
-                    {
-                      id: crypto.randomUUID(),
-                      type: "text",
-                      content: post.content,
-                    },
-                  ]
-                : [])
+            (post.content
+              ? [
+                  {
+                    id: crypto.randomUUID(),
+                    type: "text",
+                    content: post.content,
+                  },
+                ]
+              : [])
+          ).map((b) =>
+            b.type === "text" && !b.dir ? { ...b, dir: "rtl" } : b
           );
+          setBlocks(loadedBlocks);
           setShowLoadModal(false);
         };
 
@@ -871,11 +930,18 @@
                       textColorMode: "auto",
                     }
                   : "",
+              dir: "rtl",
             },
           ]);
         const updateBlock = (id, val) =>
           setBlocks(
             blocks.map((b) => (b.id === id ? { ...b, content: val } : b))
+          );
+        const updateBlockDir = (id) =>
+          setBlocks(
+            blocks.map((b) =>
+              b.id === id ? { ...b, dir: b.dir === "ltr" ? "rtl" : "ltr" } : b
+            )
           );
         const removeBlock = (id) =>
           setBlocks(blocks.filter((b) => b.id !== id));
@@ -945,6 +1011,12 @@
           setIsSaving(true);
           const fullContent = blocks
             .map((b) => {
+              if (b.type === "text") {
+                if (b.dir === "ltr") {
+                  return `\n<div dir="ltr" style="text-align: left;">\n\n${b.content}\n\n</div>\n`;
+                }
+                return `\n${b.content}\n`;
+              }
               if (b.type === "image")
                 return b.content ? `\n![Image](${b.content})\n` : "";
               if (b.type === "button") {
@@ -1022,7 +1094,14 @@
             setTitle("");
             setCoverImage("");
             setTopics([]);
-            setBlocks([{ id: crypto.randomUUID(), type: "text", content: "" }]);
+            setBlocks([
+              {
+                id: crypto.randomUUID(),
+                type: "text",
+                content: "",
+                dir: "rtl",
+              },
+            ]);
             window.history.pushState({}, "", window.location.pathname);
           }
         };
@@ -1030,6 +1109,12 @@
         const renderPreview = () => {
           const body = blocks
             .map((b) => {
+              if (b.type === "text") {
+                if (b.dir === "ltr") {
+                  return `\n<div dir="ltr" style="text-align: left;">\n\n${b.content}\n\n</div>\n`;
+                }
+                return `\n${b.content}\n`;
+              }
               if (b.type === "image")
                 return b.content ? `\n![Image](${b.content})\n` : "";
               if (b.type === "button") {
@@ -1056,9 +1141,6 @@
               <Loader className="w-8 h-8" />
             </div>
           );
-
-        // Allow settings modal to be shown on auth screen too if needed via a state passed down?
-        // For simplicity, we keep AuthScreen clean but add the settings button there.
         if (!user)
           return (
             <>
@@ -1276,9 +1358,30 @@
                         <GripVertical size={16} />
                       </div>
                       <div className="flex justify-between items-center px-4 py-2 border-b border-gray-100 dark:border-gray-700 mr-8">
-                        <span className="text-xs font-bold text-gray-400">
-                          {block.type}
+                        <span className="text-xs font-bold text-gray-400 flex items-center gap-2">
+                          {block.type === "text" && <Type size={14} />}
+                          {block.type === "image" && <ImageIcon size={14} />}
+                          {block.type === "button" && <LinkIcon size={14} />}
+                          {block.type === "text"
+                            ? "نص"
+                            : block.type === "image"
+                            ? "صورة"
+                            : "زر"}
                         </span>
+                        {/* Alignment Button for Text Blocks Moved Here */}
+                        {block.type === "text" && (
+                          <button
+                            onClick={() => updateBlockDir(block.id)}
+                            title="تغيير اتجاه النص"
+                            className="text-gray-500 hover:text-primary p-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                          >
+                            {block.dir === "ltr" ? (
+                              <AlignRight size={14} />
+                            ) : (
+                              <AlignLeft size={14} />
+                            )}
+                          </button>
+                        )}
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => handleMoveUp(index)}
@@ -1306,6 +1409,7 @@
                         {block.type === "text" && (
                           <TextBlock
                             content={block.content}
+                            dir={block.dir}
                             onChange={(val) => updateBlock(block.id, val)}
                           />
                         )}
@@ -1382,6 +1486,7 @@
                     )}
                     <div className="w-full h-px bg-gray-200 dark:bg-gray-700 my-8"></div>
                     <div
+                      ref={previewRef}
                       className="prose-rtl"
                       dangerouslySetInnerHTML={{ __html: renderPreview() }}
                     ></div>
@@ -1397,7 +1502,6 @@
       root.render(<App />);
     </script>
     <style>
-      /* Enhanced Typography for Accurate Preview */
       .prose-rtl {
         direction: rtl;
         text-align: right;
@@ -1465,17 +1569,23 @@
         display: block;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       }
+
+      /* Code Block Styling - Ensure relative pos for button */
       .prose-rtl pre {
+        position: relative;
         direction: ltr;
         text-align: left;
-        background: #1e293b;
-        color: #e2e8f0;
+        background: #282c34;
         padding: 1.5rem;
         border-radius: 0.75rem;
         overflow-x: auto;
         margin-bottom: 1.5em;
         font-family: "Fira Code", monospace;
         font-size: 0.9em;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+      }
+      .prose-rtl pre:hover .copy-code-btn {
+        opacity: 1;
       }
       .prose-rtl code {
         direction: ltr;
@@ -1491,10 +1601,21 @@
         background: #334155;
         color: #f472b6;
       }
+      .prose-rtl pre code {
+        background: transparent;
+        color: inherit;
+        padding: 0;
+        display: inline;
+      }
+
+      /* Link Styling */
       .prose-rtl a {
         color: #10b981;
         text-decoration: underline;
         font-weight: 500;
+      }
+      .prose-rtl a.no-underline {
+        text-decoration: none !important;
       }
       .prose-rtl strong {
         color: #0f172a;
@@ -1503,7 +1624,6 @@
       .dark .prose-rtl strong {
         color: #f1f5f9;
       }
-
       .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
       }
