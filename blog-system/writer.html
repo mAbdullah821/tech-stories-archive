@@ -313,6 +313,13 @@
           <line x1="21" x2="3" y1="18" y2="18" />
         </IconBase>
       );
+      const LogOut = (props) => (
+        <IconBase {...props}>
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" x2="9" y1="12" y2="12" />
+        </IconBase>
+      );
 
       // --- Utils ---
       const getContrastColor = (hexcolor) => {
@@ -325,24 +332,19 @@
       };
 
       // --- Settings Modal ---
-      const SettingsModal = ({ isOpen, onClose, currentImgbbKey }) => {
+      const SettingsModal = ({ isOpen, onClose, currentImgbbKey, user }) => {
         const [localImgbbKey, setLocalImgbbKey] = useState(currentImgbbKey);
-        const [localEmail, setLocalEmail] = useState(
-          localStorage.getItem("saved_email") || ""
-        );
-        const [localPass, setLocalPass] = useState(
-          localStorage.getItem("saved_pass") || ""
-        );
+        const savedEmail = localStorage.getItem("saved_email") || "";
+        const savedPass = localStorage.getItem("saved_pass") ? "••••••••" : "";
 
         if (!isOpen) return null;
 
         const handleSave = () => {
           localStorage.setItem("imgbb_key", localImgbbKey);
-          if (localEmail) localStorage.setItem("saved_email", localEmail);
-          if (localPass) localStorage.setItem("saved_pass", localPass);
-
-          alert("تم حفظ الإعدادات وبيانات الدخول.");
-          window.location.reload();
+          alert("تم حفظ مفتاح ImgBB API.");
+          onClose();
+          // تحديث imgbbApiKey بدون إعادة تحميل الصفحة
+          window.dispatchEvent(new Event("imgbbKeyUpdated"));
         };
 
         return (
@@ -368,50 +370,75 @@
                     value={localImgbbKey}
                     onChange={(e) => setLocalImgbbKey(e.target.value)}
                     className="w-full p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none ltr"
-                    placeholder="API Key"
+                    placeholder="أدخل مفتاح ImgBB API (اختياري)"
                   />
+                  <p className="text-xs text-gray-400 mt-2">
+                    مفتاح ImgBB API اختياري. يمكنك الحصول عليه من{" "}
+                    <a
+                      href="https://api.imgbb.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      imgbb.com
+                    </a>
+                  </p>
                 </div>
 
-                <div className="h-px bg-gray-200 dark:bg-gray-700 my-4"></div>
+                {user && (
+                  <>
+                    <div className="h-px bg-gray-200 dark:bg-gray-700 my-4"></div>
 
-                {/* Saved Credentials Section */}
-                <div>
-                  <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
-                    <Key size={18} /> بيانات الدخول المحفوظة
-                  </h4>
-                  <div className="space-y-4">
+                    {/* Account Info Section - للقراءة فقط */}
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1">
-                        البريد الإلكتروني (Firebase Auth)
-                      </label>
-                      <input
-                        type="email"
-                        value={localEmail}
-                        onChange={(e) => setLocalEmail(e.target.value)}
-                        className="w-full p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none ltr"
-                        placeholder="admin@example.com"
-                      />
+                      <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
+                        <Key size={18} /> معلومات الحساب
+                      </h4>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-400 mb-1">
+                            البريد الإلكتروني
+                          </label>
+                          <input
+                            type="email"
+                            value={user.email || savedEmail}
+                            disabled
+                            className="w-full p-3 bg-gray-100 dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg outline-none ltr cursor-not-allowed opacity-70"
+                            readOnly
+                          />
+                          <p className="text-xs text-gray-400 mt-1">
+                            لا يمكن تعديل البريد الإلكتروني. لتغيير الحساب، قم
+                            بتسجيل الخروج.
+                          </p>
+                        </div>
+                        {savedPass && (
+                          <div>
+                            <label className="block text-xs font-bold text-gray-400 mb-1">
+                              كلمة المرور
+                            </label>
+                            <input
+                              type="text"
+                              value={savedPass}
+                              disabled
+                              className="w-full p-3 bg-gray-100 dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg outline-none cursor-not-allowed opacity-70"
+                              readOnly
+                            />
+                            <p className="text-xs text-gray-400 mt-1">
+                              لا يمكن تعديل كلمة المرور. لتغيير الحساب، قم
+                              بتسجيل الخروج.
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1">
-                        كلمة المرور
-                      </label>
-                      <input
-                        type="password"
-                        value={localPass}
-                        onChange={(e) => setLocalPass(e.target.value)}
-                        className="w-full p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none ltr"
-                        placeholder="********"
-                      />
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
 
                 <button
                   onClick={handleSave}
                   className="w-full bg-primary hover:bg-emerald-600 text-white py-3 rounded-xl font-bold transition-all shadow-lg"
                 >
-                  حفظ وإعادة تشغيل
+                  حفظ مفتاح ImgBB
                 </button>
               </div>
             </div>
@@ -432,7 +459,12 @@
         const handleFileChange = async (e) => {
           const file = e.target.files[0];
           if (!file) return;
-          if (!imgbbApiKey) return alert("يرجى إعداد مفتاح ImgBB API.");
+          if (!imgbbApiKey) {
+            alert(
+              "مفتاح ImgBB API غير موجود. يرجى إضافته من الإعدادات (⚙️) في شريط الأدوات."
+            );
+            return;
+          }
           if (file.size > 5 * 1024 * 1024) return alert("الصورة كبيرة جداً.");
           setUploading(true);
           try {
@@ -704,19 +736,19 @@
       const AuthScreen = ({ onLogin, onOpenSettings }) => {
         const [email, setEmail] = useState("");
         const [password, setPassword] = useState("");
-        const [apiKey, setApiKey] = useState("");
         const [error, setError] = useState("");
         const [loading, setLoading] = useState(false);
         const handleLogin = async (e) => {
           e.preventDefault();
-          if (!apiKey.trim()) return setError("مفتاح ImgBB مطلوب");
           setLoading(true);
           setError("");
           try {
             await auth.signInWithEmailAndPassword(email, password);
-            onLogin(apiKey);
+            onLogin();
           } catch (err) {
-            setError("فشل تسجيل الدخول.");
+            setError(
+              "فشل تسجيل الدخول: " + (err.message || "يرجى التحقق من البيانات")
+            );
             setLoading(false);
           }
         };
@@ -869,9 +901,23 @@
               const params = new URLSearchParams(window.location.search);
               const idFromUrl = params.get("id");
               if (idFromUrl) loadPostById(idFromUrl);
+              // قراءة imgbbApiKey من localStorage عند تسجيل الدخول
+              const savedKey = localStorage.getItem("imgbb_key") || "";
+              setImgbbApiKey(savedKey);
             }
           });
           return () => unsubscribe();
+        }, []);
+
+        // تحديث imgbbApiKey عند الحفظ من الإعدادات
+        useEffect(() => {
+          const handleKeyUpdate = () => {
+            const savedKey = localStorage.getItem("imgbb_key") || "";
+            setImgbbApiKey(savedKey);
+          };
+          window.addEventListener("imgbbKeyUpdated", handleKeyUpdate);
+          return () =>
+            window.removeEventListener("imgbbKeyUpdated", handleKeyUpdate);
         }, []);
 
         useEffect(() => {
@@ -969,9 +1015,41 @@
           }
         }, [viewMode, blocks, title, coverImage]);
 
-        const handleAuthSuccess = (key) => {
-          setImgbbApiKey(key);
-          sessionStorage.setItem("imgbb_key", key);
+        const handleAuthSuccess = () => {
+          // قراءة imgbbApiKey من localStorage بعد تسجيل الدخول
+          const savedKey = localStorage.getItem("imgbb_key") || "";
+          setImgbbApiKey(savedKey);
+        };
+
+        const handleLogout = async () => {
+          if (
+            !confirm(
+              "هل أنت متأكد من تسجيل الخروج؟ سيتم مسح جميع البيانات المحفوظة."
+            )
+          ) {
+            return;
+          }
+
+          try {
+            // تسجيل الخروج من Firebase
+            await auth.signOut();
+
+            // مسح جميع البيانات من localStorage (باستثناء imgbb_key)
+            const imgbbKey = localStorage.getItem("imgbb_key");
+            localStorage.clear();
+            if (imgbbKey) {
+              localStorage.setItem("imgbb_key", imgbbKey);
+            }
+
+            // مسح sessionStorage
+            sessionStorage.clear();
+
+            // إعادة تحميل الصفحة
+            window.location.reload();
+          } catch (error) {
+            console.error("Error signing out:", error);
+            alert("حدث خطأ أثناء تسجيل الخروج");
+          }
         };
         const loadPostById = async (id) => {
           try {
@@ -1361,6 +1439,7 @@
                 isOpen={showSettings}
                 onClose={() => setShowSettings(false)}
                 currentImgbbKey={imgbbApiKey}
+                user={user}
               />
             </>
           );
@@ -1422,6 +1501,13 @@
                     title="الإعدادات"
                   >
                     <Settings size={18} />
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 p-2 rounded-lg"
+                    title="تسجيل الخروج"
+                  >
+                    <LogOut size={18} />
                   </button>
                   <button
                     onClick={() => setShowLoadModal(true)}
