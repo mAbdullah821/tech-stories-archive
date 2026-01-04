@@ -9,7 +9,7 @@
       href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <!-- Highlight.js CSS for Code Coloring (Atom One Dark) -->
+    <!-- Highlight.js CSS for Code Coloring -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
@@ -249,7 +249,7 @@
         );
       };
 
-      // --- Tag Cloud Component ---
+      // --- Tag Cloud Component (Header) ---
       const TagCloud = ({ tags, selectedTags, onSelectTag }) => {
         const [isExpanded, setIsExpanded] = useState(false);
         const sortedTags = Object.entries(tags).sort((a, b) => b[1] - a[1]);
@@ -317,6 +317,54 @@
                   <>
                     <span>عرض المزيد ({sortedTags.length - 10}+)</span>{" "}
                     <ChevronDown size={14} />
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        );
+      };
+
+      // --- Single Post Tags Component ---
+      const PostTags = ({ topics, onSelectTag }) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+
+        if (!topics || topics.length === 0) return null;
+
+        // Limit to 3 lines (approx 15 tags if avg width allows, but here we do simple slicing for demo logic,
+        // a true line clamp needs CSS or measurement. Let's assume 10-12 tags fit in 3 lines comfortably on mobile)
+        const VISIBLE_COUNT = 15;
+        const showExpandButton = topics.length > VISIBLE_COUNT;
+        const displayedTags = isExpanded
+          ? topics
+          : topics.slice(0, VISIBLE_COUNT);
+
+        return (
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              {displayedTags.map((tag, i) => (
+                <span
+                  key={i}
+                  onClick={() => onSelectTag && onSelectTag(tag)}
+                  className={`cursor-pointer px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full hover:bg-primary hover:text-white transition-colors`}
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+            {showExpandButton && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="mt-2 text-xs font-bold text-gray-500 hover:text-primary flex items-center gap-1"
+              >
+                {isExpanded ? (
+                  <>
+                    عرض أقل <ChevronUp size={12} />
+                  </>
+                ) : (
+                  <>
+                    عرض المزيد (+{topics.length - VISIBLE_COUNT}){" "}
+                    <ChevronDown size={12} />
                   </>
                 )}
               </button>
@@ -712,23 +760,14 @@
                   </div>
 
                   <div className="mb-8 border-b border-gray-100 dark:border-gray-700 pb-6">
-                    {activePost.topics && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {activePost.topics.map((tag, i) => (
-                          <span
-                            key={i}
-                            onClick={() => {
-                              setActivePost(null);
-                              handleTagSelection(tag, true);
-                              handleTagSelection(tag);
-                            }}
-                            className="cursor-pointer px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full hover:bg-primary hover:text-white transition-colors"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    <PostTags
+                      topics={activePost.topics}
+                      onSelectTag={(tag) => {
+                        setActivePost(null);
+                        handleTagSelection(tag, true);
+                        handleTagSelection(tag);
+                      }}
+                    />
                     <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
                       {activePost.title}
                     </h1>
@@ -863,28 +902,35 @@
                       </div>
                     )}
                     <div className="p-6 flex-1 flex flex-col justify-center">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {post.topics?.slice(0, 3).map((t, i) => (
-                          <span
-                            key={i}
-                            className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold"
-                          >
-                            #{t}
-                          </span>
-                        ))}
-                      </div>
                       <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2">
                         {post.title}
                       </h2>
                       <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
                         {post.excerpt}
                       </p>
-                      <div className="mt-auto text-xs text-gray-400 font-medium">
-                        {post.createdAt
-                          ? new Date(
-                              post.createdAt.toDate()
-                            ).toLocaleDateString("ar-EG")
-                          : "الآن"}
+                      <div className="mt-auto w-full flex justify-between items-center">
+                        <div className="flex gap-1 overflow-hidden max-w-[70%]">
+                          {post.topics?.slice(0, 3).map((t, i) => (
+                            <span
+                              key={i}
+                              className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold whitespace-nowrap"
+                            >
+                              #{t}
+                            </span>
+                          ))}
+                          {post.topics?.length > 3 && (
+                            <span className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded font-bold">
+                              +{post.topics.length - 3}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-400 font-medium">
+                          {post.createdAt
+                            ? new Date(
+                                post.createdAt.toDate()
+                              ).toLocaleDateString("ar-EG")
+                            : "الآن"}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -987,7 +1033,6 @@
       }
 
       /* Code Block Styling - Ensure relative pos for button */
-      /* Updated CSS Selectors for Code */
       .prose-rtl :not(pre) > code {
         direction: ltr;
         display: inline-block;
