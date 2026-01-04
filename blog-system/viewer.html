@@ -3,7 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta Tags -->
     <title>Tech Stories Archive</title>
+    <meta
+      name="description"
+      content="ارشيف حكاوي واحد غاوي - رحلة في كواليس البرمجه وتجارب الBackend"
+    />
+
+    <!-- Open Graph / Facebook / Discord / Slack -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://mabdullah821.github.io/tech-stories-archive/viewer.html"
+    />
+    <meta property="og:title" content="Tech Stories Archive" />
+    <meta
+      property="og:description"
+      content="ارشيف حكاوي واحد غاوي - رحلة في كواليس البرمجه وتجارب الBackend"
+    />
+    <meta
+      property="og:image"
+      content="https://i.ibb.co/mV5zgzKz/Gemini-Generated-Image-3fa5kg3fa5kg3fa5.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:locale" content="ar_EG" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tech Stories Archive" />
+    <meta
+      name="twitter:description"
+      content="ارشيف حكاوي واحد غاوي - رحلة في كواليس البرمجه وتجارب الBackend"
+    />
+    <meta
+      name="twitter:image"
+      content="https://i.ibb.co/mV5zgzKz/Gemini-Generated-Image-3fa5kg3fa5kg3fa5.png"
+    />
 
     <link
       href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@300;400;500;700;800&display=swap"
@@ -177,6 +215,14 @@
       const Check = (props) => (
         <IconBase {...props}>
           <path d="M20 6 9 17l-5-5" />
+        </IconBase>
+      );
+      const Layout = (props) => (
+        <IconBase {...props}>
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
         </IconBase>
       );
 
@@ -393,6 +439,7 @@
         const [darkMode, setDarkMode] = useState(true);
         const [currentTheme, setCurrentTheme] = useState("midnight");
         const [showThemeMenu, setShowThemeMenu] = useState(false);
+        const [showDisplayMenu, setShowDisplayMenu] = useState(false);
 
         // Image Zoom State
         const [zoomedImage, setZoomedImage] = useState(null);
@@ -405,6 +452,9 @@
 
         // Tag Cloud State
         const [allTags, setAllTags] = useState({});
+
+        // Copy Link State
+        const [copiedPostId, setCopiedPostId] = useState(null);
 
         // Ref for content container
         const contentRef = useRef(null);
@@ -459,6 +509,18 @@
           document.addEventListener("click", handleClick);
           return () => document.removeEventListener("click", handleClick);
         }, []);
+
+        // --- Close Display Menu when clicking outside ---
+        useEffect(() => {
+          const handleClickOutside = (e) => {
+            if (showDisplayMenu && !e.target.closest("[data-display-menu]")) {
+              setShowDisplayMenu(false);
+            }
+          };
+          document.addEventListener("click", handleClickOutside);
+          return () =>
+            document.removeEventListener("click", handleClickOutside);
+        }, [showDisplayMenu]);
 
         // --- Syntax Highlighting & Copy Button Injection ---
         useEffect(() => {
@@ -587,7 +649,10 @@
           navigator.clipboard
             .writeText(url)
             .then(() => {
-              alert("تم نسخ رابط المنشور بنجاح! 📋");
+              setCopiedPostId(id);
+              setTimeout(() => {
+                setCopiedPostId(null);
+              }, 2000);
             })
             .catch((err) => {
               console.error("Failed to copy: ", err);
@@ -722,48 +787,110 @@
                 <div className="max-w-4xl mx-auto flex justify-between items-center pointer-events-auto">
                   <button
                     onClick={handleBackToList}
-                    className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-white hover:bg-white dark:hover:bg-black/70"
+                    className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-white hover:bg-white dark:hover:bg-black/70 border border-gray-200 dark:border-transparent"
                     title="العودة للقائمة"
                   >
                     <ArrowRight size={18} />{" "}
                     <span className="hidden sm:inline">عودة</span>
                   </button>
                   <div className="flex gap-2 items-center">
-                    <div className="relative">
+                    {/* Desktop Display Settings - تظهر فقط على الشاشات الكبيرة */}
+                    <div className="hidden md:flex gap-2 items-center">
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowThemeMenu(!showThemeMenu)}
+                          className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors border border-gray-200 dark:border-transparent"
+                          title="تغيير المظهر"
+                        >
+                          <Palette size={20} />
+                        </button>
+                        {showThemeMenu && (
+                          <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
+                            {Object.entries(themes).map(([key, t]) => (
+                              <button
+                                key={key}
+                                onClick={() => {
+                                  setCurrentTheme(key);
+                                  setShowThemeMenu(false);
+                                }}
+                                className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
+                                  currentTheme === key
+                                    ? "text-primary font-bold"
+                                    : ""
+                                }`}
+                              >
+                                {t.name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       <button
-                        onClick={() => setShowThemeMenu(!showThemeMenu)}
-                        className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
-                        title="تغيير المظهر"
+                        onClick={() => setDarkMode(!darkMode)}
+                        className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors border border-gray-200 dark:border-transparent"
+                        title={darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
                       >
-                        <Palette size={20} />
+                        {darkMode ? <Sun size={20} /> : <Moon size={20} />}
                       </button>
-                      {showThemeMenu && (
-                        <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
-                          {Object.entries(themes).map(([key, t]) => (
-                            <button
-                              key={key}
-                              onClick={() => {
-                                setCurrentTheme(key);
-                                setShowThemeMenu(false);
-                              }}
-                              className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
-                                currentTheme === key
-                                  ? "text-primary font-bold"
-                                  : ""
-                              }`}
-                            >
-                              {t.name}
-                            </button>
-                          ))}
+                    </div>
+
+                    {/* Mobile Display Settings Button - يظهر فقط على الشاشات الصغيرة */}
+                    <div className="relative md:hidden" data-display-menu>
+                      <button
+                        onClick={() => setShowDisplayMenu(!showDisplayMenu)}
+                        className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors border border-gray-200 dark:border-transparent"
+                        title="إعدادات المظهر"
+                      >
+                        <Layout size={20} />
+                      </button>
+                      {showDisplayMenu && (
+                        <div
+                          className="absolute top-12 left-0 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-[100] flex flex-col gap-2"
+                          data-display-menu
+                        >
+                          <div className="flex items-center gap-2 px-2 py-1 border-b border-gray-200 dark:border-gray-700 mb-1">
+                            <Layout size={16} />
+                            <span className="text-xs font-bold text-gray-500">
+                              إعدادات المظهر
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => setDarkMode(!darkMode)}
+                            className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-right"
+                          >
+                            <span className="font-bold text-sm">
+                              {darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
+                            </span>
+                            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                          </button>
+                          <div className="h-px bg-gray-200 dark:bg-gray-700 my-1"></div>
+                          <div>
+                            <div className="text-xs font-bold text-gray-500 px-2 py-1 mb-1">
+                              السمات
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              {Object.entries(themes).map(([key, t]) => (
+                                <button
+                                  key={key}
+                                  onClick={() => {
+                                    setCurrentTheme(key);
+                                    setShowDisplayMenu(false);
+                                  }}
+                                  className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 flex items-center justify-between ${
+                                    currentTheme === key
+                                      ? "text-primary font-bold bg-primary/10"
+                                      : ""
+                                  }`}
+                                >
+                                  <span>{t.name}</span>
+                                  {currentTheme === key && <Check size={14} />}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
-                    <button
-                      onClick={() => setDarkMode(!darkMode)}
-                      className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors"
-                    >
-                      {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
                   </div>
                 </div>
               </header>
@@ -789,10 +916,22 @@
                   <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
                     <button
                       onClick={(e) => handleCopyLink(activePost.id, e)}
-                      className="bg-white text-gray-700 p-2 rounded-full shadow-lg hover:bg-gray-100 transition-transform hover:scale-110"
-                      title="نسخ رابط المقال"
+                      className={`p-2 rounded-full shadow-lg transition-all duration-300 ${
+                        copiedPostId === activePost.id
+                          ? "bg-green-500 text-white scale-110"
+                          : "bg-white text-gray-700 hover:bg-gray-100 hover:scale-110"
+                      }`}
+                      title={
+                        copiedPostId === activePost.id
+                          ? "تم النسخ!"
+                          : "نسخ رابط المقال"
+                      }
                     >
-                      <LinkIcon size={18} />
+                      {copiedPostId === activePost.id ? (
+                        <Check size={18} />
+                      ) : (
+                        <LinkIcon size={18} />
+                      )}
                     </button>
                     <button
                       onClick={(e) => handleEditPost(activePost, e)}
@@ -855,48 +994,111 @@
                   TechArchive
                 </h1>
                 <div className="flex gap-2 items-center">
-                  <div className="relative">
+                  <button
+                    onClick={handleCreateNew}
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-primary border border-gray-200 dark:border-transparent"
+                    title="إنشاء مقال جديد"
+                  >
+                    <PlusCircle size={20} />
+                  </button>
+
+                  {/* Desktop Display Settings - تظهر فقط على الشاشات الكبيرة */}
+                  <div className="hidden md:flex gap-2 items-center">
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowThemeMenu(!showThemeMenu)}
+                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors border border-gray-200 dark:border-transparent"
+                        title="السمات"
+                      >
+                        <Palette size={20} />
+                      </button>
+                      {showThemeMenu && (
+                        <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
+                          {Object.entries(themes).map(([key, t]) => (
+                            <button
+                              key={key}
+                              onClick={() => {
+                                setCurrentTheme(key);
+                                setShowThemeMenu(false);
+                              }}
+                              className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
+                                currentTheme === key
+                                  ? "text-primary font-bold"
+                                  : ""
+                              }`}
+                            >
+                              {t.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <button
-                      onClick={handleCreateNew}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-primary"
-                      title="إنشاء مقال جديد"
+                      onClick={() => setDarkMode(!darkMode)}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors border border-gray-200 dark:border-transparent"
+                      title={darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
                     >
-                      <PlusCircle size={20} />
+                      {darkMode ? <Sun size={20} /> : <Moon size={20} />}
                     </button>
+                  </div>
+
+                  {/* Mobile Display Settings Button - يظهر فقط على الشاشات الصغيرة */}
+                  <div className="relative md:hidden" data-display-menu>
                     <button
-                      onClick={() => setShowThemeMenu(!showThemeMenu)}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
-                      title="السمات"
+                      onClick={() => setShowDisplayMenu(!showDisplayMenu)}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors border border-gray-200 dark:border-transparent"
+                      title="إعدادات المظهر"
                     >
-                      <Palette size={20} />
+                      <Layout size={20} />
                     </button>
-                    {showThemeMenu && (
-                      <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
-                        {Object.entries(themes).map(([key, t]) => (
-                          <button
-                            key={key}
-                            onClick={() => {
-                              setCurrentTheme(key);
-                              setShowThemeMenu(false);
-                            }}
-                            className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
-                              currentTheme === key
-                                ? "text-primary font-bold"
-                                : ""
-                            }`}
-                          >
-                            {t.name}
-                          </button>
-                        ))}
+                    {showDisplayMenu && (
+                      <div
+                        className="absolute top-12 left-0 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-[100] flex flex-col gap-2"
+                        data-display-menu
+                      >
+                        <div className="flex items-center gap-2 px-2 py-1 border-b border-gray-200 dark:border-gray-700 mb-1">
+                          <Layout size={16} />
+                          <span className="text-xs font-bold text-gray-500">
+                            إعدادات المظهر
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => setDarkMode(!darkMode)}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-right"
+                        >
+                          <span className="font-bold text-sm">
+                            {darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
+                          </span>
+                          {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                        </button>
+                        <div className="h-px bg-gray-200 dark:bg-gray-700 my-1"></div>
+                        <div>
+                          <div className="text-xs font-bold text-gray-500 px-2 py-1 mb-1">
+                            السمات
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            {Object.entries(themes).map(([key, t]) => (
+                              <button
+                                key={key}
+                                onClick={() => {
+                                  setCurrentTheme(key);
+                                  setShowDisplayMenu(false);
+                                }}
+                                className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 flex items-center justify-between ${
+                                  currentTheme === key
+                                    ? "text-primary font-bold bg-primary/10"
+                                    : ""
+                                }`}
+                              >
+                                <span>{t.name}</span>
+                                {currentTheme === key && <Check size={14} />}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
-                  >
-                    {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                  </button>
                 </div>
               </div>
             </header>
@@ -922,10 +1124,20 @@
                     <div className="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <button
                         onClick={(e) => handleCopyLink(post.id, e)}
-                        className="bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                        title="نسخ الرابط"
+                        className={`p-2 rounded-full shadow-sm transition-all duration-300 ${
+                          copiedPostId === post.id
+                            ? "bg-green-500 text-white scale-110"
+                            : "bg-white/90 dark:bg-black/50 hover:bg-gray-200 dark:hover:bg-gray-700"
+                        }`}
+                        title={
+                          copiedPostId === post.id ? "تم النسخ!" : "نسخ الرابط"
+                        }
                       >
-                        <LinkIcon size={16} />
+                        {copiedPostId === post.id ? (
+                          <Check size={16} />
+                        ) : (
+                          <LinkIcon size={16} />
+                        )}
                       </button>
                       <button
                         onClick={(e) => handleEditPost(post, e)}
