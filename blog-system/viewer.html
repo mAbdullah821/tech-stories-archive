@@ -530,6 +530,47 @@
         overflow: hidden;
       }
 
+      /* ============================================
+         PLAIN THEME - No Animation (for accessibility)
+         ============================================ */
+      .theme-plain {
+        position: relative;
+      }
+
+      .theme-plain::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        background-image: radial-gradient(
+            circle,
+            rgba(100, 116, 139, 0.15) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+        background-size: 200px 200px, 300px 300px;
+        /* No animation - static stars */
+      }
+
+      .dark .theme-plain::before {
+        background-image: radial-gradient(
+            circle,
+            rgba(148, 163, 184, 0.3) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(203, 213, 225, 0.2) 1px, transparent 1px);
+        background-size: 220px 220px, 320px 320px;
+      }
+
+      .theme-plain > * {
+        position: relative;
+        z-index: 1;
+      }
+
       .theme-modern::before,
       .theme-sepia::before,
       .theme-ocean::before,
@@ -537,10 +578,10 @@
       .theme-midnight::before {
         content: "";
         position: fixed;
-        top: -50%;
-        left: -50%;
-        width: 300%;
-        height: 300%;
+        top: -100%;
+        left: -100%;
+        width: 400%;
+        height: 400%;
         pointer-events: none;
         z-index: 0;
       }
@@ -644,12 +685,12 @@
       .dark .theme-forest::before {
         background-image: radial-gradient(
             circle,
-            rgba(74, 222, 128, 0.9) 1px,
+            rgba(52, 211, 153, 0.5) 1px,
             transparent 1px
           ),
           radial-gradient(
             circle,
-            rgba(134, 239, 172, 0.65) 1px,
+            rgba(110, 231, 183, 0.35) 1px,
             transparent 1px
           );
         background-size: 220px 220px, 320px 320px;
@@ -680,27 +721,27 @@
       }
 
       /* ============================================
-         ANIMATIONS - Very Slow Drift
-         Like floating peacefully in space
+         ANIMATIONS - Seamless Infinite Drift
+         Like floating peacefully in space forever
          ============================================ */
 
-      /* Diagonal drift - NW to SE (very slow) */
+      /* Diagonal drift - NW to SE (seamless loop) */
       @keyframes stars-drift {
         from {
           transform: translate(0, 0);
         }
         to {
-          transform: translate(33.33%, 33.33%);
+          transform: translate(25%, 25%);
         }
       }
 
-      /* Rising drift - for ocean theme */
+      /* Rising drift - for ocean theme (seamless loop) */
       @keyframes stars-rise {
         from {
           transform: translateY(0);
         }
         to {
-          transform: translateY(-33.33%);
+          transform: translateY(-25%);
         }
       }
 
@@ -974,7 +1015,7 @@
           bgDark:
             "dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800",
           accent: "text-primary",
-          className: "theme-modern",
+          className: "theme-plain",
         },
         sepia: {
           name: "ورقي (Sepia)",
