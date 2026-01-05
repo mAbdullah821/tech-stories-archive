@@ -847,6 +847,7 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   </head>
   <body
@@ -1006,6 +1007,7 @@
         firebase.initializeApp(firebaseConfig);
       }
       const db = firebase.firestore();
+      const auth = firebase.auth(); // تعريف الـ Auth
 
       // --- Themes Configuration ---
       const themes = {
@@ -1196,18 +1198,22 @@
         );
       };
 
-      // --- Tag Cloud Component (Header) ---
+      // --- Tag Cloud Component (Updated for Mobile) ---
       const TagCloud = ({ tags, selectedTags, onSelectTag }) => {
         const [isExpanded, setIsExpanded] = useState(false);
         const sortedTags = Object.entries(tags).sort((a, b) => b[1] - a[1]);
 
         if (sortedTags.length === 0) return null;
 
+        // الحد الذي يظهر عنده زر "عرض المزيد"
+        const THRESHOLD = 5;
+        const showExpandButton = sortedTags.length > THRESHOLD;
+
         return (
           <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-gray-200 dark:border-gray-700 mb-6 transition-all duration-300">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-sm font-bold text-gray-500 flex items-center gap-2">
-                <TagIcon size={16} /> استكشف المواضيع (اختر حتى 5)
+                <TagIcon size={16} /> استكشف المواضيع
               </h3>
               {selectedTags.length > 0 && (
                 <button
@@ -1221,7 +1227,7 @@
 
             <div
               className={`flex flex-wrap gap-2 transition-all duration-500 ease-in-out ${
-                isExpanded ? "max-h-[1000px]" : "max-h-[88px] overflow-hidden"
+                isExpanded ? "max-h-[1000px]" : "max-h-[120px] overflow-hidden"
               }`}
             >
               {sortedTags.map(([tag, count]) => {
@@ -1230,10 +1236,10 @@
                   <button
                     key={tag}
                     onClick={() => onSelectTag(tag)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all border ${
                       isSelected
-                        ? "bg-primary text-white shadow-lg scale-105"
-                        : "bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
+                        ? "bg-primary text-white border-primary shadow-md scale-105"
+                        : "bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-300 border-gray-100 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600"
                     }`}
                   >
                     <span>#{tag}</span>
@@ -1251,7 +1257,7 @@
               })}
             </div>
 
-            {sortedTags.length > 10 && (
+            {showExpandButton && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="w-full mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 text-xs font-bold text-primary flex items-center justify-center gap-1 hover:bg-gray-50 dark:hover:bg-slate-700/30 rounded-b-lg transition-colors"
@@ -1262,7 +1268,7 @@
                   </>
                 ) : (
                   <>
-                    <span>عرض المزيد ({sortedTags.length - 10}+)</span>{" "}
+                    <span>عرض المزيد ({sortedTags.length - THRESHOLD}+)</span>{" "}
                     <ChevronDown size={14} />
                   </>
                 )}
@@ -1322,6 +1328,8 @@
       function App() {
         const [posts, setPosts] = useState([]);
         const [activePost, setActivePost] = useState(null);
+        // 👇 حالة لمعرفة هل الزائر هو المشرف أم لا
+        const [isAdmin, setIsAdmin] = useState(false);
 
         // Load saved preferences from localStorage
         const [darkMode, setDarkMode] = useState(() => {
@@ -1343,6 +1351,18 @@
         useEffect(() => {
           localStorage.setItem("blog-theme", currentTheme);
         }, [currentTheme]);
+
+        // 👇 Effect للتحقق من حالة تسجيل الدخول عند فتح الصفحة
+        useEffect(() => {
+          const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+              setIsAdmin(true); // المستخدم مسجل دخول (مشرف)
+            } else {
+              setIsAdmin(false); // زائر عادي
+            }
+          });
+          return () => unsubscribe();
+        }, []);
 
         // Image Zoom State
         const [zoomedImage, setZoomedImage] = useState(null);
@@ -1373,6 +1393,9 @@
 
         // Copy Link State
         const [copiedPostId, setCopiedPostId] = useState(null);
+
+        // Scroll to Top State
+        const [showScrollTop, setShowScrollTop] = useState(false);
 
         // Ref for content container
         const contentRef = useRef(null);
@@ -1662,6 +1685,43 @@
           window.addEventListener("scroll", handleScroll);
           return () => window.removeEventListener("scroll", handleScroll);
         }, [lastDoc, loading, hasMore, activePost]);
+
+        // Scroll to Top Button Handler
+        useEffect(() => {
+          const handleScroll = () => {
+            // Show button when scrolled down more than 300px
+            const scrollY =
+              window.scrollY || document.documentElement.scrollTop;
+            setShowScrollTop(scrollY > 300);
+          };
+          window.addEventListener("scroll", handleScroll);
+          return () => window.removeEventListener("scroll", handleScroll);
+        }, []);
+
+        // Smooth Scroll to Top Function
+        const scrollToTop = () => {
+          const startPosition = window.pageYOffset;
+          const distance = startPosition;
+          const duration = Math.min(800, Math.max(400, distance * 0.5)); // Between 400ms and 800ms
+          let start = null;
+
+          const animation = (currentTime) => {
+            if (start === null) start = currentTime;
+            const timeElapsed = currentTime - start;
+            const progress = Math.min(timeElapsed / duration, 1);
+
+            // Easing function for smooth animation (ease-out)
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+
+            window.scrollTo(0, startPosition * (1 - easeOut));
+
+            if (timeElapsed < duration) {
+              requestAnimationFrame(animation);
+            }
+          };
+
+          requestAnimationFrame(animation);
+        };
 
         const renderMarkdown = (content) => {
           if (!content) return { __html: "" };
@@ -2060,7 +2120,7 @@
 
               {/* Header Overlay for Single Post */}
               <header className="fixed top-0 z-50 w-full p-4 pointer-events-none">
-                <div className="max-w-4xl mx-auto flex justify-between items-center pointer-events-auto">
+                <div className="w-full px-2 flex justify-between items-center pointer-events-auto">
                   <button
                     onClick={handleBackToList}
                     className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-white hover:bg-white dark:hover:bg-black/70 border border-gray-200 dark:border-transparent"
@@ -2209,13 +2269,16 @@
                         <LinkIcon size={18} />
                       )}
                     </button>
-                    <button
-                      onClick={(e) => handleEditPost(activePost, e)}
-                      className="bg-primary text-white p-2 rounded-full shadow-lg hover:bg-emerald-600 transition-transform hover:scale-110"
-                      title="تعديل هذا المقال"
-                    >
-                      <Edit size={18} />
-                    </button>
+                    {/* 👇 زر التعديل: شرط isAdmin 👇 */}
+                    {isAdmin && (
+                      <button
+                        onClick={(e) => handleEditPost(activePost, e)}
+                        className="bg-primary text-white p-2 rounded-full shadow-lg hover:bg-emerald-600 transition-transform hover:scale-110"
+                        title="تعديل هذا المقال"
+                      >
+                        <Edit size={18} />
+                      </button>
+                    )}
                   </div>
 
                   <div className="mb-8 border-b border-gray-100 dark:border-gray-700 pb-6">
@@ -2249,6 +2312,18 @@
                   />
                 </article>
               </div>
+
+              {/* Scroll to Top Button */}
+              {showScrollTop && (
+                <button
+                  onClick={scrollToTop}
+                  className="fixed bottom-8 right-8 z-40 p-3 rounded-full bg-primary text-white shadow-lg hover:bg-emerald-600 transition-all duration-300 hover:scale-110 animate-fade-in backdrop-blur-sm border border-white/20"
+                  title="العودة للأعلى"
+                  aria-label="العودة للأعلى"
+                >
+                  <ChevronUp size={24} />
+                </button>
+              )}
             </div>
           );
         }
@@ -2270,13 +2345,16 @@
                   حكاوي واحد غاوي
                 </h1>
                 <div className="flex gap-2 items-center">
-                  <button
-                    onClick={handleCreateNew}
-                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-primary border border-gray-200 dark:border-transparent"
-                    title="إنشاء مقال جديد"
-                  >
-                    <PlusCircle size={20} />
-                  </button>
+                  {/* زر إنشاء مقال جديد - يظهر للمشرف فقط */}
+                  {isAdmin && (
+                    <button
+                      onClick={handleCreateNew}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-primary border border-gray-200 dark:border-transparent"
+                      title="إنشاء مقال جديد"
+                    >
+                      <PlusCircle size={20} />
+                    </button>
+                  )}
 
                   {/* Desktop Display Settings - تظهر فقط على الشاشات الكبيرة */}
                   <div className="hidden md:flex gap-2 items-center">
@@ -2415,13 +2493,16 @@
                           <LinkIcon size={16} />
                         )}
                       </button>
-                      <button
-                        onClick={(e) => handleEditPost(post, e)}
-                        className="bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                        title="تعديل سريع"
-                      >
-                        <Edit size={16} />
-                      </button>
+                      {/* 👇 زر التعديل: شرط isAdmin 👇 */}
+                      {isAdmin && (
+                        <button
+                          onClick={(e) => handleEditPost(post, e)}
+                          className="bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                          title="تعديل سريع"
+                        >
+                          <Edit size={16} />
+                        </button>
+                      )}
                     </div>
 
                     {post.coverImage && (
@@ -2434,29 +2515,63 @@
                       </div>
                     )}
                     <div className="p-6 flex-1 flex flex-col justify-center">
-                      <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2">
+                      <h2 className="text-xl md:text-2xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-primary transition-colors md:line-clamp-2 leading-relaxed">
                         {post.title}
                       </h2>
                       <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
                         {post.excerpt}
                       </p>
-                      <div className="mt-auto w-full flex justify-between items-center">
-                        <div className="flex gap-1 overflow-hidden max-w-[70%]">
-                          {post.topics?.slice(0, 3).map((t, i) => (
-                            <span
-                              key={i}
-                              className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold whitespace-nowrap"
-                            >
-                              #{t}
-                            </span>
-                          ))}
-                          {post.topics?.length > 3 && (
-                            <span className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded font-bold">
-                              +{post.topics.length - 3}
+                      <div className="mt-auto w-full flex justify-between items-center relative">
+                        <div className="flex gap-1 items-center flex-wrap">
+                          {/* التاج الأول: يظهر دائماً */}
+                          {post.topics?.length > 0 && (
+                            <span className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold whitespace-nowrap">
+                              #{post.topics[0]}
                             </span>
                           )}
+
+                          {/* التاج الثاني: يظهر فقط في الشاشات أكبر من 350px */}
+                          {post.topics?.length > 1 && (
+                            <span className="hidden min-[350px]:inline-block text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold whitespace-nowrap">
+                              #{post.topics[1]}
+                            </span>
+                          )}
+
+                          {/* التاج الثالث: يظهر فقط في الشاشات المتوسطة (التابلت) فما فوق */}
+                          {post.topics?.length > 2 && (
+                            <span className="hidden md:inline-block text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold whitespace-nowrap">
+                              #{post.topics[2]}
+                            </span>
+                          )}
+
+                          {/* عداد المتبقي (+X) مع القائمة المنبثقة */}
+                          {post.topics?.length > 1 && (
+                            <div className="relative group/tags inline-block">
+                              <span className="cursor-pointer text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-bold hover:bg-primary hover:text-white transition-colors whitespace-nowrap">
+                                + المزيد
+                              </span>
+
+                              {/* القائمة المنبثقة (Tooltip) - تعرض جميع الـ tags المخفية */}
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-xl opacity-0 invisible group-hover/tags:opacity-100 group-hover/tags:visible transition-all duration-200 z-50 pointer-events-none group-hover/tags:pointer-events-auto">
+                                <div className="flex flex-wrap gap-1 justify-center">
+                                  {/* عرض جميع الـ tags ما عدا الأول (لأن الأول يظهر دائماً) */}
+                                  {post.topics.slice(1).map((t, i) => (
+                                    <span
+                                      key={i}
+                                      className="bg-white/20 px-1.5 py-0.5 rounded text-[9px] whitespace-nowrap"
+                                    >
+                                      #{t}
+                                    </span>
+                                  ))}
+                                </div>
+                                {/* سهم صغير يشير للأسفل */}
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div className="text-xs text-gray-400 font-medium">
+
+                        <div className="text-xs text-gray-400 font-medium shrink-0 mr-2">
                           {post.createdAt
                             ? new Date(
                                 post.createdAt.toDate()
@@ -2485,6 +2600,18 @@
                 </div>
               )}
             </main>
+
+            {/* Scroll to Top Button */}
+            {showScrollTop && (
+              <button
+                onClick={scrollToTop}
+                className="fixed bottom-8 right-8 z-40 p-3 rounded-full bg-primary text-white shadow-lg hover:bg-emerald-600 transition-all duration-300 hover:scale-110 animate-fade-in backdrop-blur-sm border border-white/20"
+                title="العودة للأعلى"
+                aria-label="العودة للأعلى"
+              >
+                <ChevronUp size={24} />
+              </button>
+            )}
           </div>
         );
       }
