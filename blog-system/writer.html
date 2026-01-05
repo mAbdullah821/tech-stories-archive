@@ -1784,37 +1784,92 @@
       };
 
       // --- Post List Modal ---
+      // --- Post List Modal (Updated with Soft Delete) ---
       const PostListModal = ({ isOpen, onClose, onSelect, onShowToast }) => {
         const [postsList, setPostsList] = useState([]);
         const [loading, setLoading] = useState(false);
-        useEffect(() => {
-          if (isOpen && db) {
-            setLoading(true);
-            db.collection("posts")
-              .orderBy("updatedAt", "desc")
-              .limit(20)
-              .get()
-              .then((snap) => {
-                setPostsList(
-                  snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-                );
-                setLoading(false);
-              })
-              .catch((err) => {
-                console.error(err);
-                setLoading(false);
-              });
-          }
-        }, [isOpen]);
+        const [showTrash, setShowTrash] = useState(false); // حالة للتبديل بين المنشور والمحذوف
 
-        const handleDelete = async (postId, e) => {
+        // دالة لجلب المقالات بناءً على الحالة (محذوفة أم لا)
+        const fetchPosts = () => {
+          if (!db) return;
+          setLoading(true);
+
+          let query = db.collection("posts").orderBy("updatedAt", "desc");
+
+          // ملاحظة: لجعل هذا الفلتر يعمل بكفاءة مع orderBy في Firebase
+          // قد يطلب منك المتصفح إنشاء Index من خلال الرابط الذي سيظهر في الـ Console
+          // ولكن للتسهيل سنقوم بجلب أخر 50 مقال ونفلترهم محلياً (Client-side filtering)
+          // هذا يمنع مشاكل الـ Index للمشاريع الصغيرة
+
+          query
+            .limit(50)
+            .get()
+            .then((snap) => {
+              const allPosts = snap.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+
+              // الفلترة هنا
+              const filteredPosts = showTrash
+                ? allPosts.filter((p) => p.deleted === true) // المحذوفات فقط
+                : allPosts.filter((p) => !p.deleted); // غير المحذوف (المنشور)
+
+              setPostsList(filteredPosts);
+              setLoading(false);
+            })
+            .catch((err) => {
+              console.error(err);
+              setLoading(false);
+            });
+        };
+
+        useEffect(() => {
+          if (isOpen) {
+            fetchPosts();
+          }
+        }, [isOpen, showTrash]); // إعادة الجلب عند تغيير التبويب
+
+        // 1. الحذف المؤقت (Soft Delete)
+        const handleSoftDelete = async (postId, e) => {
           e.stopPropagation();
-          if (!confirm("هل أنت متأكد من حذف هذا المقال نهائياً من السحابة؟"))
+          if (!confirm("هل تريد نقل هذا المقال إلى سلة المحذوفات؟")) return;
+          try {
+            await db.collection("posts").doc(postId).update({ deleted: true });
+            setPostsList((prev) => prev.filter((p) => p.id !== postId)); // إزالة من القائمة الحالية
+            if (onShowToast)
+              onShowToast("success", "تم نقل المقال إلى سلة المحذوفات");
+          } catch (err) {
+            if (onShowToast) onShowToast("error", "حدث خطأ: " + err.message);
+          }
+        };
+
+        // 2. الاستعادة (Restore)
+        const handleRestore = async (postId, e) => {
+          e.stopPropagation();
+          try {
+            await db.collection("posts").doc(postId).update({ deleted: false });
+            setPostsList((prev) => prev.filter((p) => p.id !== postId)); // إزالة من سلة المحذوفات
+            if (onShowToast) onShowToast("success", "تم استعادة المقال بنجاح");
+          } catch (err) {
+            if (onShowToast) onShowToast("error", "حدث خطأ: " + err.message);
+          }
+        };
+
+        // 3. الحذف النهائي (Hard Delete)
+        const handleHardDelete = async (postId, e) => {
+          e.stopPropagation();
+          if (
+            !confirm(
+              "تحذير: سيتم حذف المقال نهائياً ولا يمكن استرجاعه. هل أنت متأكد؟"
+            )
+          )
             return;
           try {
             await db.collection("posts").doc(postId).delete();
             setPostsList((prev) => prev.filter((p) => p.id !== postId));
-            if (onShowToast) onShowToast("success", "تم حذف المقال بنجاح");
+            if (onShowToast) onShowToast("success", "تم حذف المقال نهائياً");
           } catch (err) {
             if (onShowToast)
               onShowToast("error", "خطأ في الحذف: " + err.message);
@@ -1822,68 +1877,152 @@
         };
 
         if (!isOpen) return null;
+
         return (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
             <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
-              <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between">
-                <h3 className="font-bold flex items-center gap-2">
-                  <CloudDownload size={18} /> اختر مقالاً للتعديل
-                </h3>
-                <button onClick={onClose}>
-                  <X size={20} />
-                </button>
+              {/* Header with Tabs */}
+              <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold flex items-center gap-2 text-lg">
+                    {showTrash ? (
+                      <span className="text-red-500 flex items-center gap-2">
+                        <Trash2 size={20} /> سلة المحذوفات
+                      </span>
+                    ) : (
+                      <span className="text-primary flex items-center gap-2">
+                        <CloudDownload size={20} /> المقالات المنشورة
+                      </span>
+                    )}
+                  </h3>
+                  <button onClick={onClose}>
+                    <X size={20} />
+                  </button>
+                </div>
+
+                {/* Tabs Switcher */}
+                <div className="flex bg-gray-100 dark:bg-slate-900 p-1 rounded-lg">
+                  <button
+                    onClick={() => setShowTrash(false)}
+                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
+                      !showTrash
+                        ? "bg-white dark:bg-slate-700 shadow text-primary"
+                        : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    }`}
+                  >
+                    المنشورة
+                  </button>
+                  <button
+                    onClick={() => setShowTrash(true)}
+                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
+                      showTrash
+                        ? "bg-white dark:bg-slate-700 shadow text-red-500"
+                        : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    }`}
+                  >
+                    سلة المحذوفات
+                  </button>
+                </div>
               </div>
-              <div className="p-4 overflow-y-auto custom-scrollbar">
+
+              <div className="p-4 overflow-y-auto custom-scrollbar flex-1">
                 {loading ? (
                   <div className="flex justify-center p-4">
-                    <Loader className="text-primary" />
+                    <Loader
+                      className={`animate-spin ${
+                        showTrash ? "text-red-500" : "text-primary"
+                      }`}
+                      size={24}
+                    />
                   </div>
                 ) : postsList.length === 0 ? (
-                  <div className="text-center text-gray-500">
-                    لا توجد مقالات.
+                  <div className="text-center text-gray-500 py-10 flex flex-col items-center gap-2">
+                    {showTrash ? (
+                      <Trash2 size={40} className="opacity-20" />
+                    ) : (
+                      <FolderOpen size={40} className="opacity-20" />
+                    )}
+                    <p>
+                      {showTrash
+                        ? "سلة المحذوفات فارغة"
+                        : "لا توجد مقالات منشورة"}
+                    </p>
                   </div>
                 ) : (
                   postsList.map((post) => (
                     <div
                       key={post.id}
-                      onClick={() => onSelect(post)}
-                      className="p-3 mb-2 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex justify-between items-center group"
+                      onClick={() => !showTrash && onSelect(post)} // لا يمكن فتح المقال وهو في السلة
+                      className={`p-3 mb-2 rounded-xl border transition-colors flex justify-between items-center group relative overflow-hidden ${
+                        showTrash
+                          ? "border-red-100 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/10 cursor-default"
+                          : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer"
+                      }`}
                     >
                       <div className="flex items-center gap-3">
                         {post.coverImage && (
                           <img
                             src={post.coverImage}
-                            className="w-12 h-12 rounded-lg object-cover"
+                            className={`w-12 h-12 rounded-lg object-cover ${
+                              showTrash ? "grayscale opacity-50" : ""
+                            }`}
                           />
                         )}
                         <div>
-                          <h4 className="font-bold text-sm">
+                          <h4
+                            className={`font-bold text-sm ${
+                              showTrash ? "text-gray-500 line-through" : ""
+                            }`}
+                          >
                             {post.title || "بدون عنوان"}
                           </h4>
                           <div className="flex gap-1 mt-1 text-[10px]">
                             {post.topics?.slice(0, 3).map((t, i) => (
                               <span
                                 key={t}
-                                className="bg-primary/10 text-primary px-1.5 py-0.5 rounded"
+                                className={`px-1.5 py-0.5 rounded ${
+                                  showTrash
+                                    ? "bg-gray-200 dark:bg-slate-700 text-gray-500"
+                                    : "bg-primary/10 text-primary"
+                                }`}
                               >
                                 #{t}
                               </span>
                             ))}
-                            {post.topics?.length > 3 && (
-                              <span className="text-gray-400">
-                                +{post.topics.length - 3}
-                              </span>
-                            )}
                           </div>
                         </div>
                       </div>
-                      <button
-                        onClick={(e) => handleDelete(post.id, e)}
-                        className="p-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="حذف المقال"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+
+                      <div className="flex items-center gap-2">
+                        {showTrash ? (
+                          <>
+                            {/* أزرار سلة المحذوفات */}
+                            <button
+                              onClick={(e) => handleRestore(post.id, e)}
+                              className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                              title="استعادة"
+                            >
+                              <RefreshCw size={16} />
+                            </button>
+                            <button
+                              onClick={(e) => handleHardDelete(post.id, e)}
+                              className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                              title="حذف نهائي"
+                            >
+                              <X size={16} />
+                            </button>
+                          </>
+                        ) : (
+                          /* زر الحذف المؤقت للقائمة العادية */
+                          <button
+                            onClick={(e) => handleSoftDelete(post.id, e)}
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                            title="نقل للمحذوفات"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))
                 )}
@@ -2505,15 +2644,19 @@
 
         const handleDeleteCurrent = async () => {
           if (!postId) return;
-          if (!confirm("حذف هذا المقال من السحابة؟")) return;
+          // تغيير نص التأكيد
+          if (!confirm("هل أنت متأكد من نقل هذا المقال إلى سلة المحذوفات؟"))
+            return;
           try {
-            await db.collection("posts").doc(postId).delete();
+            // تحديث الحقل deleted بدلاً من delete()
+            await db.collection("posts").doc(postId).update({ deleted: true });
+
             setNotification({
               type: "success",
-              message: "تم حذف المقال بنجاح",
+              message: "تم نقل المقال إلى سلة المحذوفات",
             });
             setTimeout(() => setNotification(null), 3000);
-            reset();
+            reset(true); // تفريغ المحرر بدون تأكيد (لأن المستخدم أكد بالفعل عند الحذف)
           } catch (e) {
             setNotification({ type: "error", message: "خطأ: " + e.message });
             setTimeout(() => setNotification(null), 3000);
@@ -2539,6 +2682,7 @@
             blocks,
             content: fullContent,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            deleted: false, // <--- أضف هذا السطر لضمان أن المقال يعتبر "منشور" عند الحفظ
             excerpt:
               textContent.substring(0, 150) +
               (textContent.length > 150 ? "..." : ""),
@@ -2587,22 +2731,31 @@
             alert("افتح viewer.html");
           }
         };
-        const reset = () => {
-          if (confirm("متأكد؟")) {
-            setPostId(null);
-            setTitle("");
-            setCoverImage("");
-            setTopics([]);
-            setBlocks([
-              {
-                id: crypto.randomUUID(),
-                type: "text",
-                content: "",
-                dir: "rtl",
-              },
-            ]);
-            window.history.pushState({}, "", window.location.pathname);
+        const reset = (skipConfirm = false) => {
+          // إذا لم يكن skipConfirm، نطلب التأكيد من المستخدم
+          if (!skipConfirm) {
+            if (
+              !confirm(
+                "هل أنت متأكد من إعادة تعيين المحرر؟ سيتم مسح جميع المحتويات غير المحفوظة."
+              )
+            ) {
+              return;
+            }
           }
+
+          setPostId(null);
+          setTitle("");
+          setCoverImage("");
+          setTopics([]);
+          setBlocks([
+            {
+              id: crypto.randomUUID(),
+              type: "text",
+              content: "",
+              dir: "rtl",
+            },
+          ]);
+          window.history.pushState({}, "", window.location.pathname);
         };
 
         const renderPreview = () => {
@@ -2921,7 +3074,7 @@
                       </button>
                     )}
                     <button
-                      onClick={reset}
+                      onClick={() => reset()}
                       className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
                     >
                       <RefreshCw size={18} />

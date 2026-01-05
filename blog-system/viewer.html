@@ -1519,9 +1519,10 @@
           return () => window.removeEventListener("popstate", handlePopState);
         }, []);
 
-        // --- Fetch Tags Stats ---
+        // --- Fetch Tags Stats (Server-side Filtering) ---
         useEffect(() => {
           db.collection("posts")
+            .where("deleted", "==", false)
             .orderBy("createdAt", "desc")
             .limit(100)
             .get()
@@ -1536,7 +1537,8 @@
                 }
               });
               setAllTags(tagsMap);
-            });
+            })
+            .catch((err) => console.error("Tags fetch error:", err));
         }, []);
 
         // --- Helpers ---
@@ -1610,24 +1612,29 @@
           }
         };
 
-        // --- Fetch List Posts Logic ---
+        // --- Fetch List Posts Logic (Server-side Filtering) ---
         const fetchPosts = async (isNewFilter = false) => {
           if (loading || (!hasMore && !isNewFilter)) return;
           setLoading(true);
 
           try {
-            let query = db.collection("posts");
+            // 1. البداية: تحديد المجموعة والشرط الأساسي (غير محذوف)
+            let query = db.collection("posts").where("deleted", "==", false);
 
+            // 2. إضافة فلتر التاجز إن وجد
             if (selectedTags.length > 0) {
               query = query.where("topics", "array-contains-any", selectedTags);
             }
 
+            // 3. الترتيب
             query = query.orderBy("createdAt", "desc");
 
+            // 4. الباجينيشن (إكمال التحميل)
             if (!isNewFilter && lastDoc) {
               query = query.startAfter(lastDoc);
             }
 
+            // 5. الحد الأقصى
             query = query.limit(5);
 
             const snapshot = await query.get();
@@ -1640,6 +1647,7 @@
                 id: doc.id,
                 ...doc.data(),
               }));
+
               setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
 
               if (isNewFilter) {
