@@ -100,6 +100,6 @@
 <br>
 🛠️ <i>الموضوع:</i> Domain-Driven Design & Clean Architecture
 <br>
-🔗 <i>المنصات:</i> <i>قريباً.. الحكاية جاية! 🚀✨</i>
+🔗 <i>المنصات:</i> <a href="https://www.linkedin.com/posts/mabdullah821_aevaeraepaewaeyabraewaepaevaexabraeiaepaewaey-activity-7414267698412621824-HzNR?utm_source=share&utm_medium=member_desktop&rcm=ACoAADN5YmcBS4y9F_dpQ1fcwDWklAsCoieR3AQ">LinkedIn</a> | <a href="https://qabilah.com/posts/رحلة-البحث-عن-الهندسة-المفقودة-من-الفوضى-إلى-النظام-البرمجي~oWbCwt-ZSPw">قبيلة</a> | <a href="https://mabdullah821.github.io/tech-stories-archive/viewer.html?id=6098b6ba-b0a0-477c-b202-e3b38d2ee057">حكاوي واحد غاوي</a>
 
 </div>
