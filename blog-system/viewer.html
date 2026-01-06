@@ -2251,11 +2251,13 @@
               )}
 
               <div
-                className={`max-w-3xl mx-auto px-4 ${
-                  activePost.coverImage ? "-mt-20 relative z-10" : "pt-24"
+                className={`max-w-3xl mx-auto px-1 md:px-4 ${
+                  activePost.coverImage
+                    ? "-mt-12 md:-mt-20 relative z-10"
+                    : "pt-20 md:pt-24"
                 }`}
               >
-                <article className="animate-fade-in bg-white/90 dark:bg-slate-800/90 p-6 md:p-8 rounded-2xl shadow-sm backdrop-blur-md relative group border border-gray-100 dark:border-gray-700">
+                <article className="animate-fade-in bg-white/95 dark:bg-slate-800/95 p-3 md:p-8 rounded-lg md:rounded-2xl shadow-sm backdrop-blur-md relative group border border-gray-100 dark:border-gray-700">
                   {/* Action Buttons */}
                   <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
                     <button
