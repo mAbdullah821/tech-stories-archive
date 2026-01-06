@@ -842,6 +842,8 @@
     ></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- DOMPurify for XSS Protection -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <!-- Highlight.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
@@ -1733,7 +1735,10 @@
 
         const renderMarkdown = (content) => {
           if (!content) return { __html: "" };
-          // If content already contains HTML tags, use it directly
+
+          let processedContent;
+
+          // If content already contains HTML tags, process it
           // Otherwise parse as markdown
           if (
             content.includes("<div") ||
@@ -1741,48 +1746,134 @@
             content.includes("<a")
           ) {
             // Content already has HTML, process it to add click handlers for images
-            let processedContent = content;
+            processedContent = content;
 
             // Process image groups with data-all-images attribute
-            // Use simpler approach: just add data-image-group to divs that have data-all-images
-            // The regex matches opening div tag with data-all-images attribute (using single quotes)
             let groupIndex = 0;
 
-            // Match div opening tags with data-all-images='...' (single quotes contain JSON with double quotes)
+            // Match div opening tags with data-all-images='...' (single quotes)
             processedContent = processedContent.replace(
               /<div([^>]*)\s+data-all-images='([^']*)'([^>]*)>/g,
               (match, beforeAttr, allImagesJson, afterAttr) => {
                 const groupId = `image-group-${groupIndex++}`;
-
-                // Keep the original data-all-images and add data-image-group
-                return `<div${beforeAttr} data-all-images='${allImagesJson}' data-image-group="${groupId}"${afterAttr}>`;
+                return `<div${beforeAttr} data-all-images='${allImagesJson.replace(
+                  /'/g,
+                  "&#39;"
+                )}' data-image-group="${groupId}"${afterAttr}>`;
               }
             );
 
-            // Also handle double quotes version (less common)
+            // Also handle double quotes version
             processedContent = processedContent.replace(
               /<div([^>]*)\s+data-all-images="([^"]*)"([^>]*)>/g,
               (match, beforeAttr, allImagesJson, afterAttr) => {
-                // Check if this div already has data-image-group (from previous replace)
                 if (match.includes("data-image-group")) {
                   return match;
                 }
                 const groupId = `image-group-${groupIndex++}`;
-                return `<div${beforeAttr} data-all-images="${allImagesJson}" data-image-group="${groupId}"${afterAttr}>`;
+                return `<div${beforeAttr} data-all-images="${allImagesJson.replace(
+                  /"/g,
+                  "&quot;"
+                )}" data-image-group="${groupId}"${afterAttr}>`;
               }
             );
 
-            // Also handle standalone images
+            // Handle standalone images - add data-image-src attribute
             processedContent = processedContent.replace(
               /<img([^>]+)src="([^"]+)"([^>]*)>/g,
               (match, before, src, after) => {
-                return `<img${before}src="${src}"${after} data-image-src="${src}" class="cursor-pointer">`;
+                return `<img${before}src="${src.replace(
+                  /"/g,
+                  "&quot;"
+                )}"${after} data-image-src="${src.replace(
+                  /"/g,
+                  "&quot;"
+                )}" class="cursor-pointer">`;
               }
             );
-
-            return { __html: processedContent };
+          } else {
+            // Parse markdown
+            processedContent = marked.parse(content);
           }
-          return { __html: marked.parse(content) };
+
+          // Final sanitization with DOMPurify - remove all dangerous content
+          // This is the critical security step that prevents XSS attacks
+          const sanitized = DOMPurify.sanitize(processedContent, {
+            ALLOWED_TAGS: [
+              "p",
+              "br",
+              "strong",
+              "em",
+              "u",
+              "b",
+              "i",
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6",
+              "ul",
+              "ol",
+              "li",
+              "blockquote",
+              "code",
+              "pre",
+              "a",
+              "img",
+              "div",
+              "span",
+              "table",
+              "thead",
+              "tbody",
+              "tr",
+              "td",
+              "th",
+              "hr",
+            ],
+            ALLOWED_ATTR: [
+              "href",
+              "src",
+              "alt",
+              "title",
+              "class",
+              "id",
+              "data-image-group",
+              "data-all-images",
+              "data-image-src",
+              "data-images",
+              "style",
+            ],
+            // Only allow safe URL schemes
+            ALLOWED_URI_REGEXP:
+              /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+            // Block data attributes that could contain JavaScript
+            ALLOW_DATA_ATTR: false,
+            // Explicitly forbid dangerous tags
+            FORBID_TAGS: [
+              "script",
+              "iframe",
+              "object",
+              "embed",
+              "form",
+              "input",
+              "button",
+              "style",
+            ],
+            // Remove all event handlers
+            FORBID_ATTR: [
+              "onerror",
+              "onclick",
+              "onload",
+              "onmouseover",
+              "onfocus",
+              "onblur",
+              "onchange",
+              "onsubmit",
+            ],
+          });
+
+          return { __html: sanitized };
         };
 
         // Handlers for image gallery
