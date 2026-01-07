@@ -814,6 +814,170 @@
       .fullscreen-preview-close:hover {
         transform: scale(1.1);
       }
+
+      /* ============================================
+         READING PROGRESS BAR
+         ============================================ */
+      .reading-progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+        z-index: 9999;
+        transition: width 0.1s ease-out;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+      }
+
+      .dark .reading-progress-bar {
+        background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.5);
+      }
+
+      /* ============================================
+         SKELETON LOADING
+         ============================================ */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #e0e0e0 50%,
+          #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s ease-in-out infinite;
+        border-radius: 4px;
+      }
+
+      .dark .skeleton {
+        background: linear-gradient(
+          90deg,
+          #334155 25%,
+          #475569 50%,
+          #334155 75%
+        );
+        background-size: 200% 100%;
+      }
+
+      @keyframes skeleton-loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      .skeleton-post {
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: auto;
+      }
+
+      .dark .skeleton-post {
+        background: rgba(30, 41, 59, 0.9);
+        border-color: #475569;
+      }
+
+      @media (min-width: 768px) {
+        .skeleton-post {
+          flex-direction: row;
+          height: 208px;
+        }
+      }
+
+      .skeleton-image {
+        width: 100%;
+        height: 192px;
+        background: #f0f0f0;
+      }
+
+      .dark .skeleton-image {
+        background: #475569;
+      }
+
+      @media (min-width: 768px) {
+        .skeleton-image {
+          width: 33.333333%;
+          height: 100%;
+        }
+      }
+
+      .skeleton-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .skeleton-title {
+        height: 1.5rem;
+        width: 80%;
+        margin-bottom: 0.5rem;
+      }
+
+      .skeleton-title-short {
+        height: 1.5rem;
+        width: 60%;
+      }
+
+      .skeleton-text {
+        height: 0.875rem;
+        width: 100%;
+      }
+
+      .skeleton-text-short {
+        height: 0.875rem;
+        width: 70%;
+      }
+
+      .skeleton-tags {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: auto;
+      }
+
+      .skeleton-tag {
+        height: 1.25rem;
+        width: 4rem;
+        border-radius: 9999px;
+      }
+
+      .skeleton-date {
+        height: 0.75rem;
+        width: 5rem;
+        margin-right: 0.5rem;
+      }
+
+      /* === Single Post Skeleton Styles === */
+      .skeleton-cover-box {
+        width: 100%;
+        height: 256px; /* h-64 equivalent */
+      }
+      @media (min-width: 768px) {
+        .skeleton-cover-box {
+          height: 384px; /* h-96 equivalent */
+        }
+      }
+      .skeleton-article-body {
+        max-width: 48rem; /* max-w-3xl */
+        margin: 0 auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 1rem;
+        position: relative;
+        z-index: 10;
+        margin-top: -3rem; /* Tweak based on design */
+      }
+      .dark .skeleton-article-body {
+        background: #1e293b; /* dark:bg-slate-800 */
+      }
     </style>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -846,6 +1010,8 @@
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <!-- Highlight.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -855,21 +1021,33 @@
   <body
     class="bg-gray-50 dark:bg-dark text-slate-800 dark:text-slate-100 transition-colors duration-300"
   >
+    <!-- Reading Progress Bar - تم استبداله بشريط React -->
+    <div
+      id="reading-progress-bar"
+      class="reading-progress-bar"
+      style="display: none"
+    ></div>
     <div id="root"></div>
 
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
 
       // --- Icons Definitions (SVG Components) ---
-      const IconBase = ({ children, size = 24, className = "" }) => (
+      const IconBase = ({
+        children,
+        size = 24,
+        className = "",
+        fill,
+        strokeWidth = "2",
+      }) => (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width={size}
           height={size}
           viewBox="0 0 24 24"
-          fill="none"
+          fill={fill || "none"}
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
           className={className}
@@ -992,6 +1170,15 @@
           <rect x="14" y="3" width="7" height="7" rx="1" />
           <rect x="14" y="14" width="7" height="7" rx="1" />
           <rect x="3" y="14" width="7" height="7" rx="1" />
+        </IconBase>
+      );
+      const Gift = (props) => (
+        <IconBase {...props}>
+          <path d="M20 12v10H4V12" />
+          <path d="M2 7h20v5H2z" />
+          <path d="M12 22V7" />
+          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
         </IconBase>
       );
 
@@ -1327,6 +1514,78 @@
         );
       };
 
+      // --- Skeleton Loading Component ---
+      const SkeletonPost = () => (
+        <div className="skeleton-post">
+          {/* Skeleton Image */}
+          <div className="skeleton-image skeleton"></div>
+
+          {/* Skeleton Content */}
+          <div className="skeleton-content">
+            {/* Title */}
+            <div>
+              <div className="skeleton skeleton-title"></div>
+              <div className="skeleton skeleton-title-short mt-2"></div>
+            </div>
+
+            {/* Excerpt */}
+            <div className="space-y-2">
+              <div className="skeleton skeleton-text"></div>
+              <div className="skeleton skeleton-text"></div>
+              <div className="skeleton skeleton-text-short"></div>
+            </div>
+
+            {/* Tags and Date */}
+            <div className="mt-auto flex justify-between items-center">
+              <div className="skeleton-tags">
+                <div className="skeleton skeleton-tag"></div>
+                <div className="skeleton skeleton-tag"></div>
+              </div>
+              <div className="skeleton skeleton-date"></div>
+            </div>
+          </div>
+        </div>
+      );
+
+      // --- Single Post Skeleton Component ---
+      const SkeletonSinglePost = () => (
+        <div className="min-h-screen pb-20 animate-fade-in">
+          {/* Fake Header */}
+          <div className="h-16 w-full bg-white/50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-gray-700"></div>
+
+          {/* Cover Image Skeleton */}
+          <div className="skeleton skeleton-cover-box"></div>
+
+          {/* Content Container Skeleton */}
+          <div className="px-4">
+            <div className="skeleton-article-body border border-gray-100 dark:border-gray-700 shadow-sm">
+              {/* Meta Info (Date/Tags) */}
+              <div className="flex gap-2 mb-6">
+                <div className="skeleton h-6 w-20 rounded-full"></div>
+                <div className="skeleton h-6 w-20 rounded-full"></div>
+              </div>
+
+              {/* Title Skeleton (Big & Multi-line) */}
+              <div className="skeleton h-10 w-3/4 rounded-lg mb-4"></div>
+              <div className="skeleton h-10 w-1/2 rounded-lg mb-8"></div>
+
+              {/* Text Paragraphs Skeletons */}
+              <div className="space-y-4">
+                <div className="skeleton h-4 w-full rounded"></div>
+                <div className="skeleton h-4 w-full rounded"></div>
+                <div className="skeleton h-4 w-11/12 rounded"></div>
+                <div className="skeleton h-4 w-full rounded"></div>
+                <div className="skeleton h-4 w-4/5 rounded"></div>
+                <br />
+                <div className="skeleton h-4 w-full rounded"></div>
+                <div className="skeleton h-4 w-full rounded"></div>
+                <div className="skeleton h-4 w-3/4 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
       function App() {
         const [posts, setPosts] = useState([]);
         const [activePost, setActivePost] = useState(null);
@@ -1399,8 +1658,56 @@
         // Scroll to Top State
         const [showScrollTop, setShowScrollTop] = useState(false);
 
+        // State for Celebration
+        const [hasCelebrated, setHasCelebrated] = useState(false);
+
+        // State for Reading Progress
+        const [readingProgress, setReadingProgress] = useState(0);
+
         // Ref for content container
         const contentRef = useRef(null);
+
+        // --- Helper: Relative Time Formatter (Arabic) ---
+        const formatTimeAgo = (timestamp) => {
+          if (!timestamp) return "";
+          const date = timestamp.toDate();
+          const now = new Date();
+          const diffInSeconds = Math.floor((now - date) / 1000);
+
+          // لو فات أكثر من سنة (365 يوم)، اعرض التاريخ العادي
+          const oneYearInSeconds = 365 * 24 * 60 * 60;
+          if (diffInSeconds >= oneYearInSeconds) {
+            return date.toLocaleDateString("ar-EG");
+          }
+
+          // حساب المدد الزمنية
+          if (diffInSeconds < 60) return "منذ لحظات";
+
+          const diffInMinutes = Math.floor(diffInSeconds / 60);
+          if (diffInMinutes < 60) return `منذ ${diffInMinutes} دقيقة`;
+
+          const diffInHours = Math.floor(diffInMinutes / 60);
+          if (diffInHours < 24) {
+            if (diffInHours === 1) return "منذ ساعة";
+            if (diffInHours === 2) return "منذ ساعتين";
+            if (diffInHours <= 10) return `منذ ${diffInHours} ساعات`;
+            return `منذ ${diffInHours} ساعة`;
+          }
+
+          const diffInDays = Math.floor(diffInHours / 24);
+          if (diffInDays < 30) {
+            if (diffInDays === 1) return "منذ أمس";
+            if (diffInDays === 2) return "منذ يومين";
+            if (diffInDays <= 10) return `منذ ${diffInDays} أيام`;
+            return `منذ ${diffInDays} يوم`;
+          }
+
+          const diffInMonths = Math.floor(diffInDays / 30);
+          if (diffInMonths === 1) return "منذ شهر";
+          if (diffInMonths === 2) return "منذ شهرين";
+          if (diffInMonths <= 10) return `منذ ${diffInMonths} أشهر`;
+          return `منذ ${diffInMonths} شهر`;
+        };
 
         useEffect(() => {
           const lightTheme = document.getElementById("hljs-light-theme");
@@ -1542,6 +1849,87 @@
             })
             .catch((err) => console.error("Tags fetch error:", err));
         }, []);
+
+        // --- دالة الاحتفال ---
+        const triggerCelebration = () => {
+          const duration = 3 * 1000;
+          const animationEnd = Date.now() + duration;
+          const defaults = {
+            startVelocity: 30,
+            spread: 360,
+            ticks: 60,
+            zIndex: 999,
+          };
+
+          const randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+          const interval = setInterval(function () {
+            const timeLeft = animationEnd - Date.now();
+            if (timeLeft <= 0) return clearInterval(interval);
+            const particleCount = 50 * (timeLeft / duration);
+
+            // Confetti من ناحية الهدية (اليسار) أكثر
+            confetti(
+              Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: 0.1, y: Math.random() - 0.2 },
+              })
+            );
+            confetti(
+              Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: 0.9, y: Math.random() - 0.2 },
+              })
+            );
+          }, 250);
+        };
+
+        // --- Scroll Handler: حساب التقدم والاحتفال ---
+        useEffect(() => {
+          const handleScroll = () => {
+            // 1. حساب زر العودة للأعلى
+            const scrollY =
+              window.scrollY || document.documentElement.scrollTop;
+            setShowScrollTop(scrollY > 300);
+
+            // 2. لو مفيش مقال مفتوح، مش محتاجين نحسب شريط التقدم
+            if (!activePost) {
+              setReadingProgress(0);
+              return;
+            }
+
+            // 3. حساب نسبة التقدم بدقة
+            const winHeight = window.innerHeight;
+            const docHeight = document.documentElement.scrollHeight;
+            const scrollTop =
+              window.pageYOffset || document.documentElement.scrollTop;
+
+            // المعادلة: (المسافة المقطوعة / (الطول الكلي - طول الشاشة)) * 100
+            const trackLength = docHeight - winHeight;
+            const pct = Math.floor(
+              trackLength > 0 ? (scrollTop / trackLength) * 100 : 0
+            );
+
+            setReadingProgress(pct);
+
+            // 4. منطق الاحتفال عند الوصول لـ 95%
+            if (pct >= 95 && !hasCelebrated) {
+              triggerCelebration();
+              setHasCelebrated(true);
+            }
+          };
+
+          window.addEventListener("scroll", handleScroll);
+          return () => window.removeEventListener("scroll", handleScroll);
+        }, [activePost, hasCelebrated]);
+
+        // إعادة تعيين الاحتفال والتقدم لما نفتح مقال جديد
+        useEffect(() => {
+          if (activePost) {
+            setHasCelebrated(false);
+            setReadingProgress(0);
+          }
+        }, [activePost]);
 
         // --- Helpers ---
         const updateUrl = (id) => {
@@ -1696,17 +2084,7 @@
           return () => window.removeEventListener("scroll", handleScroll);
         }, [lastDoc, loading, hasMore, activePost]);
 
-        // Scroll to Top Button Handler
-        useEffect(() => {
-          const handleScroll = () => {
-            // Show button when scrolled down more than 300px
-            const scrollY =
-              window.scrollY || document.documentElement.scrollTop;
-            setShowScrollTop(scrollY > 300);
-          };
-          window.addEventListener("scroll", handleScroll);
-          return () => window.removeEventListener("scroll", handleScroll);
-        }, []);
+        // Scroll to Top Button Handler - تم دمجه في handleScroll أعلاه
 
         // Smooth Scroll to Top Function
         const scrollToTop = () => {
@@ -2190,6 +2568,23 @@
         };
 
         // --- Single Post View ---
+
+        // 1. تحديد هل نحن بصدد تحميل مقال منفرد؟
+        // نتحقق مما إذا كان هناك ID في الرابط ولكن لم يتم تعيين activePost بعد
+        const params = new URLSearchParams(window.location.search);
+        const urlId = params.get("id");
+        const isSinglePostLoading = loading && urlId && !activePost;
+
+        // الحالة الأولى: جاري تحميل مقال منفرد (Direct Link Loading)
+        if (isSinglePostLoading) {
+          return (
+            <div className={`min-h-screen ${getThemeClass()}`}>
+              <SkeletonSinglePost />
+            </div>
+          );
+        }
+
+        // الحالة الثانية: المقال موجود ومحمل
         if (activePost) {
           return (
             <div
@@ -2217,8 +2612,39 @@
                 />
               )}
 
+              {/* === شريط التقدم الجديد + الهدية === */}
+              <div
+                className="fixed top-0 left-0 right-0 h-1.5 z-[100] bg-gray-200 dark:bg-gray-700"
+                dir="ltr"
+              >
+                {/* الهدية (أيقونة الهدف) */}
+                <div
+                  className={`fixed top-0 left-2 z-[101] transition-all duration-500 transform origin-top ${
+                    readingProgress >= 95
+                      ? "text-emerald-500 scale-110 opacity-100 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-bounce pt-1"
+                      : "text-gray-400 dark:text-gray-600 scale-75 grayscale opacity-50 pt-0.5"
+                  }`}
+                  style={{ willChange: "transform, opacity" }}
+                >
+                  <Gift
+                    size={24}
+                    strokeWidth={readingProgress >= 95 ? 2.5 : 2}
+                    fill="none"
+                  />
+                </div>
+
+                {/* الشريط الملون - لون واحد (الأخضر) */}
+                <div
+                  className="absolute top-0 right-0 h-full transition-all duration-100 ease-out bg-primary"
+                  style={{ width: `${readingProgress}%` }}
+                >
+                  {/* وميض أبيض خفيف جداً في نهاية الشريط لإظهار الحركة */}
+                  <div className="absolute top-0 left-0 bottom-0 w-1 bg-white/40 shadow-[0_0_8px_white]"></div>
+                </div>
+              </div>
+
               {/* Header Overlay for Single Post */}
-              <header className="fixed top-0 z-50 w-full p-4 pointer-events-none">
+              <header className="fixed top-0 z-50 w-full p-4 pointer-events-none mt-2">
                 <div className="w-full px-2 flex justify-between items-center pointer-events-auto">
                   <button
                     onClick={handleBackToList}
@@ -2396,11 +2822,7 @@
                     </h1>
                     <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                       <span>
-                        {activePost.createdAt
-                          ? new Date(
-                              activePost.createdAt.toDate()
-                            ).toLocaleDateString("ar-EG")
-                          : "غير معروف"}
+                        {formatTimeAgo(activePost.createdAt) || "غير معروف"}
                       </span>
                       <span>•</span>
                       <span>قراءة ممتعة ☕</span>
@@ -2673,11 +3095,7 @@
                         </div>
 
                         <div className="text-xs text-gray-400 font-medium shrink-0 mr-2">
-                          {post.createdAt
-                            ? new Date(
-                                post.createdAt.toDate()
-                              ).toLocaleDateString("ar-EG")
-                            : "الآن"}
+                          {formatTimeAgo(post.createdAt) || "الآن"}
                         </div>
                       </div>
                     </div>
@@ -2686,8 +3104,10 @@
               </div>
 
               {loading && (
-                <div className="col-span-full flex justify-center py-8">
-                  <LoaderIcon className="animate-spin text-primary" size={32} />
+                <div className="col-span-full grid gap-6">
+                  <SkeletonPost />
+                  <SkeletonPost />
+                  <SkeletonPost />
                 </div>
               )}
               {!hasMore && posts.length > 0 && (
