@@ -83,6 +83,38 @@
        */
 
       /* ============================================
+         HIDE DEFAULT SCROLLBAR
+         إخفاء شريط التمرير الافتراضي للمتصفح
+         ============================================ */
+      html {
+        /* Hide scrollbar for Firefox */
+        scrollbar-width: none;
+        /* Hide scrollbar for IE and Edge */
+        -ms-overflow-style: none;
+      }
+
+      html::-webkit-scrollbar {
+        /* Hide scrollbar for Chrome, Safari, and Opera */
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      body {
+        /* Hide scrollbar for Firefox */
+        scrollbar-width: none;
+        /* Hide scrollbar for IE and Edge */
+        -ms-overflow-style: none;
+      }
+
+      body::-webkit-scrollbar {
+        /* Hide scrollbar for Chrome, Safari, and Opera */
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      /* ============================================
          ANIMATIONS
          ============================================ */
       .animate-fade-in {
@@ -121,6 +153,39 @@
           opacity: 0;
           transform: translate(-50%, -20px);
         }
+      }
+
+      /* Gift Bounce Animation - قفزة خفيفة للهدية */
+      @keyframes gentleBounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px); /* قفزة خفيفة جداً */
+        }
+      }
+
+      .animate-gentle-bounce {
+        animation: gentleBounce 1s ease-in-out infinite;
+      }
+
+      /* Clap Animation - تأثير التصفيق العائم */
+      @keyframes floatUpFade {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(1) rotate(0deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-60px) scale(1.5) rotate(-20deg);
+        }
+      }
+
+      .animate-float-clap {
+        animation: floatUpFade 0.8s ease-out forwards;
+        position: absolute;
+        pointer-events: none; /* عشان الضغطات المتتالية متتعطلش */
       }
 
       .toast-enter {
@@ -1181,7 +1246,13 @@
           <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
         </IconBase>
       );
-
+      // أيقونة الساعة (لوقت القراءة)
+      const Clock = (props) => (
+        <IconBase {...props}>
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </IconBase>
+      );
       // --- Firebase Config ---
       const firebaseConfig = {
         apiKey: "AIzaSyAquezWzOJ5w5CZPuQFC01RxdGM2i9oYss",
@@ -1198,7 +1269,7 @@
       const db = firebase.firestore();
       const auth = firebase.auth(); // تعريف الـ Auth
 
-      // --- Themes Configuration ---
+      // --- Themes Configuration (Updated) ---
       const themes = {
         plain: {
           name: "بسيط",
@@ -1206,6 +1277,14 @@
           bgDark:
             "dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800",
           accent: "text-primary",
+          // 👇 الألوان الجديدة للشريط والهدية
+          barColor: "bg-emerald-500",
+          iconColor: "text-emerald-500",
+          // 👇 ألوان الـ tags
+          borderColor: "border-emerald-500",
+          tagBgColor: "bg-emerald-500/10",
+          tagTextColor: "text-emerald-500",
+          tagHoverColor: "bg-emerald-500",
           className: "theme-plain",
         },
         sepia: {
@@ -1213,6 +1292,14 @@
           bgLight: "bg-[#f4ecd8] text-slate-800",
           bgDark: "dark:bg-[#463a2a] dark:text-[#f4ecd8]",
           accent: "text-amber-600",
+          // 👇 لون ذهبي/بني للورقي
+          barColor: "bg-amber-600",
+          iconColor: "text-amber-600",
+          // 👇 ألوان الـ tags
+          borderColor: "border-amber-600",
+          tagBgColor: "bg-amber-600/10",
+          tagTextColor: "text-amber-600",
+          tagHoverColor: "bg-amber-600",
           className: "theme-sepia",
         },
         ocean: {
@@ -1222,6 +1309,14 @@
           bgDark:
             "dark:bg-gradient-to-br dark:from-[#0a1929] dark:via-[#0d1b2a] dark:to-[#0f172a] dark:text-cyan-100",
           accent: "text-cyan-500",
+          // 👇 لون سماوي للمحيط
+          barColor: "bg-cyan-500",
+          iconColor: "text-cyan-500",
+          // 👇 ألوان الـ tags
+          borderColor: "border-cyan-500",
+          tagBgColor: "bg-cyan-500/10",
+          tagTextColor: "text-cyan-500",
+          tagHoverColor: "bg-cyan-500",
           className: "theme-ocean",
         },
         forest: {
@@ -1231,6 +1326,14 @@
           bgDark:
             "dark:bg-gradient-to-br dark:from-[#022c22] dark:via-[#064e3b] dark:to-[#065f46] dark:text-emerald-100",
           accent: "text-emerald-500",
+          // 👇 لون أخضر للغابة
+          barColor: "bg-emerald-600",
+          iconColor: "text-emerald-500",
+          // 👇 ألوان الـ tags
+          borderColor: "border-emerald-600",
+          tagBgColor: "bg-emerald-600/10",
+          tagTextColor: "text-emerald-500",
+          tagHoverColor: "bg-emerald-600",
           className: "theme-forest",
         },
         midnight: {
@@ -1240,6 +1343,14 @@
           bgDark:
             "dark:bg-gradient-to-br dark:from-[#0a0e27] dark:via-[#1a1b3a] dark:to-[#2d1b3d] dark:text-indigo-100",
           accent: "text-indigo-400",
+          // 👇 لون بنفسجي للفضاء
+          barColor: "bg-indigo-500",
+          iconColor: "text-indigo-500",
+          // 👇 ألوان الـ tags
+          borderColor: "border-indigo-500",
+          tagBgColor: "bg-indigo-500/10",
+          tagTextColor: "text-indigo-500",
+          tagHoverColor: "bg-indigo-500",
           className: "theme-midnight",
         },
       };
@@ -1468,7 +1579,7 @@
       };
 
       // --- Single Post Tags Component ---
-      const PostTags = ({ topics, onSelectTag }) => {
+      const PostTags = ({ topics, onSelectTag, currentTheme, themes }) => {
         const [isExpanded, setIsExpanded] = useState(false);
 
         if (!topics || topics.length === 0) return null;
@@ -1480,6 +1591,26 @@
           ? topics
           : topics.slice(0, VISIBLE_COUNT);
 
+        // الحصول على ألوان الثيم الحالي
+        const theme = themes[currentTheme] || themes.midnight;
+
+        // Mapping للـ hover classes لكل theme
+        const hoverClasses = {
+          plain: "hover:bg-emerald-500",
+          sepia: "hover:bg-amber-600",
+          ocean: "hover:bg-cyan-500",
+          forest: "hover:bg-emerald-600",
+          midnight: "hover:bg-indigo-500",
+        };
+
+        const hoverTextClasses = {
+          plain: "hover:text-emerald-500",
+          sepia: "hover:text-amber-600",
+          ocean: "hover:text-cyan-500",
+          forest: "hover:text-emerald-500",
+          midnight: "hover:text-indigo-500",
+        };
+
         return (
           <div className="mb-4">
             <div className="flex flex-wrap gap-2">
@@ -1487,7 +1618,13 @@
                 <span
                   key={i}
                   onClick={() => onSelectTag && onSelectTag(tag)}
-                  className={`cursor-pointer px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full hover:bg-primary hover:text-white transition-colors`}
+                  className={`cursor-pointer px-3 py-1 ${theme.tagBgColor} ${
+                    theme.tagTextColor
+                  } text-xs font-bold rounded-full ${
+                    hoverClasses[currentTheme] || hoverClasses.midnight
+                  } hover:text-white transition-colors border ${
+                    theme.borderColor
+                  }/30`}
                 >
                   #{tag}
                 </span>
@@ -1496,7 +1633,9 @@
             {showExpandButton && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-2 text-xs font-bold text-gray-500 hover:text-primary flex items-center gap-1"
+                className={`mt-3 text-xs font-bold text-gray-500 dark:text-gray-400 ${
+                  hoverTextClasses[currentTheme] || hoverTextClasses.midnight
+                } flex items-center gap-1 transition-colors`}
               >
                 {isExpanded ? (
                   <>
@@ -1658,11 +1797,18 @@
         // Scroll to Top State
         const [showScrollTop, setShowScrollTop] = useState(false);
 
+        // Floating Controls State (for single post view)
+        const [showFloatingControls, setShowFloatingControls] = useState(true);
+        const lastScrollY = useRef(0);
+
         // State for Celebration
         const [hasCelebrated, setHasCelebrated] = useState(false);
 
         // State for Reading Progress
         const [readingProgress, setReadingProgress] = useState(0);
+
+        // State لتأثيرات التصفيق (مصفوفة عشان نقدر نضغط ورا بعض بسرعة)
+        const [clapParticles, setClapParticles] = useState([]);
 
         // Ref for content container
         const contentRef = useRef(null);
@@ -1707,6 +1853,30 @@
           if (diffInMonths === 2) return "منذ شهرين";
           if (diffInMonths <= 10) return `منذ ${diffInMonths} أشهر`;
           return `منذ ${diffInMonths} شهر`;
+        };
+
+        // دالة حساب وقت القراءة
+        const calculateReadingTime = (content) => {
+          if (!content) return 0;
+          // حذف رموز الماركداون والمسافات الزائدة لحساب الكلمات بدقة
+          const text = content.replace(/[#*`~>\[\]\(\)]/g, "").trim();
+          const wordCount = text
+            .split(/\s+/)
+            .filter((word) => word.length > 0).length;
+          const readingTime = Math.ceil(wordCount / 200); // متوسط القراءة 200 كلمة/دقيقة
+          return readingTime || 1; // على الأقل دقيقة واحدة
+        };
+
+        // دالة التعامل مع ضغطة التصفيق
+        const handleClap = () => {
+          const id = Date.now();
+          // إضافة "جسيم" جديد للمصفوفة
+          setClapParticles((prev) => [...prev, { id }]);
+
+          // حذف الجسيم بعد انتهاء الانيميشن (1 ثانية) لتنظيف الذاكرة
+          setTimeout(() => {
+            setClapParticles((prev) => prev.filter((p) => p.id !== id));
+          }, 1000);
         };
 
         useEffect(() => {
@@ -1887,18 +2057,34 @@
         // --- Scroll Handler: حساب التقدم والاحتفال ---
         useEffect(() => {
           const handleScroll = () => {
-            // 1. حساب زر العودة للأعلى
-            const scrollY =
+            const currentScrollY =
               window.scrollY || document.documentElement.scrollTop;
-            setShowScrollTop(scrollY > 300);
 
-            // 2. لو مفيش مقال مفتوح، مش محتاجين نحسب شريط التقدم
+            // 1. منطق إظهار/إخفاء الأزرار العائمة (فقط في وضع القراءة)
+            if (activePost) {
+              // إذا كان السكرول للأعلى أو نحن في بداية الصفحة -> أظهر التحكم
+              if (
+                currentScrollY < lastScrollY.current ||
+                currentScrollY < 100
+              ) {
+                setShowFloatingControls(true);
+              } else {
+                // إذا كان السكرول للأسفل -> أخفِ التحكم
+                setShowFloatingControls(false);
+              }
+              lastScrollY.current = currentScrollY;
+            }
+
+            // 2. حساب زر العودة للأعلى
+            setShowScrollTop(currentScrollY > 300);
+
+            // 3. لو مفيش مقال مفتوح، مش محتاجين نحسب شريط التقدم
             if (!activePost) {
               setReadingProgress(0);
               return;
             }
 
-            // 3. حساب نسبة التقدم بدقة
+            // 4. حساب نسبة التقدم بدقة
             const winHeight = window.innerHeight;
             const docHeight = document.documentElement.scrollHeight;
             const scrollTop =
@@ -1912,7 +2098,7 @@
 
             setReadingProgress(pct);
 
-            // 4. منطق الاحتفال عند الوصول لـ 95%
+            // 5. منطق الاحتفال عند الوصول لـ 95%
             if (pct >= 95 && !hasCelebrated) {
               triggerCelebration();
               setHasCelebrated(true);
@@ -1923,11 +2109,13 @@
           return () => window.removeEventListener("scroll", handleScroll);
         }, [activePost, hasCelebrated]);
 
-        // إعادة تعيين الاحتفال والتقدم لما نفتح مقال جديد
+        // إعادة تعيين الاحتفال والتقدم والأزرار العائمة لما نفتح مقال جديد
         useEffect(() => {
           if (activePost) {
             setHasCelebrated(false);
             setReadingProgress(0);
+            setShowFloatingControls(true);
+            lastScrollY.current = 0;
           }
         }, [activePost]);
 
@@ -2619,142 +2807,31 @@
               >
                 {/* الهدية (أيقونة الهدف) */}
                 <div
-                  className={`fixed top-0 left-2 z-[101] transition-all duration-500 transform origin-top ${
+                  className={`fixed left-2 z-[101] transition-all duration-500 transform origin-top ${
                     readingProgress >= 95
-                      ? "text-emerald-500 scale-110 opacity-100 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-bounce pt-1"
-                      : "text-gray-400 dark:text-gray-600 scale-75 grayscale opacity-50 pt-0.5"
+                      ? `${themes[currentTheme].iconColor} scale-110 opacity-100 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] animate-gentle-bounce`
+                      : "text-gray-400 dark:text-gray-600 scale-75 grayscale opacity-50"
                   }`}
-                  style={{ willChange: "transform, opacity" }}
+                  // 👇 الهدية منخفضة أكثر ولها مسافة كافية من الشريط
+                  // القفزة خفيفة (4px فقط) حتى لا تصل للشريط
+                  style={{ top: "0.75rem", willChange: "transform, opacity" }}
                 >
                   <Gift
                     size={24}
                     strokeWidth={readingProgress >= 95 ? 2.5 : 2}
-                    fill="none"
+                    fill="none" // فقط stroke يتلون، بدون fill
                   />
                 </div>
 
-                {/* الشريط الملون - لون واحد (الأخضر) */}
+                {/* الشريط الملون - يتغير حسب الثيم */}
                 <div
-                  className="absolute top-0 right-0 h-full transition-all duration-100 ease-out bg-primary"
+                  className={`absolute top-0 right-0 h-full transition-all duration-100 ease-out ${themes[currentTheme].barColor}`}
                   style={{ width: `${readingProgress}%` }}
                 >
                   {/* وميض أبيض خفيف جداً في نهاية الشريط لإظهار الحركة */}
                   <div className="absolute top-0 left-0 bottom-0 w-1 bg-white/40 shadow-[0_0_8px_white]"></div>
                 </div>
               </div>
-
-              {/* Header Overlay for Single Post */}
-              <header className="fixed top-0 z-50 w-full p-4 pointer-events-none mt-2">
-                <div className="w-full px-2 flex justify-between items-center pointer-events-auto">
-                  <button
-                    onClick={handleBackToList}
-                    className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-white hover:bg-white dark:hover:bg-black/70 border border-gray-200 dark:border-transparent"
-                    title="العودة للقائمة"
-                  >
-                    <ArrowRight size={18} />{" "}
-                    <span className="hidden sm:inline">عودة</span>
-                  </button>
-                  <div className="flex gap-2 items-center">
-                    {/* Desktop Display Settings - تظهر فقط على الشاشات الكبيرة */}
-                    <div className="hidden md:flex gap-2 items-center">
-                      <div className="relative">
-                        <button
-                          onClick={() => setShowThemeMenu(!showThemeMenu)}
-                          className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors border border-gray-200 dark:border-transparent"
-                          title="تغيير المظهر"
-                        >
-                          <Palette size={20} />
-                        </button>
-                        {showThemeMenu && (
-                          <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
-                            {Object.entries(themes).map(([key, t]) => (
-                              <button
-                                key={key}
-                                onClick={() => {
-                                  setCurrentTheme(key);
-                                  setShowThemeMenu(false);
-                                }}
-                                className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
-                                  currentTheme === key
-                                    ? "text-primary font-bold"
-                                    : ""
-                                }`}
-                              >
-                                {t.name}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => setDarkMode(!darkMode)}
-                        className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors border border-gray-200 dark:border-transparent"
-                        title={darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
-                      >
-                        {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                      </button>
-                    </div>
-
-                    {/* Mobile Display Settings Button - يظهر فقط على الشاشات الصغيرة */}
-                    <div className="relative md:hidden" data-display-menu>
-                      <button
-                        onClick={() => setShowDisplayMenu(!showDisplayMenu)}
-                        className="p-2 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-sm transition-colors border border-gray-200 dark:border-transparent"
-                        title="إعدادات المظهر"
-                      >
-                        <Layout size={20} />
-                      </button>
-                      {showDisplayMenu && (
-                        <div
-                          className="absolute top-12 left-0 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-[100] flex flex-col gap-2"
-                          data-display-menu
-                        >
-                          <div className="flex items-center gap-2 px-2 py-1 border-b border-gray-200 dark:border-gray-700 mb-1">
-                            <Layout size={16} />
-                            <span className="text-xs font-bold text-gray-500">
-                              إعدادات المظهر
-                            </span>
-                          </div>
-                          <button
-                            onClick={() => setDarkMode(!darkMode)}
-                            className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-right"
-                          >
-                            <span className="font-bold text-sm">
-                              {darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
-                            </span>
-                            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                          </button>
-                          <div className="h-px bg-gray-200 dark:bg-gray-700 my-1"></div>
-                          <div>
-                            <div className="text-xs font-bold text-gray-500 px-2 py-1 mb-1">
-                              السمات
-                            </div>
-                            <div className="flex flex-col gap-1">
-                              {Object.entries(themes).map(([key, t]) => (
-                                <button
-                                  key={key}
-                                  onClick={() => {
-                                    setCurrentTheme(key);
-                                    setShowDisplayMenu(false);
-                                  }}
-                                  className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 flex items-center justify-between ${
-                                    currentTheme === key
-                                      ? "text-primary font-bold bg-primary/10"
-                                      : ""
-                                  }`}
-                                >
-                                  <span>{t.name}</span>
-                                  {currentTheme === key && <Check size={14} />}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </header>
 
               {activePost.coverImage && (
                 <div className="w-full h-64 md:h-96 relative">
@@ -2771,7 +2848,7 @@
                 className={`max-w-3xl mx-auto px-1 md:px-4 ${
                   activePost.coverImage
                     ? "-mt-12 md:-mt-20 relative z-10"
-                    : "pt-20 md:pt-24"
+                    : "pt-12"
                 }`}
               >
                 <article className="animate-fade-in bg-white/95 dark:bg-slate-800/95 p-3 md:p-8 rounded-lg md:rounded-2xl shadow-sm backdrop-blur-md relative group border border-gray-100 dark:border-gray-700">
@@ -2816,6 +2893,8 @@
                         handleTagSelection(tag, true);
                         handleTagSelection(tag);
                       }}
+                      currentTheme={currentTheme}
+                      themes={themes}
                     />
                     <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
                       {activePost.title}
@@ -2823,6 +2902,14 @@
                     <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                       <span>
                         {formatTimeAgo(activePost.createdAt) || "غير معروف"}
+                      </span>
+                      <span>•</span>
+                      {/* وقت القراءة المتوقع */}
+                      <span className="flex items-center gap-1 bg-gray-100 dark:bg-slate-700/50 px-2 py-0.5 rounded-full">
+                        <Clock size={12} />
+                        <span>
+                          {calculateReadingTime(activePost.content)} دقيقة قراءة
+                        </span>
                       </span>
                       <span>•</span>
                       <span>قراءة ممتعة ☕</span>
@@ -2836,17 +2923,105 @@
                 </article>
               </div>
 
-              {/* Scroll to Top Button */}
-              {showScrollTop && (
+              {/* ========================================================== */}
+              {/* 🔥 Floating Dock: الأزرار العائمة (Theme, Back, Scroll Top) 🔥 */}
+              {/* ========================================================== */}
+              <div
+                className={`fixed bottom-8 right-6 flex flex-col items-center gap-3 z-[100] transition-transform duration-500 ease-in-out ${
+                  showFloatingControls ? "translate-y-0" : "translate-y-[200%]"
+                }`}
+              >
+                {/* زر السمة (Theme) - في الأعلى */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowThemeMenu(!showThemeMenu)}
+                    className="w-12 h-12 rounded-full bg-white/90 dark:bg-slate-800/90 text-gray-700 dark:text-gray-200 shadow-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center backdrop-blur-sm hover:scale-110 transition-transform"
+                    title="المظهر"
+                  >
+                    <Palette size={24} />
+                  </button>
+
+                  {/* قائمة السمات - تظهر على يسار الزر ومحاذية له من الأعلى */}
+                  {showThemeMenu && (
+                    <div className="absolute -top-12 right-full mr-3 w-40 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-2 overflow-hidden animate-fade-in">
+                      <div className="flex flex-col gap-1">
+                        {/* زر الوضع الداكن/الفاتح داخل القائمة */}
+                        <button
+                          onClick={() => setDarkMode(!darkMode)}
+                          className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-xs font-bold border-b border-gray-100 dark:border-gray-700 mb-1"
+                        >
+                          <span>{darkMode ? "نهاري" : "ليلي"}</span>
+                          {darkMode ? <Sun size={14} /> : <Moon size={14} />}
+                        </button>
+                        {/* باقي السمات */}
+                        {Object.entries(themes).map(([key, t]) => (
+                          <button
+                            key={key}
+                            onClick={() => {
+                              setCurrentTheme(key);
+                              setShowThemeMenu(false);
+                            }}
+                            className={`text-right px-3 py-2 text-xs rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
+                              currentTheme === key
+                                ? "text-primary font-bold bg-primary/10"
+                                : ""
+                            }`}
+                          >
+                            {t.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* زر العودة (Back) - في المنتصف */}
+                <button
+                  onClick={handleBackToList}
+                  className="w-12 h-12 rounded-full bg-white/90 dark:bg-slate-800/90 text-gray-800 dark:text-white shadow-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center backdrop-blur-sm hover:scale-110 transition-transform"
+                  title="عودة للقائمة"
+                >
+                  <ArrowRight size={24} />
+                </button>
+
+                {/* زر التصفيق (Clap Button) */}
+                <div className="relative">
+                  {/* التأثيرات العائمة (Particles) */}
+                  {clapParticles.map((particle) => (
+                    <div
+                      key={particle.id}
+                      className="animate-float-clap absolute -top-8 left-1/2 -translate-x-1/2 text-2xl"
+                    >
+                      👏 {/* أو ممكن تستخدم ❤️ أو +1 */}
+                    </div>
+                  ))}
+
+                  <button
+                    onClick={handleClap}
+                    className={`w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 border border-gray-200 dark:border-gray-600 backdrop-blur-sm 
+                      bg-white/90 dark:bg-slate-800/90 text-yellow-500`}
+                    title="تفاعل"
+                  >
+                    <span className="text-2xl">👏</span>
+                  </button>
+                </div>
+
+                {/* زر الصعود (Scroll Top) - في الأسفل (الأقرب للإبهام) */}
                 <button
                   onClick={scrollToTop}
-                  className="fixed bottom-8 right-8 z-40 p-3 rounded-full bg-primary text-white shadow-lg hover:bg-emerald-600 transition-all duration-300 hover:scale-110 animate-fade-in backdrop-blur-sm border border-white/20"
-                  title="العودة للأعلى"
-                  aria-label="العودة للأعلى"
+                  className={`w-12 h-12 rounded-full text-white shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 ${
+                    themes[currentTheme].barColor
+                  } ${
+                    showScrollTop
+                      ? "opacity-100 scale-100"
+                      : "opacity-50 scale-75"
+                  }`}
+                  disabled={!showScrollTop}
+                  title="للأعلى"
                 >
                   <ChevronUp size={24} />
                 </button>
-              )}
+              </div>
             </div>
           );
         }
