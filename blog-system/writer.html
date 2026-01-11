@@ -513,11 +513,12 @@
       .dark .theme-plain::before {
         background-image: radial-gradient(
             circle,
-            rgba(148, 163, 184, 0.3) 1px,
-            transparent 1px
+            rgba(148, 163, 184, 0.5) 1.5px,
+            transparent 1.5px
           ),
-          radial-gradient(circle, rgba(203, 213, 225, 0.2) 1px, transparent 1px);
-        background-size: 220px 220px, 320px 320px;
+          radial-gradient(circle, rgba(203, 213, 225, 0.35) 1px, transparent 1px),
+          radial-gradient(circle, rgba(226, 232, 240, 0.25) 1px, transparent 1px);
+        background-size: 200px 200px, 280px 280px, 350px 350px;
       }
 
       .theme-plain > * {
@@ -2122,14 +2123,15 @@
           name: "بسيط",
           bgLight: "bg-gradient-to-br from-gray-50 to-gray-100",
           bgDark:
-            "dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800",
+            "dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-blue-950 dark:text-slate-100",
           accent: "text-primary",
           className: "theme-plain",
         },
         sepia: {
           name: "ورقي (Sepia)",
           bgLight: "bg-[#f4ecd8] text-slate-800",
-          bgDark: "dark:bg-[#463a2a] dark:text-[#f4ecd8]",
+          bgDark:
+            "dark:bg-gradient-to-br dark:from-[#2a2118] dark:via-[#3a2f25] dark:to-[#2f2620] dark:text-[#f4ecd8]",
           accent: "text-amber-600",
           className: "theme-sepia",
         },
@@ -2138,7 +2140,7 @@
           bgLight:
             "bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 text-slate-800",
           bgDark:
-            "dark:bg-gradient-to-br dark:from-[#0a1929] dark:via-[#0d1b2a] dark:to-[#0f172a] dark:text-cyan-100",
+            "dark:bg-gradient-to-br dark:from-[#0a1a2e] dark:via-[#0d2338] dark:to-[#0f1e3a] dark:text-cyan-100",
           accent: "text-cyan-500",
           className: "theme-ocean",
         },

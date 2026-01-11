@@ -580,6 +580,388 @@
       }
 
       /* ============================================
+         THEME-SPECIFIC TEXT COLORS
+         Comfortable, readable colors matched to each theme
+         ============================================ */
+
+      /* ============================================
+         PLAIN THEME - Clean & Simple
+         ============================================ */
+      .theme-plain .prose-rtl {
+        color: #1e293b; /* Dark slate for excellent readability */
+      }
+
+      .dark .theme-plain .prose-rtl {
+        color: #e2e8f0; /* Light slate - comfortable on dark */
+      }
+
+      .theme-plain .prose-rtl h1,
+      .theme-plain .prose-rtl h2,
+      .theme-plain .prose-rtl h3 {
+        color: #0f172a; /* Very dark for headers */
+      }
+
+      .dark .theme-plain .prose-rtl h1,
+      .dark .theme-plain .prose-rtl h2,
+      .dark .theme-plain .prose-rtl h3 {
+        color: #f1f5f9; /* Very light for headers */
+      }
+
+      .theme-plain .prose-rtl a {
+        color: #10b981; /* Emerald green */
+      }
+
+      .dark .theme-plain .prose-rtl a {
+        color: #34d399; /* Lighter emerald */
+      }
+
+      .theme-plain .prose-rtl blockquote {
+        border-color: #10b981;
+        color: #475569;
+      }
+
+      .dark .theme-plain .prose-rtl blockquote {
+        border-color: #34d399;
+        color: #94a3b8;
+      }
+
+      /* ============================================
+         SEPIA THEME - Celestial Antiquity
+         ============================================ */
+      .theme-sepia .prose-rtl {
+        color: #3e2723; /* Rich dark brown - comfortable on sepia paper */
+      }
+
+      .dark .theme-sepia .prose-rtl {
+        color: #e6dcca; /* Starlight Cream - perfect for dark sepia */
+      }
+
+      .theme-sepia .prose-rtl h1,
+      .theme-sepia .prose-rtl h2,
+      .theme-sepia .prose-rtl h3 {
+        color: #5d4037; /* Darker brown for headers */
+        font-weight: 800; /* Bold like other themes */
+      }
+
+      .dark .theme-sepia .prose-rtl h1,
+      .dark .theme-sepia .prose-rtl h2,
+      .dark .theme-sepia .prose-rtl h3 {
+        color: #cfa76e; /* Constellation Gold */
+        font-weight: 800; /* Bold like other themes */
+        border-color: rgba(207, 167, 110, 0.3);
+      }
+
+      .theme-sepia .prose-rtl h1 {
+        border-bottom: 1px solid rgba(139, 90, 43, 0.3);
+        padding-bottom: 20px;
+        margin-bottom: 40px;
+      }
+
+      .dark .theme-sepia .prose-rtl h1 {
+        border-bottom: 1px solid rgba(207, 167, 110, 0.3);
+        padding-bottom: 20px;
+        margin-bottom: 40px;
+      }
+
+      .theme-sepia .prose-rtl h2 {
+        border-bottom: 1px solid rgba(139, 90, 43, 0.2);
+        padding-bottom: 0.5em;
+      }
+
+      .dark .theme-sepia .prose-rtl h2 {
+        border-bottom: 1px solid rgba(207, 167, 110, 0.2);
+        padding-bottom: 0.5em;
+      }
+
+      .theme-sepia .prose-rtl a {
+        color: #d97706; /* Amber-600 */
+      }
+
+      .dark .theme-sepia .prose-rtl a {
+        color: #cfa76e; /* Constellation Gold */
+      }
+
+      .theme-sepia .prose-rtl a:hover {
+        color: #b45309; /* Darker amber */
+      }
+
+      .dark .theme-sepia .prose-rtl a:hover {
+        color: #e6dcca; /* Starlight Cream on hover */
+      }
+
+      .theme-sepia .prose-rtl blockquote {
+        background: rgba(244, 236, 216, 0.5);
+        border-color: rgba(217, 119, 6, 0.4);
+        color: #5d4037;
+      }
+
+      .dark .theme-sepia .prose-rtl blockquote {
+        background: rgba(38, 32, 29, 0.6); /* Paper Overlay */
+        border-color: rgba(207, 167, 110, 0.4);
+        color: #a89f91; /* Faded Ink */
+      }
+
+      /* Removed special card styling to match other themes - no double border */
+
+      /* ============================================
+         OCEAN THEME - Deep Blue Waters
+         ============================================ */
+      .theme-ocean .prose-rtl {
+        color: #1e3a5f; /* Deep blue-gray - readable on light cyan */
+      }
+
+      .dark .theme-ocean .prose-rtl {
+        color: #cffafe; /* Light cyan - comfortable on dark ocean */
+      }
+
+      .theme-ocean .prose-rtl h1,
+      .theme-ocean .prose-rtl h2,
+      .theme-ocean .prose-rtl h3 {
+        color: #0c4a6e; /* Very dark cyan-blue */
+      }
+
+      .dark .theme-ocean .prose-rtl h1,
+      .dark .theme-ocean .prose-rtl h2,
+      .dark .theme-ocean .prose-rtl h3 {
+        color: #67e8f9; /* Bright cyan */
+      }
+
+      .theme-ocean .prose-rtl h2 {
+        border-color: rgba(6, 182, 212, 0.3);
+      }
+
+      .dark .theme-ocean .prose-rtl h2 {
+        border-color: rgba(103, 232, 249, 0.3);
+      }
+
+      .theme-ocean .prose-rtl a {
+        color: #0891b2; /* Cyan-600 */
+      }
+
+      .dark .theme-ocean .prose-rtl a {
+        color: #22d3ee; /* Cyan-400 */
+      }
+
+      .theme-ocean .prose-rtl a:hover {
+        color: #0e7490; /* Darker cyan */
+      }
+
+      .dark .theme-ocean .prose-rtl a:hover {
+        color: #67e8f9; /* Brighter cyan */
+      }
+
+      .theme-ocean .prose-rtl blockquote {
+        background: rgba(207, 250, 254, 0.3);
+        border-color: rgba(6, 182, 212, 0.4);
+        color: #164e63;
+      }
+
+      .dark .theme-ocean .prose-rtl blockquote {
+        background: rgba(8, 47, 73, 0.4);
+        border-color: rgba(34, 211, 238, 0.4);
+        color: #a5f3fc;
+      }
+
+      /* ============================================
+         FOREST THEME - Natural Green
+         ============================================ */
+      .theme-forest .prose-rtl {
+        color: #1a3a2e; /* Deep green-gray - readable on light green */
+      }
+
+      .dark .theme-forest .prose-rtl {
+        color: #d1fae5; /* Light emerald - comfortable on dark forest */
+      }
+
+      .theme-forest .prose-rtl h1,
+      .theme-forest .prose-rtl h2,
+      .theme-forest .prose-rtl h3 {
+        color: #064e3b; /* Very dark emerald */
+      }
+
+      .dark .theme-forest .prose-rtl h1,
+      .dark .theme-forest .prose-rtl h2,
+      .dark .theme-forest .prose-rtl h3 {
+        color: #6ee7b7; /* Bright emerald */
+      }
+
+      .theme-forest .prose-rtl h2 {
+        border-color: rgba(16, 185, 129, 0.3);
+      }
+
+      .dark .theme-forest .prose-rtl h2 {
+        border-color: rgba(110, 231, 183, 0.3);
+      }
+
+      .theme-forest .prose-rtl a {
+        color: #059669; /* Emerald-600 */
+      }
+
+      .dark .theme-forest .prose-rtl a {
+        color: #34d399; /* Emerald-400 */
+      }
+
+      .theme-forest .prose-rtl a:hover {
+        color: #047857; /* Darker emerald */
+      }
+
+      .dark .theme-forest .prose-rtl a:hover {
+        color: #6ee7b7; /* Brighter emerald */
+      }
+
+      .theme-forest .prose-rtl blockquote {
+        background: rgba(209, 250, 229, 0.3);
+        border-color: rgba(16, 185, 129, 0.4);
+        color: #065f46;
+      }
+
+      .dark .theme-forest .prose-rtl blockquote {
+        background: rgba(2, 44, 34, 0.4);
+        border-color: rgba(52, 211, 153, 0.4);
+        color: #a7f3d0;
+      }
+
+      /* ============================================
+         MIDNIGHT THEME - Deep Purple Space
+         ============================================ */
+      .theme-midnight .prose-rtl {
+        color: #312e81; /* Deep indigo - readable on light purple */
+      }
+
+      .dark .theme-midnight .prose-rtl {
+        color: #e0e7ff; /* Light indigo - comfortable on dark space */
+      }
+
+      .theme-midnight .prose-rtl h1,
+      .theme-midnight .prose-rtl h2,
+      .theme-midnight .prose-rtl h3 {
+        color: #1e1b4b; /* Very dark indigo */
+      }
+
+      .dark .theme-midnight .prose-rtl h1,
+      .dark .theme-midnight .prose-rtl h2,
+      .dark .theme-midnight .prose-rtl h3 {
+        color: #a5b4fc; /* Bright indigo */
+      }
+
+      .theme-midnight .prose-rtl h2 {
+        border-color: rgba(99, 102, 241, 0.3);
+      }
+
+      .dark .theme-midnight .prose-rtl h2 {
+        border-color: rgba(165, 180, 252, 0.3);
+      }
+
+      .theme-midnight .prose-rtl a {
+        color: #6366f1; /* Indigo-500 */
+      }
+
+      .dark .theme-midnight .prose-rtl a {
+        color: #818cf8; /* Indigo-400 */
+      }
+
+      .theme-midnight .prose-rtl a:hover {
+        color: #4f46e5; /* Darker indigo */
+      }
+
+      .dark .theme-midnight .prose-rtl a:hover {
+        color: #a5b4fc; /* Brighter indigo */
+      }
+
+      .theme-midnight .prose-rtl blockquote {
+        background: rgba(224, 231, 255, 0.3);
+        border-color: rgba(99, 102, 241, 0.4);
+        color: #4338ca;
+      }
+
+      .dark .theme-midnight .prose-rtl blockquote {
+        background: rgba(10, 14, 39, 0.4);
+        border-color: rgba(129, 140, 248, 0.4);
+        color: #c7d2fe;
+      }
+
+      /* ============================================
+         SIMPLE TEXT COLORS MODE
+         ألوان بسيطة (أبيض/أسود/رمادي) - غير مرتبطة بالثيم
+         ============================================ */
+      .text-simple-mode .prose-rtl {
+        color: #1f2937 !important; /* رمادي داكن جداً - قريب من الأسود */
+      }
+
+      .dark .text-simple-mode .prose-rtl {
+        color: #f3f4f6 !important; /* رمادي فاتح جداً - قريب من الأبيض */
+      }
+
+      .text-simple-mode .prose-rtl h1,
+      .text-simple-mode .prose-rtl h2,
+      .text-simple-mode .prose-rtl h3 {
+        color: #111827 !important; /* أسود تقريباً للعناوين */
+        font-weight: 800;
+      }
+
+      .dark .text-simple-mode .prose-rtl h1,
+      .dark .text-simple-mode .prose-rtl h2,
+      .dark .text-simple-mode .prose-rtl h3 {
+        color: #ffffff !important; /* أبيض للعناوين في الوضع الداكن */
+        font-weight: 800;
+      }
+
+      .text-simple-mode .prose-rtl h2 {
+        border-color: #d1d5db !important; /* رمادي فاتح للحدود */
+      }
+
+      .dark .text-simple-mode .prose-rtl h2 {
+        border-color: #4b5563 !important; /* رمادي متوسط للحدود في الوضع الداكن */
+      }
+
+      .text-simple-mode .prose-rtl a {
+        color: #374151 !important; /* رمادي داكن للروابط */
+        text-decoration: underline;
+      }
+
+      .dark .text-simple-mode .prose-rtl a {
+        color: #e5e7eb !important; /* رمادي فاتح للروابط في الوضع الداكن */
+      }
+
+      .text-simple-mode .prose-rtl a:hover {
+        color: #111827 !important; /* أسود عند التمرير */
+      }
+
+      .dark .text-simple-mode .prose-rtl a:hover {
+        color: #ffffff !important; /* أبيض عند التمرير في الوضع الداكن */
+      }
+
+      .text-simple-mode .prose-rtl strong {
+        color: #111827 !important; /* أسود للنص العريض */
+      }
+
+      .dark .text-simple-mode .prose-rtl strong {
+        color: #ffffff !important; /* أبيض للنص العريض في الوضع الداكن */
+      }
+
+      .text-simple-mode .prose-rtl blockquote {
+        background: #f9fafb !important; /* رمادي فاتح جداً للخلفية */
+        border-color: #d1d5db !important; /* رمادي فاتح للحدود */
+        color: #374151 !important; /* رمادي داكن للنص */
+      }
+
+      .dark .text-simple-mode .prose-rtl blockquote {
+        background: #1f2937 !important; /* رمادي داكن للخلفية */
+        border-color: #4b5563 !important; /* رمادي متوسط للحدود */
+        color: #e5e7eb !important; /* رمادي فاتح للنص */
+      }
+
+      .text-simple-mode .prose-rtl :not(pre) > code {
+        background: #e5e7eb !important; /* رمادي فاتح للخلفية */
+        color: #111827 !important; /* أسود للنص */
+      }
+
+      .dark .text-simple-mode .prose-rtl :not(pre) > code {
+        background: #374151 !important; /* رمادي داكن للخلفية */
+        color: #f3f4f6 !important; /* رمادي فاتح للنص */
+      }
+
+      /* ============================================
          THEMES - Tiny Stars in Colorful Space
          Very gentle drift - like floating in space
          Small stars with soft glow - peaceful & calming
@@ -624,11 +1006,12 @@
       .dark .theme-plain::before {
         background-image: radial-gradient(
             circle,
-            rgba(148, 163, 184, 0.3) 1px,
-            transparent 1px
+            rgba(148, 163, 184, 0.5) 1.5px,
+            transparent 1.5px
           ),
-          radial-gradient(circle, rgba(203, 213, 225, 0.2) 1px, transparent 1px);
-        background-size: 220px 220px, 320px 320px;
+          radial-gradient(circle, rgba(203, 213, 225, 0.35) 1px, transparent 1px),
+          radial-gradient(circle, rgba(226, 232, 240, 0.25) 1px, transparent 1px);
+        background-size: 200px 200px, 280px 280px, 350px 350px;
       }
 
       .theme-plain > * {
@@ -667,11 +1050,12 @@
       .theme-modern::before {
         background-image: radial-gradient(
             circle,
-            rgba(16, 185, 129, 0.7) 1px,
-            transparent 1px
+            rgba(4, 120, 87, 1) 2px,
+            transparent 2px
           ),
-          radial-gradient(circle, rgba(52, 211, 153, 0.5) 1px, transparent 1px);
-        background-size: 180px 180px, 260px 260px;
+          radial-gradient(circle, rgba(5, 150, 105, 1) 1.5px, transparent 1.5px),
+          radial-gradient(circle, rgba(16, 185, 129, 0.9) 1px, transparent 1px);
+        background-size: 150px 150px, 200px 200px, 250px 250px;
         animation: stars-drift 500s linear infinite;
       }
 
@@ -691,22 +1075,24 @@
       .theme-sepia::before {
         background-image: radial-gradient(
             circle,
-            rgba(180, 120, 60, 0.6) 1px,
-            transparent 1px
+            rgba(120, 53, 15, 1) 2px,
+            transparent 2px
           ),
-          radial-gradient(circle, rgba(139, 90, 43, 0.4) 1px, transparent 1px);
-        background-size: 190px 190px, 270px 270px;
-        animation: stars-drift 550s linear infinite;
+          radial-gradient(circle, rgba(146, 64, 14, 1) 1.5px, transparent 1.5px),
+          radial-gradient(circle, rgba(180, 83, 9, 0.9) 1px, transparent 1px);
+        background-size: 160px 160px, 210px 210px, 260px 260px;
+        animation: stars-rise 480s linear infinite;
       }
 
       .dark .theme-sepia::before {
         background-image: radial-gradient(
             circle,
-            rgba(251, 191, 36, 0.8) 1px,
+            rgba(251, 191, 36, 0.85) 1px,
             transparent 1px
           ),
-          radial-gradient(circle, rgba(245, 158, 11, 0.55) 1px, transparent 1px);
-        background-size: 210px 210px, 290px 290px;
+          radial-gradient(circle, rgba(245, 158, 11, 0.6) 1px, transparent 1px);
+        background-size: 190px 190px, 270px 270px;
+        animation: stars-rise 480s linear infinite;
       }
 
       /* ============================================
@@ -715,11 +1101,16 @@
       .theme-ocean::before {
         background-image: radial-gradient(
             circle,
-            rgba(6, 182, 212, 0.65) 1px,
-            transparent 1px
+            rgba(8, 145, 178, 1) 2px,
+            transparent 2px
           ),
-          radial-gradient(circle, rgba(34, 211, 238, 0.45) 1px, transparent 1px);
-        background-size: 170px 170px, 250px 250px;
+          radial-gradient(
+            circle,
+            rgba(14, 116, 144, 1) 1.5px,
+            transparent 1.5px
+          ),
+          radial-gradient(circle, rgba(6, 182, 212, 0.9) 1px, transparent 1px);
+        background-size: 140px 140px, 190px 190px, 240px 240px;
         animation: stars-rise 480s linear infinite;
       }
 
@@ -739,26 +1130,24 @@
       .theme-forest::before {
         background-image: radial-gradient(
             circle,
-            rgba(74, 222, 128, 0.7) 1px,
-            transparent 1px
+            rgba(4, 120, 87, 1) 2px,
+            transparent 2px
           ),
-          radial-gradient(circle, rgba(52, 211, 153, 0.5) 1px, transparent 1px);
-        background-size: 200px 200px, 300px 300px;
-        animation: stars-drift 580s linear infinite;
+          radial-gradient(circle, rgba(5, 150, 105, 1) 1.5px, transparent 1.5px),
+          radial-gradient(circle, rgba(16, 185, 129, 0.9) 1px, transparent 1px);
+        background-size: 170px 170px, 220px 220px, 270px 270px;
+        animation: stars-rise 480s linear infinite;
       }
 
       .dark .theme-forest::before {
         background-image: radial-gradient(
             circle,
-            rgba(52, 211, 153, 0.5) 1px,
+            rgba(52, 211, 153, 0.85) 1px,
             transparent 1px
           ),
-          radial-gradient(
-            circle,
-            rgba(110, 231, 183, 0.35) 1px,
-            transparent 1px
-          );
-        background-size: 220px 220px, 320px 320px;
+          radial-gradient(circle, rgba(110, 231, 183, 0.6) 1px, transparent 1px);
+        background-size: 190px 190px, 270px 270px;
+        animation: stars-rise 480s linear infinite;
       }
 
       /* ============================================
@@ -767,11 +1156,16 @@
       .theme-midnight::before {
         background-image: radial-gradient(
             circle,
-            rgba(139, 92, 246, 0.65) 1px,
-            transparent 1px
+            rgba(79, 70, 229, 1) 2px,
+            transparent 2px
           ),
-          radial-gradient(circle, rgba(168, 85, 247, 0.45) 1px, transparent 1px);
-        background-size: 160px 160px, 240px 240px;
+          radial-gradient(
+            circle,
+            rgba(99, 102, 241, 1) 1.5px,
+            transparent 1.5px
+          ),
+          radial-gradient(circle, rgba(139, 92, 246, 0.9) 1px, transparent 1px);
+        background-size: 130px 130px, 180px 180px, 230px 230px;
         animation: stars-drift 450s linear infinite;
       }
 
@@ -1145,6 +1539,12 @@
           <path d="m12 5 7 7-7 7" />
         </IconBase>
       );
+      const Home = (props) => (
+        <IconBase {...props}>
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M9 22V12h6v10" />
+        </IconBase>
+      );
       const LoaderIcon = (props) => (
         <IconBase {...props}>
           <path d="M21 12a9 9 0 1 1-6.219-8.56" />
@@ -1202,6 +1602,13 @@
           <circle cx="8.5" cy="7.5" r=".5" />
           <circle cx="6.5" cy="12.5" r=".5" />
           <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+        </IconBase>
+      );
+      const Type = (props) => (
+        <IconBase {...props}>
+          <polyline points="4 7 4 4 20 4 20 7" />
+          <line x1="9" y1="20" x2="15" y2="20" />
+          <line x1="12" y1="4" x2="12" y2="20" />
         </IconBase>
       );
       const ZoomIn = (props) => (
@@ -1275,7 +1682,7 @@
           name: "بسيط",
           bgLight: "bg-gradient-to-br from-gray-50 to-gray-100",
           bgDark:
-            "dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800",
+            "dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-blue-950 dark:text-slate-100",
           accent: "text-primary",
           // 👇 الألوان الجديدة للشريط والهدية
           barColor: "bg-emerald-500",
@@ -1290,7 +1697,8 @@
         sepia: {
           name: "ورقي (Sepia)",
           bgLight: "bg-[#f4ecd8] text-slate-800",
-          bgDark: "dark:bg-[#463a2a] dark:text-[#f4ecd8]",
+          bgDark:
+            "dark:bg-gradient-to-br dark:from-[#2a2118] dark:via-[#3a2f25] dark:to-[#2f2620] dark:text-[#f4ecd8]",
           accent: "text-amber-600",
           // 👇 لون ذهبي/بني للورقي
           barColor: "bg-amber-600",
@@ -1307,7 +1715,7 @@
           bgLight:
             "bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 text-slate-800",
           bgDark:
-            "dark:bg-gradient-to-br dark:from-[#0a1929] dark:via-[#0d1b2a] dark:to-[#0f172a] dark:text-cyan-100",
+            "dark:bg-gradient-to-br dark:from-[#0a1a2e] dark:via-[#0d2338] dark:to-[#0f1e3a] dark:text-cyan-100",
           accent: "text-cyan-500",
           // 👇 لون سماوي للمحيط
           barColor: "bg-cyan-500",
@@ -1324,7 +1732,7 @@
           bgLight:
             "bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 text-slate-800",
           bgDark:
-            "dark:bg-gradient-to-br dark:from-[#022c22] dark:via-[#064e3b] dark:to-[#065f46] dark:text-emerald-100",
+            "dark:bg-gradient-to-br dark:from-[#0a1f18] dark:via-[#0d2a20] dark:to-[#0f1f1a] dark:text-emerald-100",
           accent: "text-emerald-500",
           // 👇 لون أخضر للغابة
           barColor: "bg-emerald-600",
@@ -1499,7 +1907,13 @@
       };
 
       // --- Tag Cloud Component (Updated for Mobile) ---
-      const TagCloud = ({ tags, selectedTags, onSelectTag }) => {
+      const TagCloud = ({
+        tags,
+        selectedTags,
+        onSelectTag,
+        currentTheme,
+        themes,
+      }) => {
         const [isExpanded, setIsExpanded] = useState(false);
         const sortedTags = Object.entries(tags).sort((a, b) => b[1] - a[1]);
 
@@ -1508,6 +1922,18 @@
         // الحد الذي يظهر عنده زر "عرض المزيد"
         const THRESHOLD = 5;
         const showExpandButton = sortedTags.length > THRESHOLD;
+
+        // الحصول على ألوان الثيم الحالي
+        const theme = themes[currentTheme] || themes.midnight;
+
+        // Mapping للـ hover classes لكل theme
+        const hoverTextClasses = {
+          plain: "hover:text-emerald-500",
+          sepia: "hover:text-amber-600",
+          ocean: "hover:text-cyan-500",
+          forest: "hover:text-emerald-500",
+          midnight: "hover:text-indigo-500",
+        };
 
         return (
           <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-gray-200 dark:border-gray-700 mb-6 transition-all duration-300">
@@ -1532,14 +1958,28 @@
             >
               {sortedTags.map(([tag, count]) => {
                 const isSelected = selectedTags.includes(tag);
+
+                // Mapping للـ hover classes لكل theme عند عدم الاختيار
+                const hoverClasses = {
+                  plain: "hover:bg-emerald-500 hover:text-white",
+                  sepia: "hover:bg-amber-600 hover:text-white",
+                  ocean: "hover:bg-cyan-500 hover:text-white",
+                  forest: "hover:bg-emerald-600 hover:text-white",
+                  midnight: "hover:bg-indigo-500 hover:text-white",
+                };
+
                 return (
                   <button
                     key={tag}
                     onClick={() => onSelectTag(tag)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all border ${
                       isSelected
-                        ? "bg-primary text-white border-primary shadow-md scale-105"
-                        : "bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-300 border-gray-100 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600"
+                        ? `${theme.tagHoverColor} text-white ${theme.borderColor} shadow-md scale-105`
+                        : `${theme.tagBgColor} ${theme.tagTextColor} ${
+                            theme.borderColor
+                          }/30 ${
+                            hoverClasses[currentTheme] || hoverClasses.midnight
+                          }`
                     }`}
                   >
                     <span>#{tag}</span>
@@ -1560,7 +2000,11 @@
             {showExpandButton && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-full mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 text-xs font-bold text-primary flex items-center justify-center gap-1 hover:bg-gray-50 dark:hover:bg-slate-700/30 rounded-b-lg transition-colors"
+                className={`w-full mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 text-xs font-bold ${
+                  theme.tagTextColor
+                } flex items-center justify-center gap-1 hover:bg-gray-50 dark:hover:bg-slate-700/30 rounded-b-lg transition-colors ${
+                  hoverTextClasses[currentTheme] || hoverTextClasses.midnight
+                }`}
               >
                 {isExpanded ? (
                   <>
@@ -1740,8 +2184,12 @@
           return localStorage.getItem("blog-theme") || "midnight";
         });
 
+        // 👇 وضع ألوان النصوص: "theme" (ألوان مرتبطة بالثيم) أو "simple" (أبيض/أسود/رمادي)
+        const [textColorMode, setTextColorMode] = useState(() => {
+          return localStorage.getItem("blog-textColorMode") || "theme";
+        });
+
         const [showThemeMenu, setShowThemeMenu] = useState(false);
-        const [showDisplayMenu, setShowDisplayMenu] = useState(false);
 
         // Save preferences to localStorage when they change
         useEffect(() => {
@@ -1751,6 +2199,10 @@
         useEffect(() => {
           localStorage.setItem("blog-theme", currentTheme);
         }, [currentTheme]);
+
+        useEffect(() => {
+          localStorage.setItem("blog-textColorMode", textColorMode);
+        }, [textColorMode]);
 
         // 👇 Effect للتحقق من حالة تسجيل الدخول عند فتح الصفحة
         useEffect(() => {
@@ -1923,17 +2375,29 @@
           return () => document.removeEventListener("click", handleClick);
         }, []);
 
-        // --- Close Display Menu when clicking outside ---
+        // --- Close Theme Menu when clicking outside ---
         useEffect(() => {
           const handleClickOutside = (e) => {
-            if (showDisplayMenu && !e.target.closest("[data-display-menu]")) {
-              setShowDisplayMenu(false);
+            if (showThemeMenu) {
+              // Check if click is outside the theme menu and its button
+              const isClickInsideMenu =
+                e.target.closest(".absolute") &&
+                e.target.closest(".absolute").querySelector("button");
+              const isClickOnPaletteButton =
+                e.target.closest("button") &&
+                (e.target.closest("button").querySelector("svg") ||
+                  e.target.closest("button").innerHTML.includes("Palette"));
+              if (!isClickInsideMenu && !isClickOnPaletteButton) {
+                setShowThemeMenu(false);
+              }
             }
           };
-          document.addEventListener("click", handleClickOutside);
-          return () =>
-            document.removeEventListener("click", handleClickOutside);
-        }, [showDisplayMenu]);
+          if (showThemeMenu) {
+            document.addEventListener("click", handleClickOutside);
+            return () =>
+              document.removeEventListener("click", handleClickOutside);
+          }
+        }, [showThemeMenu]);
 
         // --- Syntax Highlighting & Copy Button Injection ---
         useEffect(() => {
@@ -2752,7 +3216,11 @@
         // --- Theme Classes ---
         const getThemeClass = () => {
           const theme = themes[currentTheme];
-          return `${theme.bgLight} ${theme.bgDark} ${theme.className || ""}`;
+          const textModeClass =
+            textColorMode === "simple" ? "text-simple-mode" : "";
+          return `${theme.bgLight} ${theme.bgDark} ${
+            theme.className || ""
+          } ${textModeClass}`;
         };
 
         // --- Single Post View ---
@@ -2953,13 +3421,28 @@
                           <span>{darkMode ? "نهاري" : "ليلي"}</span>
                           {darkMode ? <Sun size={14} /> : <Moon size={14} />}
                         </button>
+                        {/* زر وضع ألوان النصوص */}
+                        <button
+                          onClick={() =>
+                            setTextColorMode(
+                              textColorMode === "theme" ? "simple" : "theme"
+                            )
+                          }
+                          className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-xs font-bold border-b border-gray-100 dark:border-gray-700 mb-1"
+                        >
+                          <span>
+                            {textColorMode === "theme"
+                              ? "ألوان بسيطة"
+                              : "ألوان الثيم"}
+                          </span>
+                          <Type size={14} />
+                        </button>
                         {/* باقي السمات */}
                         {Object.entries(themes).map(([key, t]) => (
                           <button
                             key={key}
                             onClick={() => {
                               setCurrentTheme(key);
-                              setShowThemeMenu(false);
                             }}
                             className={`text-right px-3 py-2 text-xs rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
                               currentTheme === key
@@ -2975,13 +3458,13 @@
                   )}
                 </div>
 
-                {/* زر العودة (Back) - في المنتصف */}
+                {/* زر العودة للصفحة الرئيسية (Home) - في المنتصف */}
                 <button
                   onClick={handleBackToList}
                   className="w-12 h-12 rounded-full bg-white/90 dark:bg-slate-800/90 text-gray-800 dark:text-white shadow-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center backdrop-blur-sm hover:scale-110 transition-transform"
-                  title="عودة للقائمة"
+                  title="الصفحة الرئيسية"
                 >
-                  <ArrowRight size={24} />
+                  <Home size={24} />
                 </button>
 
                 {/* زر التصفيق (Clap Button) */}
@@ -3034,7 +3517,9 @@
             <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 transition-colors">
               <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
                 <h1
-                  className="text-xl font-bold text-primary cursor-pointer"
+                  className={`text-xl font-bold ${
+                    themes[currentTheme]?.iconColor || themes.midnight.iconColor
+                  } cursor-pointer transition-colors`}
                   onClick={() => {
                     setSelectedTags([]);
                     window.scrollTo(0, 0);
@@ -3047,7 +3532,10 @@
                   {isAdmin && (
                     <button
                       onClick={handleCreateNew}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-primary border border-gray-200 dark:border-transparent"
+                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors ${
+                        themes[currentTheme]?.iconColor ||
+                        themes.midnight.iconColor
+                      } border border-gray-200 dark:border-transparent`}
                       title="إنشاء مقال جديد"
                     >
                       <PlusCircle size={20} />
@@ -3060,93 +3548,115 @@
                       <button
                         onClick={() => setShowThemeMenu(!showThemeMenu)}
                         className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors border border-gray-200 dark:border-transparent"
-                        title="السمات"
+                        title="المظهر"
                       >
                         <Palette size={20} />
                       </button>
                       {showThemeMenu && (
-                        <div className="absolute top-12 left-0 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-[100] flex flex-col gap-1">
+                        <div className="absolute top-12 left-0 w-40 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-2 z-[100] overflow-hidden animate-fade-in">
+                          <div className="flex flex-col gap-1">
+                            {/* زر الوضع الداكن/الفاتح داخل القائمة */}
+                            <button
+                              onClick={() => setDarkMode(!darkMode)}
+                              className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-xs font-bold border-b border-gray-100 dark:border-gray-700 mb-1"
+                            >
+                              <span>{darkMode ? "نهاري" : "ليلي"}</span>
+                              {darkMode ? (
+                                <Sun size={14} />
+                              ) : (
+                                <Moon size={14} />
+                              )}
+                            </button>
+                            {/* زر وضع ألوان النصوص */}
+                            <button
+                              onClick={() =>
+                                setTextColorMode(
+                                  textColorMode === "theme" ? "simple" : "theme"
+                                )
+                              }
+                              className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-xs font-bold border-b border-gray-100 dark:border-gray-700 mb-1"
+                            >
+                              <span>
+                                {textColorMode === "theme"
+                                  ? "ألوان بسيطة"
+                                  : "ألوان الثيم"}
+                              </span>
+                              <Type size={14} />
+                            </button>
+                            {/* باقي السمات */}
+                            {Object.entries(themes).map(([key, t]) => (
+                              <button
+                                key={key}
+                                onClick={() => {
+                                  setCurrentTheme(key);
+                                }}
+                                className={`text-right px-3 py-2 text-xs rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
+                                  currentTheme === key
+                                    ? "text-primary font-bold bg-primary/10"
+                                    : ""
+                                }`}
+                              >
+                                {t.name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Mobile Display Settings Button - يظهر فقط على الشاشات الصغيرة */}
+                  <div className="relative md:hidden">
+                    <button
+                      onClick={() => setShowThemeMenu(!showThemeMenu)}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors border border-gray-200 dark:border-transparent"
+                      title="المظهر"
+                    >
+                      <Palette size={20} />
+                    </button>
+                    {showThemeMenu && (
+                      <div className="absolute top-12 left-0 w-40 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-2 z-[100] overflow-hidden animate-fade-in">
+                        <div className="flex flex-col gap-1">
+                          {/* زر الوضع الداكن/الفاتح داخل القائمة */}
+                          <button
+                            onClick={() => setDarkMode(!darkMode)}
+                            className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-xs font-bold border-b border-gray-100 dark:border-gray-700 mb-1"
+                          >
+                            <span>{darkMode ? "نهاري" : "ليلي"}</span>
+                            {darkMode ? <Sun size={14} /> : <Moon size={14} />}
+                          </button>
+                          {/* زر وضع ألوان النصوص */}
+                          <button
+                            onClick={() =>
+                              setTextColorMode(
+                                textColorMode === "theme" ? "simple" : "theme"
+                              )
+                            }
+                            className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-xs font-bold border-b border-gray-100 dark:border-gray-700 mb-1"
+                          >
+                            <span>
+                              {textColorMode === "theme"
+                                ? "ألوان بسيطة"
+                                : "ألوان الثيم"}
+                            </span>
+                            <Type size={14} />
+                          </button>
+                          {/* باقي السمات */}
                           {Object.entries(themes).map(([key, t]) => (
                             <button
                               key={key}
                               onClick={() => {
                                 setCurrentTheme(key);
-                                setShowThemeMenu(false);
                               }}
-                              className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
+                              className={`text-right px-3 py-2 text-xs rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ${
                                 currentTheme === key
-                                  ? "text-primary font-bold"
+                                  ? "text-primary font-bold bg-primary/10"
                                   : ""
                               }`}
                             >
                               {t.name}
                             </button>
                           ))}
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => setDarkMode(!darkMode)}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors border border-gray-200 dark:border-transparent"
-                      title={darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
-                    >
-                      {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
-                  </div>
-
-                  {/* Mobile Display Settings Button - يظهر فقط على الشاشات الصغيرة */}
-                  <div className="relative md:hidden" data-display-menu>
-                    <button
-                      onClick={() => setShowDisplayMenu(!showDisplayMenu)}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors border border-gray-200 dark:border-transparent"
-                      title="إعدادات المظهر"
-                    >
-                      <Layout size={20} />
-                    </button>
-                    {showDisplayMenu && (
-                      <div
-                        className="absolute top-12 left-0 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-[100] flex flex-col gap-2"
-                        data-display-menu
-                      >
-                        <div className="flex items-center gap-2 px-2 py-1 border-b border-gray-200 dark:border-gray-700 mb-1">
-                          <Layout size={16} />
-                          <span className="text-xs font-bold text-gray-500">
-                            إعدادات المظهر
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => setDarkMode(!darkMode)}
-                          className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-right"
-                        >
-                          <span className="font-bold text-sm">
-                            {darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
-                          </span>
-                          {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                        </button>
-                        <div className="h-px bg-gray-200 dark:bg-gray-700 my-1"></div>
-                        <div>
-                          <div className="text-xs font-bold text-gray-500 px-2 py-1 mb-1">
-                            السمات
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            {Object.entries(themes).map(([key, t]) => (
-                              <button
-                                key={key}
-                                onClick={() => {
-                                  setCurrentTheme(key);
-                                  setShowDisplayMenu(false);
-                                }}
-                                className={`text-right px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 flex items-center justify-between ${
-                                  currentTheme === key
-                                    ? "text-primary font-bold bg-primary/10"
-                                    : ""
-                                }`}
-                              >
-                                <span>{t.name}</span>
-                                {currentTheme === key && <Check size={14} />}
-                              </button>
-                            ))}
-                          </div>
                         </div>
                       </div>
                     )}
@@ -3162,120 +3672,169 @@
                   tags={allTags}
                   selectedTags={selectedTags}
                   onSelectTag={handleTagSelection}
+                  currentTheme={currentTheme}
+                  themes={themes}
                 />
               )}
 
               <div className="grid gap-6">
-                {posts.map((post) => (
-                  <div
-                    key={post.id}
-                    onClick={() => handlePostClick(post)}
-                    className="group bg-white/90 dark:bg-slate-800/90 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col md:flex-row h-auto md:h-52 relative backdrop-blur-sm"
-                  >
-                    {/* Action Buttons in List View */}
-                    <div className="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                      <button
-                        onClick={(e) => handleCopyLink(post.id, e)}
-                        className={`p-2 rounded-full shadow-sm transition-all duration-300 ${
-                          copiedPostId === post.id
-                            ? "bg-green-500 text-white scale-110"
-                            : "bg-white/90 dark:bg-black/50 hover:bg-gray-200 dark:hover:bg-gray-700"
-                        }`}
-                        title={
-                          copiedPostId === post.id ? "تم النسخ!" : "نسخ الرابط"
-                        }
-                      >
-                        {copiedPostId === post.id ? (
-                          <Check size={16} />
-                        ) : (
-                          <LinkIcon size={16} />
-                        )}
-                      </button>
-                      {/* 👇 زر التعديل: شرط isAdmin 👇 */}
-                      {isAdmin && (
+                {posts.map((post) => {
+                  // الحصول على ألوان الثيم الحالي
+                  const theme = themes[currentTheme] || themes.midnight;
+
+                  // Mapping للـ hover classes لكل theme
+                  const hoverTextClasses = {
+                    plain: "group-hover:text-emerald-500",
+                    sepia: "group-hover:text-amber-600",
+                    ocean: "group-hover:text-cyan-500",
+                    forest: "group-hover:text-emerald-500",
+                    midnight: "group-hover:text-indigo-500",
+                  };
+
+                  const hoverBgClasses = {
+                    plain: "hover:bg-emerald-500",
+                    sepia: "hover:bg-amber-600",
+                    ocean: "hover:bg-cyan-500",
+                    forest: "hover:bg-emerald-600",
+                    midnight: "hover:bg-indigo-500",
+                  };
+
+                  return (
+                    <div
+                      key={post.id}
+                      onClick={() => handlePostClick(post)}
+                      className="group bg-white/90 dark:bg-slate-800/90 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col md:flex-row h-auto md:h-52 relative backdrop-blur-sm"
+                    >
+                      {/* Action Buttons in List View */}
+                      <div className="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         <button
-                          onClick={(e) => handleEditPost(post, e)}
-                          className="bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                          title="تعديل سريع"
+                          onClick={(e) => handleCopyLink(post.id, e)}
+                          className={`p-2 rounded-full shadow-sm transition-all duration-300 ${
+                            copiedPostId === post.id
+                              ? "bg-green-500 text-white scale-110"
+                              : "bg-white/90 dark:bg-black/50 hover:bg-gray-200 dark:hover:bg-gray-700"
+                          }`}
+                          title={
+                            copiedPostId === post.id
+                              ? "تم النسخ!"
+                              : "نسخ الرابط"
+                          }
                         >
-                          <Edit size={16} />
+                          {copiedPostId === post.id ? (
+                            <Check size={16} />
+                          ) : (
+                            <LinkIcon size={16} />
+                          )}
                         </button>
+                        {/* 👇 زر التعديل: شرط isAdmin 👇 */}
+                        {isAdmin && (
+                          <button
+                            onClick={(e) => handleEditPost(post, e)}
+                            className={`bg-white/90 dark:bg-black/50 p-2 rounded-full shadow-sm ${
+                              hoverBgClasses[currentTheme] ||
+                              hoverBgClasses.midnight
+                            } hover:text-white transition-colors`}
+                            title="تعديل سريع"
+                          >
+                            <Edit size={16} />
+                          </button>
+                        )}
+                      </div>
+
+                      {post.coverImage && (
+                        <div className="md:w-1/3 h-48 md:h-full overflow-hidden shrink-0">
+                          <img
+                            src={post.coverImage}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        </div>
                       )}
-                    </div>
-
-                    {post.coverImage && (
-                      <div className="md:w-1/3 h-48 md:h-full overflow-hidden shrink-0">
-                        <img
-                          src={post.coverImage}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                      </div>
-                    )}
-                    <div className="p-6 flex-1 flex flex-col justify-center">
-                      <h2 className="text-xl md:text-2xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-primary transition-colors md:line-clamp-2 leading-relaxed">
-                        {post.title}
-                      </h2>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
-                        {post.excerpt}
-                      </p>
-                      <div className="mt-auto w-full flex justify-between items-center relative">
-                        <div className="flex gap-1 items-center flex-wrap">
-                          {/* التاج الأول: يظهر دائماً */}
-                          {post.topics?.length > 0 && (
-                            <span className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold whitespace-nowrap">
-                              #{post.topics[0]}
-                            </span>
-                          )}
-
-                          {/* التاج الثاني: يظهر فقط في الشاشات أكبر من 350px */}
-                          {post.topics?.length > 1 && (
-                            <span className="hidden min-[350px]:inline-block text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold whitespace-nowrap">
-                              #{post.topics[1]}
-                            </span>
-                          )}
-
-                          {/* التاج الثالث: يظهر فقط في الشاشات المتوسطة (التابلت) فما فوق */}
-                          {post.topics?.length > 2 && (
-                            <span className="hidden md:inline-block text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold whitespace-nowrap">
-                              #{post.topics[2]}
-                            </span>
-                          )}
-
-                          {/* عداد المتبقي (+X) مع القائمة المنبثقة */}
-                          {post.topics?.length > 1 && (
-                            <div className="relative group/tags inline-block">
-                              <span className="cursor-pointer text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-bold hover:bg-primary hover:text-white transition-colors whitespace-nowrap">
-                                + المزيد
+                      <div className="p-6 flex-1 flex flex-col justify-center">
+                        <h2
+                          className={`text-xl md:text-2xl font-bold mb-3 text-slate-900 dark:text-white ${
+                            hoverTextClasses[currentTheme] ||
+                            hoverTextClasses.midnight
+                          } transition-colors md:line-clamp-2 leading-relaxed`}
+                        >
+                          {post.title}
+                        </h2>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
+                          {post.excerpt}
+                        </p>
+                        <div className="mt-auto w-full flex justify-between items-center relative">
+                          <div className="flex gap-1 items-center flex-wrap">
+                            {/* التاج الأول: يظهر دائماً */}
+                            {post.topics?.length > 0 && (
+                              <span
+                                className={`text-[10px] ${theme.tagBgColor} ${theme.tagTextColor} px-2 py-0.5 rounded font-bold whitespace-nowrap border ${theme.borderColor}/30`}
+                              >
+                                #{post.topics[0]}
                               </span>
+                            )}
 
-                              {/* القائمة المنبثقة (Tooltip) - تعرض جميع الـ tags المخفية */}
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-xl opacity-0 invisible group-hover/tags:opacity-100 group-hover/tags:visible transition-all duration-200 z-50 pointer-events-none group-hover/tags:pointer-events-auto">
-                                <div className="flex flex-wrap gap-1 justify-center">
-                                  {/* عرض جميع الـ tags ما عدا الأول (لأن الأول يظهر دائماً) */}
-                                  {post.topics.slice(1).map((t, i) => (
-                                    <span
-                                      key={i}
-                                      className="bg-white/20 px-1.5 py-0.5 rounded text-[9px] whitespace-nowrap"
-                                    >
-                                      #{t}
-                                    </span>
-                                  ))}
+                            {/* التاج الثاني: يظهر فقط في الشاشات أكبر من 350px */}
+                            {post.topics?.length > 1 && (
+                              <span
+                                className={`hidden min-[350px]:inline-block text-[10px] ${theme.tagBgColor} ${theme.tagTextColor} px-2 py-0.5 rounded font-bold whitespace-nowrap border ${theme.borderColor}/30`}
+                              >
+                                #{post.topics[1]}
+                              </span>
+                            )}
+
+                            {/* التاج الثالث: يظهر فقط في الشاشات المتوسطة (التابلت) فما فوق */}
+                            {post.topics?.length > 2 && (
+                              <span
+                                className={`hidden md:inline-block text-[10px] ${theme.tagBgColor} ${theme.tagTextColor} px-2 py-0.5 rounded font-bold whitespace-nowrap border ${theme.borderColor}/30`}
+                              >
+                                #{post.topics[2]}
+                              </span>
+                            )}
+
+                            {/* عداد المتبقي (+X) مع القائمة المنبثقة */}
+                            {post.topics?.length > 1 && (
+                              <div className="relative group/tags inline-block">
+                                <span
+                                  className={`cursor-pointer text-[10px] ${
+                                    theme.tagBgColor
+                                  } ${
+                                    theme.tagTextColor
+                                  } px-2 py-0.5 rounded font-bold ${
+                                    hoverBgClasses[currentTheme] ||
+                                    hoverBgClasses.midnight
+                                  } hover:text-white transition-colors whitespace-nowrap`}
+                                >
+                                  + المزيد
+                                </span>
+
+                                {/* القائمة المنبثقة (Tooltip) - تعرض جميع الـ tags المخفية */}
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-xl opacity-0 invisible group-hover/tags:opacity-100 group-hover/tags:visible transition-all duration-200 z-50 pointer-events-none group-hover/tags:pointer-events-auto">
+                                  <div className="flex flex-wrap gap-1 justify-center">
+                                    {/* عرض جميع الـ tags ما عدا الأول (لأن الأول يظهر دائماً) */}
+                                    {post.topics.slice(1).map((t, i) => (
+                                      <span
+                                        key={i}
+                                        className="bg-white/20 px-1.5 py-0.5 rounded text-[9px] whitespace-nowrap"
+                                      >
+                                        #{t}
+                                      </span>
+                                    ))}
+                                  </div>
+                                  {/* سهم صغير يشير للأسفل */}
+                                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                                 </div>
-                                {/* سهم صغير يشير للأسفل */}
-                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                               </div>
-                            </div>
-                          )}
-                        </div>
+                            )}
+                          </div>
 
-                        <div className="text-xs text-gray-400 font-medium shrink-0 mr-2">
-                          {formatTimeAgo(post.createdAt) || "الآن"}
+                          <div className="text-xs text-gray-400 font-medium shrink-0 mr-2">
+                            {formatTimeAgo(post.createdAt) || "الآن"}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {loading && (
