@@ -895,83 +895,152 @@
 
       /* ============================================
          SIMPLE TEXT COLORS MODE
-         ألوان بسيطة (أبيض/أسود/رمادي) - غير مرتبطة بالثيم
+         ألوان بسيطة (درجات رمادية متدرجة) - غير مرتبطة بالثيم
          ============================================ */
+      /* النص الأساسي - الوضع الفاتح */
       .text-simple-mode .prose-rtl {
-        color: #1f2937 !important; /* رمادي داكن جداً - قريب من الأسود */
+        color: #2f2f2f !important; /* رمادي داكن متوسط - قيمة 0.18 */
       }
 
+      /* النص الأساسي - الوضع الداكن */
       .dark .text-simple-mode .prose-rtl {
-        color: #f3f4f6 !important; /* رمادي فاتح جداً - قريب من الأبيض */
+        color: #d5d5d5 !important; /* رمادي فاتح متوسط - قيمة 0.83 */
       }
 
-      .text-simple-mode .prose-rtl h1,
-      .text-simple-mode .prose-rtl h2,
-      .text-simple-mode .prose-rtl h3 {
-        color: #111827 !important; /* أسود تقريباً للعناوين */
+      /* العنوان الرئيسي h1 - الوضع الفاتح */
+      .text-simple-mode .prose-rtl h1 {
+        color: #0a0a0a !important; /* أسود تقريباً - قيمة 0.04 */
         font-weight: 800;
       }
 
-      .dark .text-simple-mode .prose-rtl h1,
-      .dark .text-simple-mode .prose-rtl h2,
-      .dark .text-simple-mode .prose-rtl h3 {
-        color: #ffffff !important; /* أبيض للعناوين في الوضع الداكن */
+      /* العنوان الرئيسي h1 - الوضع الداكن */
+      .dark .text-simple-mode .prose-rtl h1 {
+        color: #fafafa !important; /* أبيض تقريباً - قيمة 0.98 */
         font-weight: 800;
       }
 
+      /* العنوان h2 - الوضع الفاتح */
       .text-simple-mode .prose-rtl h2 {
+        color: #1a1a1a !important; /* رمادي داكن جداً - قيمة 0.1 */
+        font-weight: 800;
         border-color: #d1d5db !important; /* رمادي فاتح للحدود */
       }
 
+      /* العنوان h2 - الوضع الداكن */
       .dark .text-simple-mode .prose-rtl h2 {
-        border-color: #4b5563 !important; /* رمادي متوسط للحدود في الوضع الداكن */
+        color: #eaeaea !important; /* رمادي فاتح جداً - قيمة 0.92 */
+        font-weight: 800;
+        border-color: #4b5563 !important; /* رمادي متوسط للحدود */
       }
 
+      /* العنوان h3 - الوضع الفاتح */
+      .text-simple-mode .prose-rtl h3 {
+        color: #2a2a2a !important; /* رمادي داكن - قيمة 0.16 */
+        font-weight: 800;
+      }
+
+      /* العنوان h3 - الوضع الداكن */
+      .dark .text-simple-mode .prose-rtl h3 {
+        color: #dadada !important; /* رمادي فاتح - قيمة 0.85 */
+        font-weight: 800;
+      }
+
+      /* الروابط - الوضع الفاتح */
       .text-simple-mode .prose-rtl a {
-        color: #374151 !important; /* رمادي داكن للروابط */
+        color: #3a3a3a !important; /* رمادي متوسط - قيمة 0.23 */
         text-decoration: underline;
       }
 
+      /* الروابط - الوضع الداكن */
       .dark .text-simple-mode .prose-rtl a {
-        color: #e5e7eb !important; /* رمادي فاتح للروابط في الوضع الداكن */
+        color: #cacaca !important; /* رمادي متوسط - قيمة 0.79 */
       }
 
+      /* الروابط عند التمرير - الوضع الفاتح */
       .text-simple-mode .prose-rtl a:hover {
-        color: #111827 !important; /* أسود عند التمرير */
+        color: #1a1a1a !important; /* رمادي داكن جداً - قيمة 0.1 */
       }
 
+      /* الروابط عند التمرير - الوضع الداكن */
       .dark .text-simple-mode .prose-rtl a:hover {
-        color: #ffffff !important; /* أبيض عند التمرير في الوضع الداكن */
+        color: #eaeaea !important; /* رمادي فاتح جداً - قيمة 0.92 */
       }
 
+      /* النص العريض - الوضع الفاتح */
       .text-simple-mode .prose-rtl strong {
-        color: #111827 !important; /* أسود للنص العريض */
+        color: #1f1f1f !important; /* رمادي داكن - قيمة 0.12 */
       }
 
+      /* النص العريض - الوضع الداكن */
       .dark .text-simple-mode .prose-rtl strong {
-        color: #ffffff !important; /* أبيض للنص العريض في الوضع الداكن */
+        color: #e0e0e0 !important; /* رمادي فاتح - قيمة 0.88 */
       }
 
+      /* الاقتباس - الوضع الفاتح */
       .text-simple-mode .prose-rtl blockquote {
         background: #f9fafb !important; /* رمادي فاتح جداً للخلفية */
         border-color: #d1d5db !important; /* رمادي فاتح للحدود */
-        color: #374151 !important; /* رمادي داكن للنص */
+        color: #3f3f3f !important; /* رمادي متوسط - قيمة 0.25 */
       }
 
+      /* الاقتباس - الوضع الداكن */
       .dark .text-simple-mode .prose-rtl blockquote {
         background: #1f2937 !important; /* رمادي داكن للخلفية */
         border-color: #4b5563 !important; /* رمادي متوسط للحدود */
-        color: #e5e7eb !important; /* رمادي فاتح للنص */
+        color: #c0c0c0 !important; /* رمادي متوسط - قيمة 0.75 */
       }
 
+      /* الكود - الوضع الفاتح */
       .text-simple-mode .prose-rtl :not(pre) > code {
         background: #e5e7eb !important; /* رمادي فاتح للخلفية */
-        color: #111827 !important; /* أسود للنص */
+        color: #252525 !important; /* رمادي داكن - قيمة 0.15 */
       }
 
+      /* الكود - الوضع الداكن */
       .dark .text-simple-mode .prose-rtl :not(pre) > code {
         background: #374151 !important; /* رمادي داكن للخلفية */
-        color: #f3f4f6 !important; /* رمادي فاتح للنص */
+        color: #dadada !important; /* رمادي فاتح - قيمة 0.85 */
+      }
+
+      /* الفهرس (Table of Contents) - الوضع الفاتح */
+      .text-simple-mode [class*="bg-gray-50"] h3 {
+        color: #1f1f1f !important; /* رمادي داكن - قيمة 0.12 */
+      }
+
+      .dark .text-simple-mode [class*="bg-slate-800"] h3,
+      .dark .text-simple-mode [class*="bg-slate-800/50"] h3 {
+        color: #e0e0e0 !important; /* رمادي فاتح - قيمة 0.88 */
+      }
+
+      /* أزرار الفهرس في الوضع البسيط - الوضع الفاتح */
+      .text-simple-mode [class*="bg-gray-50"] ul button {
+        color: #353535 !important; /* رمادي متوسط - قيمة 0.21 */
+      }
+
+      .text-simple-mode [class*="bg-gray-50"] ul button:hover {
+        color: #1a1a1a !important; /* رمادي داكن جداً - قيمة 0.1 */
+        background-color: #f3f4f6 !important; /* خلفية رمادية فاتحة - مثل hover:bg-emerald-50 */
+        border-color: #9ca3af !important; /* حدود رمادية - مثل hover:border-emerald-500 */
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; /* ظل خفيف - مثل hover:shadow-sm */
+      }
+
+      /* أزرار الفهرس في الوضع البسيط - الوضع الداكن */
+      .dark .text-simple-mode [class*="bg-slate-800"] ul button,
+      .dark .text-simple-mode [class*="bg-slate-800/50"] ul button {
+        color: #c5c5c5 !important; /* رمادي متوسط - قيمة 0.77 */
+      }
+
+      .dark .text-simple-mode [class*="bg-slate-800"] ul button:hover,
+      .dark .text-simple-mode [class*="bg-slate-800/50"] ul button:hover {
+        color: #eaeaea !important; /* رمادي فاتح جداً - قيمة 0.92 */
+        background-color: rgba(
+          55,
+          65,
+          81,
+          0.3
+        ) !important; /* خلفية رمادية داكنة شفافة - مثل dark:hover:bg-emerald-900/20 */
+        border-color: #6b7280 !important; /* حدود رمادية - مثل dark:hover:border-emerald-400 */
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; /* ظل خفيف - مثل hover:shadow-sm */
       }
 
       /* ============================================
@@ -3909,7 +3978,7 @@
                                       }
                                       return "text-primary hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-500 dark:hover:border-emerald-400 hover:shadow-sm";
                                     })()
-                                  : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm"
+                                  : "" // الألوان يتم تطبيقها عبر CSS في الوضع البسيط
                               }`}
                               dir="rtl"
                             >
