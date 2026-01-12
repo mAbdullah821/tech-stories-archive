@@ -116,11 +116,11 @@
       }
 
       .prose-rtl h1 {
-        font-size: 2.25em;
+        font-size: 1.75em;
       }
 
       .prose-rtl h2 {
-        font-size: 1.5em;
+        font-size: 1.25em;
         border-bottom: 1px solid #e2e8f0;
         padding-bottom: 0.5em;
       }
@@ -130,7 +130,20 @@
       }
 
       .prose-rtl h3 {
-        font-size: 1.25em;
+        font-size: 1.1em;
+      }
+
+      /* Post Title - matches H1 size */
+      .post-title {
+        font-size: 1.75em !important;
+        font-weight: 800;
+        color: #0f172a;
+        margin-top: 1.5em;
+        margin-bottom: 0.8em;
+      }
+
+      .dark .post-title {
+        color: #f8fafc;
       }
 
       /* Paragraphs */
@@ -4061,7 +4074,7 @@
                             ))}
                           </div>
                         )}
-                        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
+                        <h1 className="post-title">
                           {title || "عنوان المقال"}
                         </h1>
                         <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
@@ -4550,9 +4563,7 @@
                     </div>
                   )}
                   <div className="p-8 md:p-12">
-                    <h1 className="text-4xl font-extrabold mb-4 text-slate-900 dark:text-white leading-tight">
-                      {title || "عنوان المقال"}
-                    </h1>
+                    <h1 className="post-title">{title || "عنوان المقال"}</h1>
                     {topics.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-8">
                         {topics.map((t, i) => (

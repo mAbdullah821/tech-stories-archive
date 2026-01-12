@@ -86,11 +86,11 @@
 }
 
 .prose-rtl h1 {
-  font-size: 2.25em;
+  font-size: 1.75em;
 }
 
 .prose-rtl h2 {
-  font-size: 1.5em;
+  font-size: 1.25em;
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 0.5em;
 }
@@ -100,7 +100,20 @@
 }
 
 .prose-rtl h3 {
-  font-size: 1.25em;
+  font-size: 1.1em;
+}
+
+/* Post Title - matches H1 size */
+.post-title {
+  font-size: 1.75em !important;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
+}
+
+.dark .post-title {
+  color: #f8fafc;
 }
 
 /* Paragraphs */
