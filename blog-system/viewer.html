@@ -2412,6 +2412,21 @@
           return readingTime || 1; // على الأقل دقيقة واحدة
         };
 
+        // دالة حساب وقت القراءة من كائن المنشور (يستخدم content إن وجد، وإلا title + excerpt)
+        const calculatePostReadingTime = (post) => {
+          if (post.content) {
+            return calculateReadingTime(post.content);
+          }
+          // إذا لم يكن content متاحاً، نحسب من title + excerpt
+          const text = `${post.title || ""} ${post.excerpt || ""}`.trim();
+          if (!text) return 1;
+          const wordCount = text
+            .split(/\s+/)
+            .filter((word) => word.length > 0).length;
+          const readingTime = Math.ceil(wordCount / 200);
+          return readingTime || 1;
+        };
+
         // دالة التعامل مع ضغطة التصفيق
         const handleClap = () => {
           const id = Date.now();
@@ -4437,8 +4452,21 @@
                             )}
                           </div>
 
-                          <div className="text-xs text-gray-400 font-medium shrink-0 mr-2">
-                            {formatTimeAgo(post.createdAt) || "الآن"}
+                          <div className="flex items-center gap-3 shrink-0">
+                            {/* زمن القراءة */}
+                            <div className="flex items-center gap-1.5 text-xs text-amber-700/80 dark:text-amber-500/80 font-medium">
+                              <Clock
+                                size={12}
+                                className="text-amber-700/80 dark:text-amber-500/80"
+                              />
+                              <span>
+                                {calculatePostReadingTime(post)} دقيقة
+                              </span>
+                            </div>
+                            {/* التاريخ */}
+                            <div className="text-xs text-gray-400 font-medium">
+                              {formatTimeAgo(post.createdAt) || "الآن"}
+                            </div>
                           </div>
                         </div>
                       </div>
