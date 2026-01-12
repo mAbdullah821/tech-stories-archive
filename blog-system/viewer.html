@@ -2182,6 +2182,8 @@
         const [activePost, setActivePost] = useState(null);
         // 👇 حالة لمعرفة هل الزائر هو المشرف أم لا
         const [isAdmin, setIsAdmin] = useState(false);
+        // Table of Contents state
+        const [tocItems, setTocItems] = useState([]);
 
         // Load saved preferences from localStorage
         const [darkMode, setDarkMode] = useState(() => {
@@ -2228,6 +2230,7 @@
         const [zoomedImage, setZoomedImage] = useState(null);
         const [imageGallery, setImageGallery] = useState(null);
         const [currentImageIndex, setCurrentImageIndex] = useState(0);
+        const [templates, setTemplates] = useState([]);
 
         // Refs to keep latest state for handlers
         const imageGalleryRef = useRef(null);
@@ -2261,8 +2264,8 @@
         const [showFloatingControls, setShowFloatingControls] = useState(true);
         const lastScrollY = useRef(0);
 
-        // State for Celebration
-        const [hasCelebrated, setHasCelebrated] = useState(false);
+        // State for Celebration - use ref to prevent multiple triggers
+        const hasCelebratedRef = useRef(false);
 
         // State for Reading Progress
         const [readingProgress, setReadingProgress] = useState(0);
@@ -2410,7 +2413,24 @@
         // --- Syntax Highlighting & Copy Button Injection ---
         useEffect(() => {
           if (activePost && contentRef.current) {
-            // 1. Highlight Code (re-highlight when theme changes)
+            // Extract Table of Contents from headings (with small delay to ensure DOM is ready)
+            setTimeout(() => {
+              if (contentRef.current) {
+                const headings = Array.from(
+                  contentRef.current.querySelectorAll("h2[id]")
+                );
+                const extractedToc = headings.map((h2) => ({
+                  id: h2.id,
+                  text: h2.textContent || h2.innerText,
+                }));
+                setTocItems(extractedToc);
+
+                // DO NOT auto-scroll on page load - only scroll if user explicitly clicked a link with hash
+                // The hashchange event handler will handle navigation when user clicks TOC links
+              }
+            }, 100);
+
+            // 2. Highlight Code (re-highlight when theme changes)
             setTimeout(() => {
               contentRef.current
                 .querySelectorAll("pre code")
@@ -2419,7 +2439,7 @@
                 });
             }, 100);
 
-            // 2. Inject Copy Buttons
+            // 3. Inject Copy Buttons
             contentRef.current.querySelectorAll("pre").forEach((preBlock) => {
               if (preBlock.querySelector(".copy-code-btn")) return;
 
@@ -2447,6 +2467,8 @@
               preBlock.classList.add("group");
               preBlock.appendChild(button);
             });
+          } else {
+            setTocItems([]);
           }
         }, [activePost]);
 
@@ -2467,8 +2489,49 @@
           };
 
           window.addEventListener("popstate", handlePopState);
-          return () => window.removeEventListener("popstate", handlePopState);
+          return () => {
+            window.removeEventListener("popstate", handlePopState);
+          };
         }, []);
+
+        // Separate effect for hash navigation - only when user explicitly clicks TOC link
+        useEffect(() => {
+          if (!activePost || !contentRef.current) return;
+
+          // Handle hash changes (for section navigation) - ONLY when hash actually changes
+          const handleHashChange = () => {
+            const hash = window.location.hash.substring(1);
+            // Only scroll if hash exists, is not empty, and is a valid TOC item
+            if (hash && hash.trim() !== "" && tocItems.length > 0) {
+              const hashExists = tocItems.some((item) => item.id === hash);
+              if (hashExists) {
+                setTimeout(() => {
+                  const element = document.getElementById(hash);
+                  if (element) {
+                    const offset = 100;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition =
+                      elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                      top: Math.max(0, offsetPosition),
+                      behavior: "smooth",
+                    });
+                  }
+                }, 200);
+              }
+            }
+          };
+
+          // Only listen to hashchange if there's actually a hash in URL (user clicked a link)
+          if (window.location.hash) {
+            handleHashChange(); // Handle initial hash if present
+          }
+
+          window.addEventListener("hashchange", handleHashChange);
+          return () => {
+            window.removeEventListener("hashchange", handleHashChange);
+          };
+        }, [activePost, tocItems]);
 
         // --- Fetch Tags Stats (Server-side Filtering) ---
         useEffect(() => {
@@ -2570,26 +2633,39 @@
 
             setReadingProgress(pct);
 
-            // 5. منطق الاحتفال عند الوصول لـ 95%
-            if (pct >= 95 && !hasCelebrated) {
-              triggerCelebration();
-              setHasCelebrated(true);
+            // 5. منطق الاحتفال عند الوصول لـ 95% (مرة واحدة فقط لكل مقال)
+            // تأكد من أن الاحتفال يحدث مرة واحدة فقط
+            if (pct >= 95) {
+              if (!hasCelebratedRef.current) {
+                triggerCelebration();
+                hasCelebratedRef.current = true;
+              }
+            } else if (pct < 90) {
+              // إعادة تعيين فقط إذا رجع المستخدم لأعلى (أقل من 90%)
+              // هذا يمنع الاحتفال المتكرر عند الصعود والنزول
+              // hasCelebratedRef.current = false; // لا نعيد التعيين - مرة واحدة فقط
             }
           };
 
           window.addEventListener("scroll", handleScroll);
           return () => window.removeEventListener("scroll", handleScroll);
-        }, [activePost, hasCelebrated]);
+        }, [activePost]);
 
         // إعادة تعيين الاحتفال والتقدم والأزرار العائمة لما نفتح مقال جديد
         useEffect(() => {
           if (activePost) {
-            setHasCelebrated(false);
+            // Reset celebration flag ONLY when opening a NEW post (different post ID)
+            hasCelebratedRef.current = false;
             setReadingProgress(0);
             setShowFloatingControls(true);
             lastScrollY.current = 0;
+            // Reset scroll position to top when opening new post
+            window.scrollTo(0, 0);
+          } else {
+            // Reset when closing post
+            hasCelebratedRef.current = false;
           }
-        }, [activePost]);
+        }, [activePost?.id]); // Only reset when post ID changes, not on every render
 
         // --- Helpers ---
         const updateUrl = (id) => {
@@ -2605,7 +2681,23 @@
           try {
             const doc = await db.collection("posts").doc(id).get();
             if (doc.exists) {
-              setActivePost({ id: doc.id, ...doc.data() });
+              const postData = { id: doc.id, ...doc.data() };
+              // تحديد status للمنشورات القديمة
+              if (!postData.status) {
+                postData.status =
+                  postData.deleted === true ? "deleted" : "public";
+              }
+              // التحقق من الصلاحيات: الـ viewer لا يعرض المسودات أو المحذوفات
+              // المسودات والمحذوفات متاحة فقط في writer app
+              if (
+                postData.status === "draft" ||
+                postData.status === "deleted"
+              ) {
+                updateUrl(null);
+                setActivePost(null);
+                return;
+              }
+              setActivePost(postData);
             } else {
               updateUrl(null);
             }
@@ -2617,6 +2709,13 @@
         };
 
         const handlePostClick = (post) => {
+          // التحقق من الصلاحيات: الـ viewer لا يعرض المسودات أو المحذوفات
+          // المسودات والمحذوفات متاحة فقط في writer app
+          const postStatus =
+            post.status || (post.deleted === true ? "deleted" : "public");
+          if (postStatus === "draft" || postStatus === "deleted") {
+            return; // منع فتح المنشور
+          }
           setActivePost(post);
           updateUrl(post.id);
         };
@@ -2668,23 +2767,26 @@
           setLoading(true);
 
           try {
-            // 1. البداية: تحديد المجموعة والشرط الأساسي (غير محذوف)
-            let query = db.collection("posts").where("deleted", "==", false);
+            let query;
 
-            // 2. إضافة فلتر التاجز إن وجد
+            // فلترة حسب status: الـ viewer يعرض المنشورات العامة فقط
+            // المسودات والمحذوفات متاحة فقط في writer app
+            query = db.collection("posts").where("status", "==", "public");
+
+            // إضافة فلتر التاجز إن وجد
             if (selectedTags.length > 0) {
               query = query.where("topics", "array-contains-any", selectedTags);
             }
 
-            // 3. الترتيب
+            // الترتيب
             query = query.orderBy("createdAt", "desc");
 
-            // 4. الباجينيشن (إكمال التحميل)
+            // الباجينيشن (إكمال التحميل)
             if (!isNewFilter && lastDoc) {
               query = query.startAfter(lastDoc);
             }
 
-            // 5. الحد الأقصى
+            // الحد الأقصى
             query = query.limit(5);
 
             const snapshot = await query.get();
@@ -2693,10 +2795,18 @@
               setHasMore(false);
               if (isNewFilter) setPosts([]);
             } else {
-              const newPosts = snapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-              }));
+              const newPosts = snapshot.docs.map((doc) => {
+                const data = doc.data();
+                // للحفاظ على التوافق مع المنشورات القديمة التي لا تحتوي على status
+                // إذا لم يكن status موجوداً، نحدده بناءً على deleted
+                if (!data.status) {
+                  data.status = data.deleted === true ? "deleted" : "public";
+                }
+                return {
+                  id: doc.id,
+                  ...data,
+                };
+              });
 
               setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
 
@@ -2716,6 +2826,59 @@
             }
           } catch (err) {
             console.error("Error fetching posts:", err);
+            // Fallback للحفاظ على التوافق مع المنشورات القديمة
+            // إذا فشل الاستعلام بسبب عدم وجود status، نجرب الطريقة القديمة
+            if (
+              err.code === "failed-precondition" ||
+              err.message?.includes("status")
+            ) {
+              try {
+                let fallbackQuery = db
+                  .collection("posts")
+                  .where("deleted", "==", false);
+                if (selectedTags.length > 0) {
+                  fallbackQuery = fallbackQuery.where(
+                    "topics",
+                    "array-contains-any",
+                    selectedTags
+                  );
+                }
+                fallbackQuery = fallbackQuery.orderBy("createdAt", "desc");
+                if (!isNewFilter && lastDoc) {
+                  fallbackQuery = fallbackQuery.startAfter(lastDoc);
+                }
+                fallbackQuery = fallbackQuery.limit(5);
+
+                const fallbackSnapshot = await fallbackQuery.get();
+                if (!fallbackSnapshot.empty) {
+                  const newPosts = fallbackSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    status: "public", // افتراضي للمنشورات القديمة
+                  }));
+                  setLastDoc(
+                    fallbackSnapshot.docs[fallbackSnapshot.docs.length - 1]
+                  );
+                  if (isNewFilter) {
+                    setPosts(newPosts);
+                  } else {
+                    setPosts((prev) => {
+                      const existingIds = new Set(prev.map((p) => p.id));
+                      const uniqueNewPosts = newPosts.filter(
+                        (p) => !existingIds.has(p.id)
+                      );
+                      return [...prev, ...uniqueNewPosts];
+                    });
+                  }
+                  if (fallbackSnapshot.docs.length < 5) setHasMore(false);
+                } else {
+                  setHasMore(false);
+                  if (isNewFilter) setPosts([]);
+                }
+              } catch (fallbackErr) {
+                console.error("Fallback query also failed:", fallbackErr);
+              }
+            }
           } finally {
             setLoading(false);
           }
@@ -2775,6 +2938,7 @@
           if (!content) return { __html: "" };
 
           let processedContent;
+          let headingCounter = 0; // Counter for automatic heading numbering
 
           // If content already contains HTML tags, process it
           // Otherwise parse as markdown
@@ -2785,6 +2949,26 @@
           ) {
             // Content already has HTML, process it to add click handlers for images
             processedContent = content;
+
+            // Add automatic numbering to h2 headings from text-group blocks only
+            // Match h2 tags that have id starting with "text-group-"
+            processedContent = processedContent.replace(
+              /<h2([^>]*)>(.*?)<\/h2>/gi,
+              (match, attributes, titleText) => {
+                // Only process headings with id starting with "text-group-"
+                if (!attributes.includes('id="text-group-')) {
+                  return match;
+                }
+                // Remove any existing numbering first
+                const cleanText = titleText.replace(/^\d+\.\s*/, "").trim();
+                // Skip if text is empty after cleaning
+                if (!cleanText) {
+                  return match;
+                }
+                headingCounter++;
+                return `<h2${attributes}>${headingCounter}. ${cleanText}</h2>`;
+              }
+            );
 
             // Process image groups with data-all-images attribute
             let groupIndex = 0;
@@ -2832,6 +3016,26 @@
           } else {
             // Parse markdown
             processedContent = marked.parse(content);
+
+            // Add automatic numbering to h2 headings from text-group blocks only
+            // Match h2 tags that have id starting with "text-group-"
+            processedContent = processedContent.replace(
+              /<h2([^>]*)>(.*?)<\/h2>/gi,
+              (match, attributes, titleText) => {
+                // Only process headings with id starting with "text-group-"
+                if (!attributes.includes('id="text-group-')) {
+                  return match;
+                }
+                // Remove any existing numbering first
+                const cleanText = titleText.replace(/^\d+\.\s*/, "").trim();
+                // Skip if text is empty after cleaning
+                if (!cleanText) {
+                  return match;
+                }
+                headingCounter++;
+                return `<h2${attributes}>${headingCounter}. ${cleanText}</h2>`;
+              }
+            );
           }
 
           // Final sanitization with DOMPurify - remove all dangerous content
@@ -2912,6 +3116,209 @@
           });
 
           return { __html: sanitized };
+        };
+
+        // Helper function to get contrast color (same as writer.html)
+        const getContrastColor = (hexcolor) => {
+          hexcolor = hexcolor.replace("#", "");
+          const r = parseInt(hexcolor.substr(0, 2), 16);
+          const g = parseInt(hexcolor.substr(2, 2), 16);
+          const b = parseInt(hexcolor.substr(4, 2), 16);
+          const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+          return yiq >= 128 ? "#000000" : "#ffffff";
+        };
+
+        // Load templates from Firebase
+        useEffect(() => {
+          if (!db) return;
+          const loadTemplates = async () => {
+            try {
+              const snapshot = await db
+                .collection("posts")
+                .where("type", "==", "template")
+                .orderBy("updatedAt", "desc")
+                .limit(10)
+                .get();
+              const loadedTemplates = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+              setTemplates(loadedTemplates);
+            } catch (e) {
+              console.error("Error loading templates:", e);
+            }
+          };
+          loadTemplates();
+        }, [db]);
+
+        // Function to render template blocks to HTML
+        const renderTemplate = (template) => {
+          if (!template || !template.blocks || template.blocks.length === 0)
+            return "";
+
+          try {
+            // Counter for automatic heading numbering (Arabic numerals)
+            let headingCounter = 0;
+
+            // Render blocks similar to writer.html
+            const parts = template.blocks
+              .map((b) => {
+                if (b.type === "text") {
+                  const content =
+                    b.dir === "ltr"
+                      ? `\n<div dir="ltr" style="text-align: left;">\n\n${b.content}\n\n</div>\n`
+                      : `\n${b.content}\n`;
+                  return { type: "markdown", content };
+                } else if (b.type === "button-group") {
+                  const groupData = b.content || {};
+                  const { buttons = [], layout = "block" } = groupData;
+                  if (buttons.length === 0) return null;
+                  const buttonsHtml = buttons
+                    .map((btn) => {
+                      if (!btn.text) return "";
+                      const textColor =
+                        btn.textColorMode === "white"
+                          ? "#ffffff"
+                          : btn.textColorMode === "black"
+                          ? "#000000"
+                          : getContrastColor(btn.color || "#10b981");
+                      return `<a href="${
+                        btn.url || "#"
+                      }" style="background-color: ${
+                        btn.color || "#10b981"
+                      }; color: ${textColor} !important; text-decoration: none !important;" class="inline-block font-bold py-3 px-8 rounded-full shadow-lg no-underline mx-2 mb-2">${
+                        btn.text
+                      }</a>`;
+                    })
+                    .filter(Boolean)
+                    .join("");
+                  const containerClass =
+                    layout === "inline"
+                      ? "my-6 text-center flex flex-wrap gap-2 justify-center"
+                      : "my-6 text-center flex flex-col gap-2 items-center";
+                  return {
+                    type: "html",
+                    content: `<div class="${containerClass}">${buttonsHtml}</div>`,
+                  };
+                } else if (b.type === "image-group") {
+                  const groupData = b.content || {};
+                  const { images = [], layout = "block" } = groupData;
+                  const validImages = images.filter((img) => img && img.trim());
+                  if (validImages.length === 0) return null;
+                  const gridClass =
+                    layout === "inline"
+                      ? validImages.length === 1
+                        ? "grid grid-cols-1"
+                        : validImages.length === 2
+                        ? "grid grid-cols-2"
+                        : "grid grid-cols-3"
+                      : "grid grid-cols-1";
+                  const imagesHtml = validImages
+                    .map(
+                      (imgUrl) =>
+                        `<div class="relative"><img src="${imgUrl}" alt="Image" class="w-full h-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 cursor-zoom-in" style="max-height: ${
+                          layout === "inline" ? "120px" : "400px"
+                        }; min-height: ${
+                          layout === "inline" ? "80px" : "300px"
+                        };" /></div>`
+                    )
+                    .join("");
+                  return {
+                    type: "html",
+                    content: `<div class="my-6 ${gridClass} gap-2" data-all-images='${JSON.stringify(
+                      validImages
+                    ).replace(/'/g, "&#39;")}'>${imagesHtml}</div>`,
+                  };
+                } else if (b.type === "text-group") {
+                  // Text groups - render each text with title and content
+                  const groupData = b.content || {};
+                  const { texts = [], layout = "block" } = groupData;
+                  const validTexts = texts.filter(
+                    (t) => t && (t.title || t.content)
+                  );
+                  if (validTexts.length === 0) return null;
+
+                  const containerClass =
+                    layout === "inline"
+                      ? "my-6 grid grid-cols-2 gap-4"
+                      : "my-6 flex flex-col gap-6";
+
+                  const textsHtml = validTexts
+                    .map((textItem, textIndex) => {
+                      let html = "";
+                      // Add title if exists - with border-bottom and proper indexing
+                      if (textItem.title) {
+                        headingCounter++; // Increment counter for each heading
+                        const titleId = `text-group-${
+                          b.id
+                            ? b.id.replace(/[^a-zA-Z0-9]/g, "")
+                            : Math.random().toString(36)
+                        }-${textIndex}-${textItem.title.replace(
+                          /[^a-zA-Z0-9]/g,
+                          ""
+                        )}`;
+                        // Add Arabic numbering (1, 2, 3, etc.) to the heading
+                        const numberedTitle = `${headingCounter}. ${textItem.title}`;
+                        html += `<h2 id="${titleId}" class="text-2xl font-bold mb-4 mt-8 scroll-mt-20 pb-3 border-b border-gray-200 dark:border-gray-700">${numberedTitle}</h2>`;
+                      }
+                      // Add content
+                      if (textItem.content) {
+                        const dirAttr =
+                          textItem.dir === "ltr"
+                            ? ' dir="ltr" style="text-align: left;"'
+                            : "";
+                        html += `<div${dirAttr} class="prose dark:prose-invert max-w-none">${marked.parse(
+                          textItem.content
+                        )}</div>`;
+                      }
+                      return html ? `<div class="text-item">${html}</div>` : "";
+                    })
+                    .filter(Boolean)
+                    .join("");
+
+                  if (textsHtml) {
+                    return {
+                      type: "html",
+                      content: `<div class="${containerClass}">${textsHtml}</div>`,
+                    };
+                  }
+                  return null;
+                }
+                return null;
+              })
+              .filter(Boolean);
+
+            // Build HTML
+            let result = "";
+            let markdownBuffer = "";
+            parts.forEach((part) => {
+              if (part.type === "markdown") {
+                markdownBuffer += part.content;
+              } else {
+                if (markdownBuffer) {
+                  result += marked.parse(markdownBuffer);
+                  markdownBuffer = "";
+                }
+                result += part.content;
+              }
+            });
+            if (markdownBuffer) {
+              result += marked.parse(markdownBuffer);
+            }
+            return result;
+          } catch (e) {
+            console.error("Error rendering template:", e);
+            return "";
+          }
+        };
+
+        // Function to render all templates (or first template) at end of post
+        // Add template only for posts that don't already have template content
+        const renderTemplatesSection = () => {
+          if (templates.length === 0) return "";
+          // Use first template (most recently updated)
+          const firstTemplate = templates[0];
+          return renderTemplate(firstTemplate);
         };
 
         // Handlers for image gallery
@@ -3391,6 +3798,117 @@
                       <span>قراءة ممتعة ☕</span>
                     </div>
                   </div>
+                  {/* Table of Contents */}
+                  {tocItems.length > 0 && (
+                    <div
+                      className="mb-8 p-6 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700"
+                      dir="rtl"
+                    >
+                      <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>📑</span> الفهرس
+                      </h3>
+                      <ul className="space-y-2" dir="rtl">
+                        {tocItems.map((item, idx) => (
+                          <li key={idx} className="text-right">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                // Try multiple methods to find and scroll to element
+                                const scrollToElement = () => {
+                                  // Method 1: Direct ID lookup
+                                  let element = document.getElementById(
+                                    item.id
+                                  );
+
+                                  // Method 2: If not found, try in contentRef
+                                  if (!element && contentRef.current) {
+                                    element = contentRef.current.querySelector(
+                                      `#${item.id}`
+                                    );
+                                  }
+
+                                  // Method 3: Try finding by text content
+                                  if (!element && contentRef.current) {
+                                    const headings =
+                                      contentRef.current.querySelectorAll("h2");
+                                    headings.forEach((h2) => {
+                                      if (
+                                        h2.textContent === item.text &&
+                                        h2.id
+                                      ) {
+                                        element = h2;
+                                      }
+                                    });
+                                  }
+
+                                  if (element) {
+                                    const offset = 100; // Offset for fixed header
+                                    const elementPosition =
+                                      element.getBoundingClientRect().top;
+                                    const offsetPosition =
+                                      elementPosition +
+                                      window.pageYOffset -
+                                      offset;
+
+                                    // Update URL with hash
+                                    const currentUrl = new URL(
+                                      window.location.href
+                                    );
+                                    currentUrl.hash = item.id;
+                                    window.history.pushState(
+                                      {},
+                                      "",
+                                      currentUrl.toString()
+                                    );
+
+                                    // Use smooth scroll
+                                    window.scrollTo({
+                                      top: Math.max(0, offsetPosition),
+                                      behavior: "smooth",
+                                    });
+                                  } else {
+                                    console.warn(
+                                      "Element not found:",
+                                      item.id,
+                                      "Text:",
+                                      item.text
+                                    );
+                                  }
+                                };
+
+                                // Small delay to ensure DOM is ready
+                                setTimeout(scrollToElement, 50);
+                              }}
+                              className={`text-right w-full text-base transition-all duration-200 py-2 px-3 rounded-lg cursor-pointer text-right border-2 border-transparent ${
+                                textColorMode === "theme"
+                                  ? (() => {
+                                      // Create hover colors and effects based on current theme
+                                      if (currentTheme === "plain") {
+                                        return "text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-500 dark:hover:border-emerald-400 hover:shadow-sm";
+                                      } else if (currentTheme === "sepia") {
+                                        return "text-amber-600 hover:text-amber-800 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:border-amber-600 dark:hover:border-amber-500 hover:shadow-sm";
+                                      } else if (currentTheme === "ocean") {
+                                        return "text-cyan-500 hover:text-cyan-700 dark:hover:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 hover:border-cyan-500 dark:hover:border-cyan-400 hover:shadow-sm";
+                                      } else if (currentTheme === "forest") {
+                                        return "text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-500 dark:hover:border-emerald-400 hover:shadow-sm";
+                                      } else if (currentTheme === "midnight") {
+                                        return "text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-sm";
+                                      }
+                                      return "text-primary hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-500 dark:hover:border-emerald-400 hover:shadow-sm";
+                                    })()
+                                  : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm"
+                              }`}
+                              dir="rtl"
+                            >
+                              {item.text}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   <div
                     ref={contentRef}
                     className="prose-rtl"

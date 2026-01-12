@@ -910,13 +910,6 @@
           <line x1="12" y1="4" x2="12" y2="20" />
         </IconBase>
       );
-      const Save = (props) => (
-        <IconBase {...props}>
-          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-          <polyline points="17 21 17 13 7 13 7 21" />
-          <polyline points="7 3 7 8 15 8" />
-        </IconBase>
-      );
       const Moon = (props) => (
         <IconBase {...props}>
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
@@ -935,17 +928,17 @@
           <path d="m19.07 4.93-1.41 1.41" />
         </IconBase>
       );
-      const FolderOpen = (props) => (
-        <IconBase {...props}>
-          <path d="m6 14 1.45-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-3.25 7a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v2" />
-        </IconBase>
-      );
       const RefreshCw = (props) => (
         <IconBase {...props}>
           <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
           <path d="M21 3v5h-5" />
           <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
           <path d="M8 16H3v5" />
+        </IconBase>
+      );
+      const FolderOpen = (props) => (
+        <IconBase {...props}>
+          <path d="m6 14 1.45-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-3.25 7a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v2" />
         </IconBase>
       );
       const Trash2 = (props) => (
@@ -957,6 +950,12 @@
         </IconBase>
       );
       const LinkIcon = (props) => (
+        <IconBase {...props}>
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+        </IconBase>
+      );
+      const Link = (props) => (
         <IconBase {...props}>
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -988,6 +987,13 @@
       const Cloud = (props) => (
         <IconBase {...props}>
           <path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-2.9-2.4-5.2-5.3-5.2-2.6 0-4.8 1.9-5.2 4.4C1.2 16 2.3 18 4.5 18h13Z" />
+        </IconBase>
+      );
+      const Save = (props) => (
+        <IconBase {...props}>
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+          <polyline points="17 21 17 13 7 13 7 21" />
+          <polyline points="7 3 7 8 15 8" />
         </IconBase>
       );
       const CloudDownload = (props) => (
@@ -1035,6 +1041,13 @@
         <IconBase {...props}>
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
           <polyline points="22 4 12 14.01 9 11.01" />
+        </IconBase>
+      );
+      const PlusCircle = (props) => (
+        <IconBase {...props}>
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" x2="12" y1="8" y2="16" />
+          <line x1="8" x2="16" y1="12" y2="12" />
         </IconBase>
       );
       const AlertCircle = (props) => (
@@ -1684,6 +1697,187 @@
         );
       };
 
+      const TextGroupBlock = ({ content, onChange }) => {
+        const data = content || { texts: [], layout: "block" };
+
+        const addText = () => {
+          onChange({
+            ...data,
+            texts: [
+              ...(data.texts || []),
+              { title: "", content: "", dir: "rtl" },
+            ],
+          });
+        };
+
+        const updateText = (index, updates) => {
+          const newTexts = [...(data.texts || [])];
+          newTexts[index] = { ...newTexts[index], ...updates };
+          onChange({ ...data, texts: newTexts });
+        };
+
+        const removeText = (index) => {
+          const newTexts = [...(data.texts || [])];
+          newTexts.splice(index, 1);
+          onChange({ ...data, texts: newTexts });
+        };
+
+        const moveText = (fromIndex, toIndex) => {
+          if (
+            fromIndex === toIndex ||
+            toIndex < 0 ||
+            toIndex >= (data.texts || []).length
+          )
+            return;
+          const newTexts = [...(data.texts || [])];
+          const [movedItem] = newTexts.splice(fromIndex, 1);
+          newTexts.splice(toIndex, 0, movedItem);
+          onChange({ ...data, texts: newTexts });
+        };
+
+        return (
+          <div className="flex flex-col gap-3 p-4 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                نصوص
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onChange({ ...data, layout: "block" })}
+                  className={`px-3 py-1 rounded text-xs ${
+                    data.layout === "block"
+                      ? "bg-primary text-white"
+                      : "bg-gray-200 text-gray-600 dark:bg-slate-700 dark:text-gray-300"
+                  }`}
+                >
+                  عمودي
+                </button>
+                <button
+                  onClick={() => onChange({ ...data, layout: "inline" })}
+                  className={`px-3 py-1 rounded text-xs ${
+                    data.layout === "inline"
+                      ? "bg-primary text-white"
+                      : "bg-gray-200 text-gray-600 dark:bg-slate-700 dark:text-gray-300"
+                  }`}
+                >
+                  أفقي
+                </button>
+              </div>
+            </div>
+            <div
+              className={`gap-3 ${
+                data.layout === "inline" ? "grid grid-cols-2" : "flex flex-col"
+              }`}
+            >
+              {(data.texts || []).map((textItem, index) => {
+                const textsCount = (data.texts || []).length;
+                return (
+                  <div key={index} className="relative">
+                    <div className="flex flex-col gap-2 p-3 bg-white dark:bg-slate-900 rounded border border-gray-200 dark:border-gray-600">
+                      <div className="mb-3 p-3 bg-blue-50/50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <label className="block text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1.5 flex items-center gap-1">
+                          <span>📝</span> عنوان النص (اختياري)
+                        </label>
+                        <input
+                          type="text"
+                          value={textItem.title || ""}
+                          onChange={(e) =>
+                            updateText(index, { title: e.target.value })
+                          }
+                          placeholder="اكتب عنوان النص هنا..."
+                          className="w-full p-2 text-base font-bold bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700 rounded-md outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:focus:ring-primary/50 dark:focus:border-primary/70 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 text-slate-900 dark:text-slate-100"
+                          style={{
+                            direction: textItem.dir || "rtl",
+                            textAlign:
+                              textItem.dir === "ltr" ? "left" : "right",
+                          }}
+                        />
+                      </div>
+                      <div className="mt-2">
+                        <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5 flex items-center gap-1">
+                          <span>✍️</span> محتوى النص
+                        </label>
+                        <textarea
+                          value={textItem.content || ""}
+                          onChange={(e) =>
+                            updateText(index, { content: e.target.value })
+                          }
+                          placeholder="اكتب محتوى النص هنا... (Markdown)"
+                          className="w-full min-h-[120px] p-3 bg-transparent outline-none resize-y font-mono text-sm leading-relaxed focus:bg-gray-50/50 dark:focus:bg-slate-800/50 rounded-lg transition-colors border border-gray-200 dark:border-gray-700 focus:border-primary dark:focus:border-primary/70"
+                          style={{
+                            direction: textItem.dir || "rtl",
+                            textAlign:
+                              textItem.dir === "ltr" ? "left" : "right",
+                          }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-2 justify-between mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                        <div className="flex gap-1 text-xs">
+                          <button
+                            onClick={() =>
+                              updateText(index, {
+                                dir: textItem.dir === "ltr" ? "rtl" : "ltr",
+                              })
+                            }
+                            className={`px-2 py-1 rounded ${
+                              textItem.dir === "ltr"
+                                ? "bg-primary text-white"
+                                : "bg-gray-200 text-gray-600 dark:bg-slate-700 dark:text-gray-300"
+                            }`}
+                          >
+                            {textItem.dir === "ltr" ? "LTR" : "RTL"}
+                          </button>
+                        </div>
+                        <div className="flex gap-1 items-center">
+                          <div className="flex flex-col gap-0.5">
+                            <button
+                              onClick={() => moveText(index, index - 1)}
+                              disabled={index === 0}
+                              className={`p-0.5 rounded transition-colors ${
+                                index === 0
+                                  ? "text-gray-300 cursor-not-allowed"
+                                  : "text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-slate-700"
+                              }`}
+                              title="تحريك لأعلى"
+                            >
+                              <ArrowUp size={14} />
+                            </button>
+                            <button
+                              onClick={() => moveText(index, index + 1)}
+                              disabled={index === textsCount - 1}
+                              className={`p-0.5 rounded transition-colors ${
+                                index === textsCount - 1
+                                  ? "text-gray-300 cursor-not-allowed"
+                                  : "text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-slate-700"
+                              }`}
+                              title="تحريك لأسفل"
+                            >
+                              <ArrowDown size={14} />
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => removeText(index)}
+                            className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
+                          >
+                            حذف
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <button
+              onClick={addText}
+              className="mt-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors"
+            >
+              + إضافة نص
+            </button>
+          </div>
+        );
+      };
+
       const ButtonBlock = ({ content, onChange }) => {
         const data =
           typeof content === "string"
@@ -1775,44 +1969,90 @@
         );
       };
 
-      const TextBlock = ({ content, dir, onChange, onDirChange }) => {
+      const TextBlock = ({
+        content,
+        dir,
+        title,
+        onChange,
+        onDirChange,
+        onTitleChange,
+      }) => {
         return (
           <div className="relative group">
-            <textarea
-              value={content}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="اكتب هنا... (Markdown)"
-              className="w-full min-h-[120px] p-3 pt-8 bg-transparent outline-none resize-y font-mono text-sm leading-relaxed focus:bg-gray-50/50 dark:focus:bg-slate-800/50 rounded-lg transition-colors"
-              style={{
-                direction: dir || "rtl",
-                textAlign: dir === "ltr" ? "left" : "right",
-              }}
-            />
+            <div className="mb-3 p-3 bg-blue-50/50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <label className="block text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1.5 flex items-center gap-1">
+                <span>📝</span> عنوان القسم (اختياري)
+              </label>
+              <input
+                type="text"
+                value={title || ""}
+                onChange={(e) => onTitleChange && onTitleChange(e.target.value)}
+                onKeyDown={(e) => {
+                  // Allow all keys including space to work normally
+                  // Don't prevent default or stop propagation
+                  if (e.key === " " || e.key === "Spacebar") {
+                    // Space should work normally - don't interfere
+                    return;
+                  }
+                }}
+                onKeyPress={(e) => {
+                  // Ensure space key works
+                  if (e.key === " " || e.keyCode === 32) {
+                    // Allow space
+                    return;
+                  }
+                }}
+                placeholder="اكتب عنوان القسم هنا..."
+                className="w-full p-2 text-base font-bold bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700 rounded-md outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:focus:ring-primary/50 dark:focus:border-primary/70 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 text-slate-900 dark:text-slate-100"
+                style={{
+                  direction: dir || "rtl",
+                  textAlign: dir === "ltr" ? "left" : "right",
+                }}
+              />
+            </div>
+            <div className="mt-2">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5 flex items-center gap-1">
+                <span>✍️</span> محتوى النص
+              </label>
+              <textarea
+                value={content}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder="اكتب محتوى النص هنا... (Markdown)"
+                className="w-full min-h-[120px] p-3 bg-transparent outline-none resize-y font-mono text-sm leading-relaxed focus:bg-gray-50/50 dark:focus:bg-slate-800/50 rounded-lg transition-colors border border-gray-200 dark:border-gray-700 focus:border-primary dark:focus:border-primary/70"
+                style={{
+                  direction: dir || "rtl",
+                  textAlign: dir === "ltr" ? "left" : "right",
+                }}
+              />
+            </div>
           </div>
         );
       };
 
       // --- Post List Modal ---
-      // --- Post List Modal (Updated with Soft Delete) ---
-      const PostListModal = ({ isOpen, onClose, onSelect, onShowToast }) => {
+      // --- Post List Modal (Updated with Templates Support) ---
+
+      const PostListModal = ({
+        isOpen,
+        onClose,
+        onSelect,
+        onShowToast,
+        onSelectTemplate,
+      }) => {
         const [postsList, setPostsList] = useState([]);
         const [loading, setLoading] = useState(false);
-        const [showTrash, setShowTrash] = useState(false); // حالة للتبديل بين المنشور والمحذوف
+        const [activeTab, setActiveTab] = useState("public"); // public, draft, deleted, templates
+        const [editingStatus, setEditingStatus] = useState(null); // id of post being edited
 
-        // دالة لجلب المقالات بناءً على الحالة (محذوفة أم لا)
+        // دالة لجلب المقالات بناءً على الحالة (محذوفة أم لا) أو Templates
         const fetchPosts = () => {
           if (!db) return;
           setLoading(true);
 
           let query = db.collection("posts").orderBy("updatedAt", "desc");
 
-          // ملاحظة: لجعل هذا الفلتر يعمل بكفاءة مع orderBy في Firebase
-          // قد يطلب منك المتصفح إنشاء Index من خلال الرابط الذي سيظهر في الـ Console
-          // ولكن للتسهيل سنقوم بجلب أخر 50 مقال ونفلترهم محلياً (Client-side filtering)
-          // هذا يمنع مشاكل الـ Index للمشاريع الصغيرة
-
           query
-            .limit(50)
+            .limit(100) // Increased limit to include templates
             .get()
             .then((snap) => {
               const allPosts = snap.docs.map((doc) => ({
@@ -1820,10 +2060,19 @@
                 ...doc.data(),
               }));
 
-              // الفلترة هنا
-              const filteredPosts = showTrash
-                ? allPosts.filter((p) => p.deleted === true) // المحذوفات فقط
-                : allPosts.filter((p) => !p.deleted); // غير المحذوف (المنشور)
+              // الفلترة هنا حسب status والتبويب النشط أو type للـ templates
+              const filteredPosts = allPosts.filter((p) => {
+                if (activeTab === "templates") {
+                  // Filter templates
+                  return p.type === "template";
+                } else {
+                  // Filter regular posts by status
+                  const postStatus =
+                    p.status || (p.deleted === true ? "deleted" : "public");
+                  // Exclude templates from regular posts
+                  return postStatus === activeTab && p.type !== "template";
+                }
+              });
 
               setPostsList(filteredPosts);
               setLoading(false);
@@ -1836,16 +2085,20 @@
 
         useEffect(() => {
           if (isOpen) {
-            fetchPosts();
+            fetchPosts(); // fetchPosts يستخدم activeTab من closure
           }
-        }, [isOpen, showTrash]); // إعادة الجلب عند تغيير التبويب
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [isOpen, activeTab]); // إعادة الجلب عند تغيير التبويب
 
         // 1. الحذف المؤقت (Soft Delete)
         const handleSoftDelete = async (postId, e) => {
           e.stopPropagation();
           if (!confirm("هل تريد نقل هذا المقال إلى سلة المحذوفات؟")) return;
           try {
-            await db.collection("posts").doc(postId).update({ deleted: true });
+            await db.collection("posts").doc(postId).update({
+              status: "deleted",
+              deleted: true, // للحفاظ على التوافق
+            });
             setPostsList((prev) => prev.filter((p) => p.id !== postId)); // إزالة من القائمة الحالية
             if (onShowToast)
               onShowToast("success", "تم نقل المقال إلى سلة المحذوفات");
@@ -1854,13 +2107,42 @@
           }
         };
 
-        // 2. الاستعادة (Restore)
-        const handleRestore = async (postId, e) => {
+        // 2. تغيير status
+        const handleChangeStatus = async (postId, newStatus, e) => {
           e.stopPropagation();
           try {
-            await db.collection("posts").doc(postId).update({ deleted: false });
-            setPostsList((prev) => prev.filter((p) => p.id !== postId)); // إزالة من سلة المحذوفات
-            if (onShowToast) onShowToast("success", "تم استعادة المقال بنجاح");
+            // الحصول على المنشور الحالي لمعرفة status الحالي
+            const postDoc = await db.collection("posts").doc(postId).get();
+            const currentPost = postDoc.data();
+            const currentStatus =
+              currentPost?.status ||
+              (currentPost?.deleted === true ? "deleted" : "public");
+
+            // إعداد بيانات التحديث
+            const updateData = {
+              status: newStatus,
+              deleted: newStatus === "deleted", // للحفاظ على التوافق
+            };
+
+            // إذا تم النقل من draft إلى public، تحديث createdAt لوقت النشر الحالي
+            if (currentStatus === "draft" && newStatus === "public") {
+              updateData.createdAt =
+                firebase.firestore.FieldValue.serverTimestamp();
+            }
+
+            await db.collection("posts").doc(postId).update(updateData);
+            setPostsList((prev) => prev.filter((p) => p.id !== postId)); // إزالة من القائمة الحالية
+            setEditingStatus(null);
+            const statusNames = {
+              public: "عام",
+              draft: "مسودة",
+              deleted: "محذوف",
+            };
+            if (onShowToast)
+              onShowToast(
+                "success",
+                `تم تغيير حالة المقال إلى ${statusNames[newStatus]}`
+              );
           } catch (err) {
             if (onShowToast) onShowToast("error", "حدث خطأ: " + err.message);
           }
@@ -1893,45 +2175,107 @@
               {/* Header with Tabs */}
               <div className="p-4 border-b border-gray-100 dark:border-gray-700">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-bold flex items-center gap-2 text-lg">
-                    {showTrash ? (
-                      <span className="text-red-500 flex items-center gap-2">
-                        <Trash2 size={20} /> سلة المحذوفات
-                      </span>
-                    ) : (
-                      <span className="text-primary flex items-center gap-2">
-                        <CloudDownload size={20} /> المقالات المنشورة
-                      </span>
-                    )}
+                  <h3 className="font-bold flex items-center gap-2 text-lg text-primary">
+                    <CloudDownload size={20} /> إدارة المنشورات
                   </h3>
                   <button onClick={onClose}>
                     <X size={20} />
                   </button>
                 </div>
 
-                {/* Tabs Switcher */}
-                <div className="flex bg-gray-100 dark:bg-slate-900 p-1 rounded-lg">
+                {/* Tabs Switcher - 4 تبويبات (إضافة Templates) */}
+                <div className="flex bg-gray-100 dark:bg-slate-900 p-1 rounded-lg gap-1">
                   <button
-                    onClick={() => setShowTrash(false)}
+                    onClick={() => setActiveTab("public")}
                     className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
-                      !showTrash
-                        ? "bg-white dark:bg-slate-700 shadow text-primary"
+                      activeTab === "public"
+                        ? "bg-white dark:bg-slate-700 shadow text-green-600 dark:text-green-400"
                         : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                     }`}
                   >
-                    المنشورة
+                    عامة
                   </button>
                   <button
-                    onClick={() => setShowTrash(true)}
+                    onClick={() => setActiveTab("draft")}
                     className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
-                      showTrash
+                      activeTab === "draft"
+                        ? "bg-white dark:bg-slate-700 shadow text-yellow-600 dark:text-yellow-400"
+                        : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    }`}
+                  >
+                    مسودات
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("deleted")}
+                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
+                      activeTab === "deleted"
                         ? "bg-white dark:bg-slate-700 shadow text-red-500"
                         : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                     }`}
                   >
-                    سلة المحذوفات
+                    محذوفات
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("templates")}
+                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
+                      activeTab === "templates"
+                        ? "bg-white dark:bg-slate-700 shadow text-purple-600 dark:text-purple-400"
+                        : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    }`}
+                  >
+                    Templates
                   </button>
                 </div>
+                {/* زر إنشاء Template جديد - يظهر فقط في تبويب Templates */}
+                {activeTab === "templates" && (
+                  <button
+                    onClick={async () => {
+                      // Create new template
+                      const newTemplateId = crypto.randomUUID();
+                      const templateData = {
+                        title: "Template جديد",
+                        coverImage: "",
+                        topics: [],
+                        blocks: [
+                          {
+                            id: crypto.randomUUID(),
+                            type: "text",
+                            content: "",
+                            dir: "rtl",
+                          },
+                        ],
+                        content: "",
+                        type: "template",
+                        createdAt:
+                          firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt:
+                          firebase.firestore.FieldValue.serverTimestamp(),
+                      };
+                      try {
+                        await db
+                          .collection("posts")
+                          .doc(newTemplateId)
+                          .set(templateData);
+                        if (onShowToast)
+                          onShowToast("success", "تم إنشاء Template جديد");
+                        fetchPosts(); // Refresh list
+                        // Load the new template for editing
+                        if (onSelectTemplate) {
+                          onSelectTemplate({
+                            id: newTemplateId,
+                            ...templateData,
+                          });
+                        }
+                      } catch (err) {
+                        if (onShowToast)
+                          onShowToast("error", "خطأ: " + err.message);
+                      }
+                    }}
+                    className="mt-2 w-full bg-purple-600 text-white py-2 rounded-lg font-bold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <PlusCircle size={18} /> إنشاء Template جديد
+                  </button>
+                )}
               </div>
 
               <div className="p-4 overflow-y-auto custom-scrollbar flex-1">
@@ -1939,101 +2283,227 @@
                   <div className="flex justify-center p-4">
                     <Loader
                       className={`animate-spin ${
-                        showTrash ? "text-red-500" : "text-primary"
+                        activeTab === "deleted"
+                          ? "text-red-500"
+                          : activeTab === "draft"
+                          ? "text-yellow-500"
+                          : "text-primary"
                       }`}
                       size={24}
                     />
                   </div>
                 ) : postsList.length === 0 ? (
                   <div className="text-center text-gray-500 py-10 flex flex-col items-center gap-2">
-                    {showTrash ? (
+                    {activeTab === "deleted" ? (
                       <Trash2 size={40} className="opacity-20" />
+                    ) : activeTab === "draft" ? (
+                      <FolderOpen size={40} className="opacity-20" />
                     ) : (
                       <FolderOpen size={40} className="opacity-20" />
                     )}
                     <p>
-                      {showTrash
+                      {activeTab === "deleted"
                         ? "سلة المحذوفات فارغة"
+                        : activeTab === "draft"
+                        ? "لا توجد مسودات"
+                        : activeTab === "templates"
+                        ? "لا توجد Templates"
                         : "لا توجد مقالات منشورة"}
                     </p>
                   </div>
                 ) : (
-                  postsList.map((post) => (
-                    <div
-                      key={post.id}
-                      onClick={() => !showTrash && onSelect(post)} // لا يمكن فتح المقال وهو في السلة
-                      className={`p-3 mb-2 rounded-xl border transition-colors flex justify-between items-center group relative overflow-hidden ${
-                        showTrash
-                          ? "border-red-100 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/10 cursor-default"
-                          : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        {post.coverImage && (
-                          <img
-                            src={post.coverImage}
-                            className={`w-12 h-12 rounded-lg object-cover ${
-                              showTrash ? "grayscale opacity-50" : ""
-                            }`}
-                          />
-                        )}
-                        <div>
-                          <h4
-                            className={`font-bold text-sm ${
-                              showTrash ? "text-gray-500 line-through" : ""
-                            }`}
-                          >
-                            {post.title || "بدون عنوان"}
-                          </h4>
-                          <div className="flex gap-1 mt-1 text-[10px]">
-                            {post.topics?.slice(0, 3).map((t, i) => (
-                              <span
-                                key={t}
-                                className={`px-1.5 py-0.5 rounded ${
-                                  showTrash
-                                    ? "bg-gray-200 dark:bg-slate-700 text-gray-500"
-                                    : "bg-primary/10 text-primary"
-                                }`}
-                              >
-                                #{t}
-                              </span>
-                            ))}
+                  postsList.map((post) => {
+                    const postStatus =
+                      post.status ||
+                      (post.deleted === true ? "deleted" : "public");
+                    const isTemplate = post.type === "template";
+                    return (
+                      <div
+                        key={post.id}
+                        onClick={() => {
+                          if (isTemplate && onSelectTemplate) {
+                            // For templates, use special handler
+                            onSelectTemplate(post);
+                          } else {
+                            // For regular posts
+                            onSelect(post);
+                          }
+                        }}
+                        className={`p-3 mb-2 rounded-xl border transition-colors flex justify-between items-center group relative overflow-hidden ${
+                          activeTab === "deleted"
+                            ? "border-red-100 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/10"
+                            : activeTab === "draft"
+                            ? "border-yellow-100 dark:border-yellow-900/30 bg-yellow-50/50 dark:bg-yellow-900/10"
+                            : isTemplate
+                            ? "border-purple-100 dark:border-purple-900/30 bg-purple-50/50 dark:bg-purple-900/10"
+                            : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700"
+                        } cursor-pointer`}
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          {post.coverImage && (
+                            <img
+                              src={post.coverImage}
+                              className={`w-12 h-12 rounded-lg object-cover ${
+                                activeTab === "deleted"
+                                  ? "grayscale opacity-50"
+                                  : ""
+                              }`}
+                            />
+                          )}
+                          <div className="flex-1">
+                            <h4
+                              className={`font-bold text-sm ${
+                                activeTab === "deleted"
+                                  ? "text-gray-500 line-through"
+                                  : isTemplate
+                                  ? "text-purple-600 dark:text-purple-400"
+                                  : ""
+                              }`}
+                            >
+                              {post.title || "بدون عنوان"}
+                              {isTemplate && (
+                                <span className="ml-2 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded">
+                                  Template
+                                </span>
+                              )}
+                            </h4>
+                            <div className="flex gap-1 mt-1 text-[10px]">
+                              {post.topics?.slice(0, 3).map((t, i) => (
+                                <span
+                                  key={t}
+                                  className={`px-1.5 py-0.5 rounded ${
+                                    activeTab === "deleted"
+                                      ? "bg-gray-200 dark:bg-slate-700 text-gray-500"
+                                      : "bg-primary/10 text-primary"
+                                  }`}
+                                >
+                                  #{t}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-2">
-                        {showTrash ? (
-                          <>
-                            {/* أزرار سلة المحذوفات */}
+                        <div className="flex items-center gap-2">
+                          {/* For templates, show delete button only */}
+                          {isTemplate ? (
                             <button
-                              onClick={(e) => handleRestore(post.id, e)}
-                              className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
-                              title="استعادة"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (!confirm("هل تريد حذف هذا Template؟"))
+                                  return;
+                                try {
+                                  await db
+                                    .collection("posts")
+                                    .doc(post.id)
+                                    .delete();
+                                  setPostsList((prev) =>
+                                    prev.filter((p) => p.id !== post.id)
+                                  );
+                                  if (onShowToast)
+                                    onShowToast("success", "تم حذف Template");
+                                } catch (err) {
+                                  if (onShowToast)
+                                    onShowToast("error", "خطأ: " + err.message);
+                                }
+                              }}
+                              className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                              title="حذف Template"
                             >
-                              <RefreshCw size={16} />
+                              <Trash2 size={16} />
                             </button>
-                            <button
-                              onClick={(e) => handleHardDelete(post.id, e)}
-                              className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
-                              title="حذف نهائي"
-                            >
-                              <X size={16} />
-                            </button>
-                          </>
-                        ) : (
-                          /* زر الحذف المؤقت للقائمة العادية */
-                          <button
-                            onClick={(e) => handleSoftDelete(post.id, e)}
-                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
-                            title="نقل للمحذوفات"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
+                          ) : editingStatus === post.id ? (
+                            // واجهة تغيير status
+                            <div className="flex gap-1 bg-white dark:bg-slate-700 p-1 rounded-lg border border-gray-200 dark:border-gray-600">
+                              <button
+                                onClick={(e) =>
+                                  handleChangeStatus(post.id, "public", e)
+                                }
+                                className={`px-2 py-1 text-xs font-bold rounded ${
+                                  postStatus === "public"
+                                    ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                                    : "hover:bg-gray-100 dark:hover:bg-slate-600"
+                                }`}
+                                title="عام"
+                              >
+                                عام
+                              </button>
+                              <button
+                                onClick={(e) =>
+                                  handleChangeStatus(post.id, "draft", e)
+                                }
+                                className={`px-2 py-1 text-xs font-bold rounded ${
+                                  postStatus === "draft"
+                                    ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400"
+                                    : "hover:bg-gray-100 dark:hover:bg-slate-600"
+                                }`}
+                                title="مسودة"
+                              >
+                                مسودة
+                              </button>
+                              <button
+                                onClick={(e) =>
+                                  handleChangeStatus(post.id, "deleted", e)
+                                }
+                                className={`px-2 py-1 text-xs font-bold rounded ${
+                                  postStatus === "deleted"
+                                    ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                                    : "hover:bg-gray-100 dark:hover:bg-slate-600"
+                                }`}
+                                title="محذوف"
+                              >
+                                محذوف
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingStatus(null);
+                                }}
+                                className="px-2 py-1 text-xs hover:bg-gray-100 dark:hover:bg-slate-600 rounded"
+                                title="إلغاء"
+                              >
+                                <X size={12} />
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              {/* زر تغيير status */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingStatus(post.id);
+                                }}
+                                className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors opacity-0 group-hover:opacity-100"
+                                title="تغيير الحالة"
+                              >
+                                <Settings size={16} />
+                              </button>
+                              {/* زر الحذف النهائي (فقط للمحذوفات) */}
+                              {activeTab === "deleted" && (
+                                <button
+                                  onClick={(e) => handleHardDelete(post.id, e)}
+                                  className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors opacity-0 group-hover:opacity-100"
+                                  title="حذف نهائي"
+                                >
+                                  <X size={16} />
+                                </button>
+                              )}
+                              {/* زر الحذف المؤقت (للعامة والمسودات) */}
+                              {activeTab !== "deleted" && (
+                                <button
+                                  onClick={(e) => handleSoftDelete(post.id, e)}
+                                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                                  title="حذف"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -2182,6 +2652,12 @@
         const [coverImage, setCoverImage] = useState("");
         const [topics, setTopics] = useState([]);
         const [tagInput, setTagInput] = useState("");
+        const [allAvailableTags, setAllAvailableTags] = useState([]); // جميع التاجز المتاحة
+        const [tagSuggestions, setTagSuggestions] = useState([]); // الاقتراحات الحالية
+        const [showTagSuggestions, setShowTagSuggestions] = useState(false);
+        const [selectedSuggestionIndex, setSelectedSuggestionIndex] =
+          useState(-1);
+        const [status, setStatus] = useState("public"); // public, draft, deleted
         const [blocks, setBlocks] = useState([
           { id: "1", type: "text", content: "", dir: "rtl" },
         ]);
@@ -2192,6 +2668,9 @@
         const [showMobileMenu, setShowMobileMenu] = useState(false);
         const [notification, setNotification] = useState(null);
         const [showFullPreview, setShowFullPreview] = useState(false);
+        const [currentTemplateId, setCurrentTemplateId] = useState(null); // ID of template being edited
+        const [isEditingTemplate, setIsEditingTemplate] = useState(false); // Flag to know if we're editing a template
+        const [saveAsNewPost, setSaveAsNewPost] = useState(false); // Option: save as new post or update template
 
         // Load saved preferences from localStorage
         const [darkMode, setDarkMode] = useState(() => {
@@ -2205,13 +2684,88 @@
         const [showThemeMenu, setShowThemeMenu] = useState(false);
         const [draggedItemIndex, setDraggedItemIndex] = useState(null);
         const [dropGapIndex, setDropGapIndex] = useState(null); // index of the gap where drop will happen (0 = before first, 1 = after first, etc.)
-        const importFileRef = useRef(null);
         const [imgbbApiKey, setImgbbApiKey] = useState(
           () => localStorage.getItem("imgbb_key") || ""
         );
 
         // Ref for code highlighting
         const previewRef = useRef(null);
+
+        // Template Functions - Templates are stored in Firebase with type: "template"
+        const loadTemplateById = async (templateId) => {
+          if (!db) return null;
+          try {
+            const doc = await db.collection("posts").doc(templateId).get();
+            if (doc.exists) {
+              const template = { id: doc.id, ...doc.data() };
+              if (template.type === "template") {
+                return template;
+              }
+            }
+            return null;
+          } catch (e) {
+            console.error("Error loading template:", e);
+            return null;
+          }
+        };
+
+        const loadTemplateData = (template) => {
+          setPostId(template.id);
+          setTitle(template.title || "");
+          setCoverImage(template.coverImage || "");
+          setTopics(template.topics || []);
+          setStatus("public"); // Templates are always public status
+          setIsEditingTemplate(true);
+          setCurrentTemplateId(template.id);
+          setSaveAsNewPost(false); // Default: update template
+
+          const loadedBlocks = (template.blocks || [])
+            .map((b) => {
+              if (b.type === "text" && !b.dir) {
+                return { ...b, dir: "rtl" };
+              }
+              if (b.type === "image") {
+                const imageUrl =
+                  typeof b.content === "string"
+                    ? b.content
+                    : b.content?.url || "";
+                if (imageUrl) {
+                  return {
+                    ...b,
+                    type: "image-group",
+                    content: { images: [imageUrl], layout: "block" },
+                  };
+                }
+                return null;
+              }
+              if (b.type === "button" && b.content) {
+                const { layout, ...buttonContent } = b.content;
+                if (buttonContent.text) {
+                  return {
+                    ...b,
+                    type: "button-group",
+                    content: { buttons: [buttonContent], layout: "block" },
+                  };
+                }
+                return null;
+              }
+              return b;
+            })
+            .filter(Boolean);
+          setBlocks(
+            loadedBlocks.length > 0
+              ? loadedBlocks
+              : [
+                  {
+                    id: crypto.randomUUID(),
+                    type: "text",
+                    content: "",
+                    dir: "rtl",
+                  },
+                ]
+          );
+          setShowLoadModal(false);
+        };
 
         // Save preferences to localStorage when they change
         useEffect(() => {
@@ -2398,6 +2952,15 @@
           setTitle(post.title || "");
           setCoverImage(post.coverImage || "");
           setTopics(post.topics || []);
+          // تحميل status أو تحديده بناءً على deleted للحفاظ على التوافق
+          if (post.status) {
+            setStatus(post.status);
+          } else if (post.deleted === true) {
+            setStatus("deleted");
+          } else {
+            setStatus("public"); // افتراضي للمنشورات القديمة
+          }
+          // Load blocks (common section is managed separately and not saved with blocks)
           const loadedBlocks = (
             post.blocks ||
             (post.content
@@ -2446,17 +3009,117 @@
             })
             .filter(Boolean); // Remove null entries
           setBlocks(loadedBlocks);
+          // Note: Common section is managed separately and loaded from localStorage, not from post data
           setShowLoadModal(false);
         };
 
-        const handleTagInputKeyDown = (e) => {
-          if (e.key === "Enter" && tagInput.trim()) {
-            e.preventDefault();
-            if (!topics.includes(tagInput.trim()))
-              setTopics([...topics, tagInput.trim()]);
-            setTagInput("");
+        // دالة لجلب جميع التاجز الفريدة من جميع المنشورات
+        const fetchAllUniqueTags = async () => {
+          if (!db) return;
+          try {
+            const snapshot = await db.collection("posts").get();
+            const allTags = new Set();
+
+            snapshot.docs.forEach((doc) => {
+              const post = doc.data();
+              if (post.topics && Array.isArray(post.topics)) {
+                post.topics.forEach((tag) => {
+                  if (tag && tag.trim()) {
+                    allTags.add(tag.trim());
+                  }
+                });
+              }
+            });
+
+            const uniqueTags = Array.from(allTags).sort();
+            setAllAvailableTags(uniqueTags);
+          } catch (error) {
+            console.error("Error fetching tags:", error);
           }
         };
+
+        // جلب التاجز عند تحميل الصفحة أو عند توفر Firebase
+        useEffect(() => {
+          if (db && user) {
+            fetchAllUniqueTags();
+          }
+        }, [db, user]);
+
+        // تصفية الاقتراحات بناءً على ما يتم كتابته
+        useEffect(() => {
+          if (tagInput.trim()) {
+            const input = tagInput.trim().toLowerCase();
+            const filtered = allAvailableTags.filter((tag) =>
+              tag.toLowerCase().startsWith(input)
+            );
+            // استبعاد التاجز التي تم إضافتها بالفعل
+            const available = filtered.filter((tag) => !topics.includes(tag));
+            setTagSuggestions(available.slice(0, 10)); // حد أقصى 10 اقتراحات
+            setShowTagSuggestions(available.length > 0);
+            setSelectedSuggestionIndex(-1);
+          } else {
+            setTagSuggestions([]);
+            setShowTagSuggestions(false);
+            setSelectedSuggestionIndex(-1);
+          }
+        }, [tagInput, allAvailableTags, topics]);
+
+        const handleTagInputKeyDown = (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (
+              selectedSuggestionIndex >= 0 &&
+              tagSuggestions[selectedSuggestionIndex]
+            ) {
+              // اختيار الاقتراح المحدد
+              const selectedTag = tagSuggestions[selectedSuggestionIndex];
+              if (!topics.includes(selectedTag)) {
+                setTopics([...topics, selectedTag]);
+              }
+              setTagInput("");
+              setShowTagSuggestions(false);
+              setSelectedSuggestionIndex(-1);
+            } else if (tagInput.trim()) {
+              // إضافة التاج الجديد
+              if (!topics.includes(tagInput.trim())) {
+                setTopics([...topics, tagInput.trim()]);
+                // إضافة التاج الجديد إلى القائمة إذا لم يكن موجوداً
+                if (!allAvailableTags.includes(tagInput.trim())) {
+                  setAllAvailableTags(
+                    [...allAvailableTags, tagInput.trim()].sort()
+                  );
+                }
+              }
+              setTagInput("");
+              setShowTagSuggestions(false);
+            }
+          } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            if (showTagSuggestions && tagSuggestions.length > 0) {
+              setSelectedSuggestionIndex((prev) =>
+                prev < tagSuggestions.length - 1 ? prev + 1 : prev
+              );
+            }
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (showTagSuggestions) {
+              setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : -1));
+            }
+          } else if (e.key === "Escape") {
+            setShowTagSuggestions(false);
+            setSelectedSuggestionIndex(-1);
+          }
+        };
+
+        const selectTagSuggestion = (tag) => {
+          if (!topics.includes(tag)) {
+            setTopics([...topics, tag]);
+          }
+          setTagInput("");
+          setShowTagSuggestions(false);
+          setSelectedSuggestionIndex(-1);
+        };
+
         const removeTag = (t) => setTopics(topics.filter((tag) => tag !== t));
 
         const addBlock = (type) => {
@@ -2469,6 +3132,11 @@
           } else if (type === "image-group") {
             content = {
               images: [],
+              layout: "block",
+            };
+          } else if (type === "text-group") {
+            content = {
+              texts: [],
               layout: "block",
             };
           }
@@ -2485,6 +3153,24 @@
         const updateBlock = (id, val) =>
           setBlocks(
             blocks.map((b) => (b.id === id ? { ...b, content: val } : b))
+          );
+        const updateBlockTitle = (id, val) =>
+          setBlocks(
+            blocks.map((b) => {
+              if (b.id === id) {
+                const updated = { ...b };
+                // Allow spaces in title - only remove field if completely empty (after trim)
+                if (val !== null && val !== undefined && val.trim() !== "") {
+                  updated.title = val; // Keep original value with spaces
+                } else {
+                  // Remove title field if empty (don't set to undefined)
+                  const { title, ...rest } = updated;
+                  return rest;
+                }
+                return updated;
+              }
+              return b;
+            })
           );
         const updateBlockDir = (id) =>
           setBlocks(
@@ -2635,31 +3321,17 @@
           setBlocks(newBlocks);
         };
 
-        const handleImportClick = () => importFileRef.current.click();
-        const handleFileImport = (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            try {
-              loadPostData(JSON.parse(event.target.result));
-              e.target.value = null;
-              alert("تم الاستيراد.");
-            } catch (err) {
-              alert("ملف تالف.");
-            }
-          };
-          reader.readAsText(file);
-        };
-
         const handleDeleteCurrent = async () => {
           if (!postId) return;
           // تغيير نص التأكيد
           if (!confirm("هل أنت متأكد من نقل هذا المقال إلى سلة المحذوفات؟"))
             return;
           try {
-            // تحديث الحقل deleted بدلاً من delete()
-            await db.collection("posts").doc(postId).update({ deleted: true });
+            // تحديث status و deleted
+            await db.collection("posts").doc(postId).update({
+              status: "deleted",
+              deleted: true, // للحفاظ على التوافق
+            });
 
             setNotification({
               type: "success",
@@ -2680,58 +3352,138 @@
             return;
           }
           setIsSaving(true);
-          const fullContent = renderPreview();
+
+          // Clean blocks: remove title field if empty or undefined
+          const cleanedBlocks = blocks.map((b) => {
+            const cleaned = { ...b };
+            if (
+              cleaned.title === undefined ||
+              cleaned.title === null ||
+              (typeof cleaned.title === "string" && !cleaned.title.trim())
+            ) {
+              const { title, ...rest } = cleaned;
+              return rest;
+            }
+            return cleaned;
+          });
+
+          // Render main content
+          const mainContent = renderMainContent();
           // Extract text from HTML for excerpt
           const tempDiv = document.createElement("div");
-          tempDiv.innerHTML = fullContent;
+          tempDiv.innerHTML = mainContent;
           const textContent = tempDiv.textContent || tempDiv.innerText || "";
-          const postData = {
-            title,
-            coverImage,
-            topics,
-            blocks,
-            content: fullContent,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            deleted: false, // <--- أضف هذا السطر لضمان أن المقال يعتبر "منشور" عند الحفظ
-            excerpt:
-              textContent.substring(0, 150) +
-              (textContent.length > 150 ? "..." : ""),
-          };
-          try {
-            const idToUse = postId || crypto.randomUUID();
-            const docRef = db.collection("posts").doc(idToUse);
-            if (!postId)
-              postData.createdAt =
-                firebase.firestore.FieldValue.serverTimestamp();
-            await docRef.set(postData, { merge: true });
-            setPostId(idToUse);
-            window.history.pushState({ id: idToUse }, "", `?id=${idToUse}`);
-            setNotification({ type: "success", message: "تم الحفظ!" });
-            setTimeout(() => setNotification(null), 3000);
-          } catch (e) {
-            setNotification({ type: "error", message: "خطأ: " + e.message });
-            setTimeout(() => setNotification(null), 3000);
-          } finally {
-            setIsSaving(false);
-          }
-        };
 
-        const handleDownload = () => {
-          if (!title) return alert("العنوان مطلوب");
-          const fileName = `${title
-            .trim()
-            .replace(/\s+/g, "-")
-            .replace(/[^a-zA-Z0-9\u0621-\u064A-]/g, "")}.json`;
-          const blob = new Blob(
-            [JSON.stringify({ id: postId, title, blocks }, null, 2)],
-            { type: "application/json" }
-          );
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          // Check if we're editing a template
+          if (isEditingTemplate && currentTemplateId) {
+            if (saveAsNewPost) {
+              // Save as new post (don't update template)
+              // Value Copy: نسخ كامل للقيم - المنشور مستقل تماماً
+              // Note: blocks الحالية تحتوي على Template blocks + أي تعديلات/إضافات من المستخدم
+              const postData = {
+                title,
+                coverImage,
+                topics,
+                blocks: cleanedBlocks, // Use cleaned blocks
+                content: mainContent, // Value copy - نسخة مستقلة (تحتوي على Template content + تعديلات)
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                status: status,
+                deleted: status === "deleted",
+                type: "post", // Explicitly set as post
+                excerpt:
+                  textContent.substring(0, 150) +
+                  (textContent.length > 150 ? "..." : ""),
+              };
+              const idToUse = crypto.randomUUID();
+              await db.collection("posts").doc(idToUse).set(postData);
+              setPostId(idToUse);
+              setIsEditingTemplate(false);
+              setCurrentTemplateId(null);
+              setSaveAsNewPost(false);
+              window.history.pushState({ id: idToUse }, "", `?id=${idToUse}`);
+              setNotification({
+                type: "success",
+                message: "تم حفظ المنشور الجديد!",
+              });
+            } else {
+              // Update the template itself
+              const templateData = {
+                title,
+                coverImage,
+                topics,
+                blocks: cleanedBlocks, // Use cleaned blocks
+                content: mainContent,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                type: "template", // Keep as template
+                excerpt:
+                  textContent.substring(0, 150) +
+                  (textContent.length > 150 ? "..." : ""),
+              };
+              await db
+                .collection("posts")
+                .doc(currentTemplateId)
+                .set(templateData, { merge: true });
+              setNotification({
+                type: "success",
+                message: "تم تحديث الـ Template!",
+              });
+            }
+          } else {
+            // Normal post save
+            const postData = {
+              title,
+              coverImage,
+              topics,
+              blocks: cleanedBlocks, // Use cleaned blocks
+              content: mainContent,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+              status: status,
+              deleted: status === "deleted",
+              type: "post", // Explicitly set as post
+              excerpt:
+                textContent.substring(0, 150) +
+                (textContent.length > 150 ? "..." : ""),
+            };
+            try {
+              const idToUse = postId || crypto.randomUUID();
+              const docRef = db.collection("posts").doc(idToUse);
+
+              // إذا كان منشور جديد، إضافة createdAt
+              if (!postId) {
+                postData.createdAt =
+                  firebase.firestore.FieldValue.serverTimestamp();
+              } else {
+                // إذا كان منشور موجود، التحقق من تغيير status من draft إلى public
+                const currentPostDoc = await docRef.get();
+                if (currentPostDoc.exists) {
+                  const currentPost = currentPostDoc.data();
+                  const currentStatus =
+                    currentPost?.status ||
+                    (currentPost?.deleted === true ? "deleted" : "public");
+
+                  // إذا تم النقل من draft إلى public، تحديث createdAt لوقت النشر الحالي
+                  if (currentStatus === "draft" && status === "public") {
+                    postData.createdAt =
+                      firebase.firestore.FieldValue.serverTimestamp();
+                  }
+                }
+              }
+
+              await docRef.set(postData, { merge: true });
+              setPostId(idToUse);
+              window.history.pushState({ id: idToUse }, "", `?id=${idToUse}`);
+              setNotification({ type: "success", message: "تم الحفظ!" });
+            } catch (e) {
+              setNotification({ type: "error", message: "خطأ: " + e.message });
+              setTimeout(() => setNotification(null), 3000);
+            }
+          }
+
+          setTimeout(() => setNotification(null), 3000);
+          // تحديث قائمة التاجز بعد الحفظ
+          await fetchAllUniqueTags();
+          setIsSaving(false);
         };
 
         const goToViewer = () => {
@@ -2741,7 +3493,7 @@
             alert("افتح viewer.html");
           }
         };
-        const reset = (skipConfirm = false) => {
+        const reset = (skipConfirm = false, includeCommon = null) => {
           // إذا لم يكن skipConfirm، نطلب التأكيد من المستخدم
           if (!skipConfirm) {
             if (
@@ -2757,6 +3509,12 @@
           setTitle("");
           setCoverImage("");
           setTopics([]);
+          setStatus("public");
+          setIsEditingTemplate(false);
+          setCurrentTemplateId(null);
+          setSaveAsNewPost(false);
+
+          // Always start with empty block
           setBlocks([
             {
               id: crypto.randomUUID(),
@@ -2768,57 +3526,77 @@
           window.history.pushState({}, "", window.location.pathname);
         };
 
-        const renderPreview = () => {
-          const parts = blocks
-            .map((b, idx) => {
-              if (b.type === "text") {
-                // Text blocks - use markdown with placeholder
-                if (b.dir === "ltr") {
-                  return {
-                    type: "markdown",
-                    content: `\n<div dir="ltr" style="text-align: left;">\n\n${b.content}\n\n</div>\n`,
-                    index: idx,
-                  };
-                }
-                return {
+        // Helper function to render blocks to parts
+        const renderBlocksToParts = (blocksToRender, startIndex = 0) => {
+          const result = [];
+          blocksToRender.forEach((b, idx) => {
+            if (b.type === "text") {
+              // Generate unique ID for title anchor
+              const titleId = b.title
+                ? `text-section-${b.id.replace(/[^a-zA-Z0-9]/g, "")}`
+                : null;
+
+              // Add title as HTML part if exists
+              if (b.title && titleId) {
+                const titleHtml = `<h2 id="${titleId}" class="text-2xl font-bold mb-4 mt-8 scroll-mt-20">${b.title}</h2>\n`;
+                result.push({
+                  type: "html",
+                  content: titleHtml,
+                  index: idx,
+                  title: b.title,
+                  titleId: titleId,
+                });
+              }
+
+              // Text blocks - use markdown with placeholder
+              if (b.dir === "ltr") {
+                result.push({
+                  type: "markdown",
+                  content: `\n<div dir="ltr" style="text-align: left;">\n\n${b.content}\n\n</div>\n`,
+                  index: idx,
+                });
+              } else {
+                result.push({
                   type: "markdown",
                   content: `\n${b.content}\n`,
                   index: idx,
-                };
-              } else if (b.type === "image") {
-                // Old format - convert to markdown
-                const imageUrl =
-                  typeof b.content === "string"
-                    ? b.content
-                    : b.content?.url || "";
-                return imageUrl
-                  ? {
-                      type: "markdown",
-                      content: `\n![Image](${imageUrl})\n`,
-                      index: idx,
-                    }
-                  : null;
-              } else if (b.type === "button") {
-                // Old format - convert to HTML
-                const buttonData = b.content || {};
-                const { text, url, color, textColorMode } = buttonData;
-                if (!text) return null;
+                });
+              }
+            } else if (b.type === "image") {
+              // Old format - convert to markdown
+              const imageUrl =
+                typeof b.content === "string"
+                  ? b.content
+                  : b.content?.url || "";
+              if (imageUrl) {
+                result.push({
+                  type: "markdown",
+                  content: `\n![Image](${imageUrl})\n`,
+                  index: idx,
+                });
+              }
+            } else if (b.type === "button") {
+              // Old format - convert to HTML
+              const buttonData = b.content || {};
+              const { text, url, color, textColorMode } = buttonData;
+              if (text) {
                 const textColor =
                   textColorMode === "white"
                     ? "#ffffff"
                     : textColorMode === "black"
                     ? "#000000"
                     : getContrastColor(color);
-                return {
+                result.push({
                   type: "html",
                   content: `<div class="my-6 text-center"><a href="${url}" style="background-color: ${color}; color: ${textColor} !important; text-decoration: none !important;" class="inline-block font-bold py-3 px-8 rounded-full shadow-lg no-underline">${text}</a></div>`,
                   index: idx,
-                };
-              } else if (b.type === "button-group") {
-                // Button groups - HTML directly
-                const groupData = b.content || {};
-                const { buttons = [], layout = "block" } = groupData;
-                if (buttons.length === 0) return null;
+                });
+              }
+            } else if (b.type === "button-group") {
+              // Button groups - HTML directly
+              const groupData = b.content || {};
+              const { buttons = [], layout = "block" } = groupData;
+              if (buttons.length > 0) {
                 const buttonsHtml = buttons
                   .map((btn) => {
                     if (!btn.text) return "";
@@ -2842,18 +3620,18 @@
                   layout === "inline"
                     ? "my-6 text-center flex flex-wrap gap-2 justify-center"
                     : "my-6 text-center flex flex-col gap-2 items-center";
-                return {
+                result.push({
                   type: "html",
                   content: `<div class="${containerClass}">${buttonsHtml}</div>`,
                   index: idx,
-                };
-              } else if (b.type === "image-group") {
-                // Image groups - HTML directly
-                const groupData = b.content || {};
-                const { images = [], layout = "block" } = groupData;
-                const validImages = images.filter((img) => img && img.trim());
-                if (validImages.length === 0) return null;
-
+                });
+              }
+            } else if (b.type === "image-group") {
+              // Image groups - HTML directly
+              const groupData = b.content || {};
+              const { images = [], layout = "block" } = groupData;
+              const validImages = images.filter((img) => img && img.trim());
+              if (validImages.length > 0) {
                 // Grid layout based on number of images (like LinkedIn)
                 let gridClass = "";
                 let showMore = false;
@@ -2903,23 +3681,78 @@
                   .join("");
 
                 const containerClass = `my-6 ${gridClass} gap-2`;
-                return {
+                result.push({
                   type: "html",
                   content: `<div class="${containerClass}" data-all-images='${JSON.stringify(
                     validImages
                   ).replace(/'/g, "&#39;")}'>${imagesHtml}</div>`,
                   index: idx,
-                };
+                });
               }
-              return null;
-            })
-            .filter(Boolean);
+            } else if (b.type === "text-group") {
+              // Text groups - render each text with title and content
+              const groupData = b.content || {};
+              const { texts = [], layout = "block" } = groupData;
+              const validTexts = texts.filter(
+                (t) => t && (t.title || t.content)
+              );
+              if (validTexts.length > 0) {
+                const containerClass =
+                  layout === "inline"
+                    ? "my-6 grid grid-cols-2 gap-4"
+                    : "my-6 flex flex-col gap-6";
+
+                const textsHtml = validTexts
+                  .map((textItem, textIndex) => {
+                    let html = "";
+                    // Add title if exists - with border-bottom and proper indexing
+                    if (textItem.title) {
+                      const titleId = `text-group-${b.id.replace(
+                        /[^a-zA-Z0-9]/g,
+                        ""
+                      )}-${textIndex}-${textItem.title.replace(
+                        /[^a-zA-Z0-9]/g,
+                        ""
+                      )}`;
+                      html += `<h2 id="${titleId}" class="text-2xl font-bold mb-4 mt-8 scroll-mt-20 pb-3 border-b border-gray-200 dark:border-gray-700">${textItem.title}</h2>`;
+                    }
+                    // Add content
+                    if (textItem.content) {
+                      const dirAttr =
+                        textItem.dir === "ltr"
+                          ? ' dir="ltr" style="text-align: left;"'
+                          : "";
+                      html += `<div${dirAttr} class="prose dark:prose-invert max-w-none">${marked.parse(
+                        textItem.content
+                      )}</div>`;
+                    }
+                    return html ? `<div class="text-item">${html}</div>` : "";
+                  })
+                  .filter(Boolean)
+                  .join("");
+
+                if (textsHtml) {
+                  result.push({
+                    type: "html",
+                    content: `<div class="${containerClass}">${textsHtml}</div>`,
+                    index: idx,
+                  });
+                }
+              }
+            }
+          });
+          return result;
+        };
+
+        // Render main content only (without common section) - for saving
+        const renderMainContent = () => {
+          const mainParts = renderBlocksToParts(blocks);
 
           // Build final HTML by processing markdown and inserting HTML
           let result = "";
           let markdownBuffer = "";
 
-          parts.forEach((part) => {
+          mainParts.forEach((part) => {
             if (part.type === "markdown") {
               markdownBuffer += part.content;
             } else {
@@ -2939,6 +3772,11 @@
           }
 
           return result;
+        };
+
+        // Render preview - same as main content (templates are separate)
+        const renderPreview = () => {
+          return renderMainContent();
         };
 
         if (authChecking)
@@ -3026,27 +3864,6 @@
                       title="فتح من السحابة"
                     >
                       <CloudDownload size={18} />
-                    </button>
-                    <input
-                      type="file"
-                      ref={importFileRef}
-                      onChange={handleFileImport}
-                      accept=".json"
-                      className="hidden"
-                    />
-                    <button
-                      onClick={handleImportClick}
-                      className="bg-gray-100 dark:bg-slate-700 p-2 rounded-lg"
-                      title="فتح ملف محلي"
-                    >
-                      <FolderOpen size={18} />
-                    </button>
-                    <button
-                      onClick={handleDownload}
-                      className="bg-gray-100 dark:bg-slate-700 p-2 rounded-lg"
-                      title="تصدير ملف"
-                    >
-                      <Save size={18} />
                     </button>
                   </div>
 
@@ -3138,18 +3955,48 @@
                       </div>
                     </div>
                   </div>
-                  <button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="bg-primary text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm"
-                  >
-                    {isSaving ? (
-                      <Loader className="w-4 h-4" />
-                    ) : (
-                      <Cloud size={16} />
-                    )}{" "}
-                    <span className="hidden sm:inline">حفظ</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {/* خيارات الحفظ للـ Templates */}
+                    {isEditingTemplate && currentTemplateId && (
+                      <div className="flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 px-3 py-1 rounded-lg">
+                        <input
+                          type="checkbox"
+                          id="saveAsNewPost"
+                          checked={saveAsNewPost}
+                          onChange={(e) => setSaveAsNewPost(e.target.checked)}
+                          className="w-4 h-4"
+                        />
+                        <label
+                          htmlFor="saveAsNewPost"
+                          className="text-xs font-bold text-purple-700 dark:text-purple-300"
+                        >
+                          حفظ كمنشور جديد
+                        </label>
+                      </div>
+                    )}
+                    <button
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className={`px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm ${
+                        isEditingTemplate
+                          ? "bg-purple-600 hover:bg-purple-700 text-white"
+                          : "bg-primary text-white"
+                      }`}
+                    >
+                      {isSaving ? (
+                        <Loader className="w-4 h-4" />
+                      ) : (
+                        <Save size={16} />
+                      )}{" "}
+                      <span className="hidden sm:inline">
+                        {isEditingTemplate
+                          ? saveAsNewPost
+                            ? "حفظ كمنشور جديد"
+                            : "تحديث Template"
+                          : "حفظ"}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </header>
@@ -3277,33 +4124,6 @@
                     <CloudDownload size={20} />
                     <span className="font-bold">فتح من السحابة</span>
                   </button>
-                  <input
-                    type="file"
-                    ref={importFileRef}
-                    onChange={handleFileImport}
-                    accept=".json"
-                    className="hidden"
-                  />
-                  <button
-                    onClick={() => {
-                      handleImportClick();
-                      setShowMobileMenu(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 text-right"
-                  >
-                    <FolderOpen size={20} />
-                    <span className="font-bold">فتح ملف محلي</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleDownload();
-                      setShowMobileMenu(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 text-right"
-                  >
-                    <Save size={20} />
-                    <span className="font-bold">تصدير ملف</span>
-                  </button>
                   {postId && (
                     <button
                       onClick={() => {
@@ -3394,6 +4214,7 @@
               isOpen={showLoadModal}
               onClose={() => setShowLoadModal(false)}
               onSelect={loadPostData}
+              onSelectTemplate={loadTemplateData}
               onShowToast={(type, message) => {
                 setNotification({ type, message });
                 setTimeout(() => setNotification(null), 3000);
@@ -3425,13 +4246,50 @@
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full p-3 text-xl font-bold rounded-lg bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-gray-600 focus:border-primary outline-none"
                   />
+                  <div>
+                    <span className="text-sm font-bold text-gray-400 mb-2 block">
+                      حالة المنشور
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setStatus("public")}
+                        className={`flex-1 px-4 py-2 rounded-lg text-sm font-bold transition-colors ${
+                          status === "public"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-2 border-green-500"
+                            : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border-2 border-transparent"
+                        }`}
+                      >
+                        عام
+                      </button>
+                      <button
+                        onClick={() => setStatus("draft")}
+                        className={`flex-1 px-4 py-2 rounded-lg text-sm font-bold transition-colors ${
+                          status === "draft"
+                            ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border-2 border-yellow-500"
+                            : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border-2 border-transparent"
+                        }`}
+                      >
+                        مسودة
+                      </button>
+                      <button
+                        onClick={() => setStatus("deleted")}
+                        className={`flex-1 px-4 py-2 rounded-lg text-sm font-bold transition-colors ${
+                          status === "deleted"
+                            ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-2 border-red-500"
+                            : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border-2 border-transparent"
+                        }`}
+                      >
+                        محذوف
+                      </button>
+                    </div>
+                  </div>
                   <ImageUploader
                     image={coverImage}
                     onChange={setCoverImage}
                     imgbbApiKey={imgbbApiKey}
                     heightClass="max-h-48"
                   />
-                  <div>
+                  <div className="relative">
                     <div className="flex flex-wrap gap-2 mb-2">
                       {topics.map((t) => (
                         <span
@@ -3445,14 +4303,45 @@
                         </span>
                       ))}
                     </div>
-                    <input
-                      type="text"
-                      placeholder="أضف تاج واضغط Enter"
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={handleTagInputKeyDown}
-                      className="w-full p-2 text-sm rounded bg-gray-50 dark:bg-slate-900/50 border dark:border-gray-600 focus:border-primary outline-none"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="أضف تاج واضغط Enter"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={handleTagInputKeyDown}
+                        onFocus={() => {
+                          if (tagInput.trim() && tagSuggestions.length > 0) {
+                            setShowTagSuggestions(true);
+                          }
+                        }}
+                        onBlur={() => {
+                          // تأخير إخفاء القائمة للسماح بالنقر على الاقتراحات
+                          setTimeout(() => {
+                            setShowTagSuggestions(false);
+                          }, 200);
+                        }}
+                        className="w-full p-2 text-sm rounded bg-gray-50 dark:bg-slate-900/50 border dark:border-gray-600 focus:border-primary outline-none"
+                      />
+                      {showTagSuggestions && tagSuggestions.length > 0 && (
+                        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                          {tagSuggestions.map((tag, index) => (
+                            <button
+                              key={tag}
+                              type="button"
+                              onClick={() => selectTagSuggestion(tag)}
+                              className={`w-full text-right px-4 py-2 text-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors ${
+                                index === selectedSuggestionIndex
+                                  ? "bg-primary/20 dark:bg-primary/30"
+                                  : ""
+                              }`}
+                            >
+                              <span className="text-primary">#{tag}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div
@@ -3518,6 +4407,7 @@
                         >
                           <span className="text-xs font-bold text-gray-400 flex items-center gap-2">
                             {block.type === "text" && <Type size={14} />}
+                            {block.type === "text-group" && <Type size={14} />}
                             {block.type === "button-group" && (
                               <LinkIcon size={14} />
                             )}
@@ -3526,6 +4416,8 @@
                             )}
                             {block.type === "text"
                               ? "نص"
+                              : block.type === "text-group"
+                              ? "نصوص"
                               : block.type === "button-group"
                               ? "أزرار"
                               : block.type === "image-group"
@@ -3579,7 +4471,11 @@
                             <TextBlock
                               content={block.content}
                               dir={block.dir}
+                              title={block.title}
                               onChange={(val) => updateBlock(block.id, val)}
+                              onTitleChange={(val) =>
+                                updateBlockTitle(block.id, val)
+                              }
                             />
                           )}
                           {block.type === "button-group" && (
@@ -3593,6 +4489,12 @@
                               content={block.content}
                               onChange={(val) => updateBlock(block.id, val)}
                               imgbbApiKey={imgbbApiKey}
+                            />
+                          )}
+                          {block.type === "text-group" && (
+                            <TextGroupBlock
+                              content={block.content}
+                              onChange={(val) => updateBlock(block.id, val)}
                             />
                           )}
                         </div>
@@ -3611,10 +4513,10 @@
                 </div>
                 <div className="grid grid-cols-3 gap-3 p-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl">
                   <button
-                    onClick={() => addBlock("text")}
+                    onClick={() => addBlock("text-group")}
                     className="p-3 hover:bg-gray-100 dark:hover:bg-slate-800 rounded text-sm font-bold"
                   >
-                    نص
+                    نصوص
                   </button>
                   <button
                     onClick={() => addBlock("button-group")}
