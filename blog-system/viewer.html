@@ -3712,7 +3712,7 @@
 
         // --- Theme Classes ---
         const getThemeClass = () => {
-          const theme = themes[currentTheme];
+          const theme = themes[currentTheme] || themes.midnight;
           const textModeClass =
             textColorMode === "simple" ? "text-simple-mode" : "";
           return `${theme.bgLight} ${theme.bgDark} ${
@@ -3774,7 +3774,9 @@
                 <div
                   className={`fixed left-2 z-[101] transition-all duration-500 transform origin-top ${
                     readingProgress >= 95
-                      ? `${themes[currentTheme].iconColor} scale-110 opacity-100 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] animate-gentle-bounce`
+                      ? `${
+                          (themes[currentTheme] || themes.midnight).iconColor
+                        } scale-110 opacity-100 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] animate-gentle-bounce`
                       : "text-gray-400 dark:text-gray-600 scale-75 grayscale opacity-50"
                   }`}
                   // 👇 الهدية منخفضة أكثر ولها مسافة كافية من الشريط
@@ -3790,7 +3792,9 @@
 
                 {/* الشريط الملون - يتغير حسب الثيم */}
                 <div
-                  className={`absolute top-0 right-0 h-full transition-all duration-100 ease-out ${themes[currentTheme].barColor}`}
+                  className={`absolute top-0 right-0 h-full transition-all duration-100 ease-out ${
+                    (themes[currentTheme] || themes.midnight).barColor
+                  }`}
                   style={{ width: `${readingProgress}%` }}
                 >
                   {/* وميض أبيض خفيف جداً في نهاية الشريط لإظهار الحركة */}
@@ -4099,7 +4103,7 @@
                 <button
                   onClick={scrollToTop}
                   className={`w-12 h-12 rounded-full text-white shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 ${
-                    themes[currentTheme].barColor
+                    (themes[currentTheme] || themes.midnight).barColor
                   } ${
                     showScrollTop
                       ? "opacity-100 scale-100"
